@@ -1,65 +1,112 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-export default function Home() {
+export default function SplashPage() {
+  const router = useRouter();
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setVisible(true), 100);
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div style={{
+      minHeight: "100vh",
+      background: "#0B1F3A",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      fontFamily: "'Segoe UI', sans-serif",
+      opacity: visible ? 1 : 0,
+      transition: "opacity 0.8s ease",
+    }}>
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .splash-logo { animation: fadeUp 0.8s ease 0.2s both; }
+        .splash-title { animation: fadeUp 0.8s ease 0.4s both; }
+        .splash-sub { animation: fadeUp 0.8s ease 0.6s both; }
+        .splash-divider { animation: fadeUp 0.8s ease 0.7s both; }
+        .splash-btn { animation: fadeUp 0.8s ease 0.8s both; }
+        .splash-footer { animation: fadeUp 0.8s ease 1s both; }
+        .enter-btn:hover { background: #e8edf2 !important; transform: translateY(-1px); }
+        .enter-btn:active { transform: translateY(0); }
+      `}</style>
+
+      {/* Logo with white background */}
+      <div className="splash-logo" style={{ marginBottom: 36 }}>
+        <div style={{
+          width: 140, height: 140,
+          borderRadius: "50%",
+          background: "white",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+        }}>
+          <Image
+            src="/csa-logo.png"
+            alt="CSA Logo"
+            width={118}
+            height={118}
+            style={{ borderRadius: "50%" }}
+          />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      {/* Title */}
+      <div className="splash-title" style={{ textAlign: "center", marginBottom: 14 }}>
+        <h1 style={{ fontSize: 42, fontWeight: 800, color: "white", letterSpacing: "0.14em", margin: 0, textTransform: "uppercase" }}>
+          LELU
+        </h1>
+      </div>
+
+      {/* Subtitle */}
+      <div className="splash-sub" style={{ textAlign: "center", marginBottom: 32 }}>
+        <div style={{ fontSize: 13, letterSpacing: "0.14em", color: "#A8BFCF", textTransform: "uppercase", fontWeight: 500 }}>
+          Law Enforcement Liaison Unit
         </div>
-      </main>
+        <div style={{ fontSize: 11, letterSpacing: "0.1em", color: "#4E6478", textTransform: "uppercase", marginTop: 8 }}>
+          Intelligence Management Platform
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="splash-divider" style={{ width: 60, height: 1, background: "#1E3A5F", marginBottom: 40 }} />
+
+      {/* Button */}
+      <div className="splash-btn">
+        <button
+          className="enter-btn"
+          onClick={() => router.push("/login")}
+          style={{
+            background: "white",
+            border: "none",
+            color: "#0B1F3A",
+            padding: "14px 52px",
+            fontSize: 12,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            cursor: "pointer",
+            borderRadius: 4,
+            transition: "all 0.2s ease",
+            fontWeight: 700,
+            boxShadow: "0 2px 12px rgba(0,0,0,0.2)",
+          }}
+        >
+          Enter Platform
+        </button>
+      </div>
+
+      {/* Footer */}
+      <div className="splash-footer" style={{ position: "absolute", bottom: 32, textAlign: "center" }}>
+        <div style={{ fontSize: 10, color: "#f1f3f5", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+          Restricted Access · Authorized Personnel Only
+        </div>
+      </div>
     </div>
   );
 }
