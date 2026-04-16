@@ -5,15 +5,15 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, FolderOpen, Phone, ShieldAlert,
   Globe, FileBarChart2, ChevronRight, LogOut,
-  Bell, Settings
+  Bell, Settings, Users
 } from "lucide-react";
 
 const navItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
   { id: "cases", label: "Case Management", icon: FolderOpen, href: "/dashboard/cases" },
-  { id: "cdr", label: "CDR Dashboard", icon: Phone, href: "/dashboard/cdr" },
-  { id: "fraud", label: "Fraud Database", icon: ShieldAlert, href: "/dashboard/fraud" },
-  { id: "international", label: "24/7 International", icon: Globe, href: "/dashboard/international" },
+  { id: "cdr", label: "CDR", icon: Phone, href: "/dashboard/cdr" },
+  { id: "fraud", label: "Intel DB", icon: ShieldAlert, href: "/dashboard/fraud" },
+  { id: "international", label: "24/7 Network", icon: Globe, href: "/dashboard/international" },
   { id: "reports", label: "Reports", icon: FileBarChart2, href: "/dashboard/reports" },
 ];
 
@@ -60,6 +60,7 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     const active = navItems.find(n => pathname === n.href || (n.href !== "/dashboard" && pathname.startsWith(n.href)));
     if (active) setPageTitle(active.label.toUpperCase());
+    else if (pathname.startsWith("/dashboard/admin")) setPageTitle("USER MANAGEMENT");
     setPageDate(new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
     setPageKey(pathname);
   }, [pathname]);
@@ -160,6 +161,31 @@ export default function DashboardLayout({ children }) {
               </button>
             );
           })}
+
+          {/* User Management — HEAD_OF_UNIT only */}
+          {role === "HEAD_OF_UNIT" && (() => {
+            const isActive = pathname.startsWith("/dashboard/admin");
+            return (
+              <button className="nav-btn"
+                onClick={() => router.push("/dashboard/admin")}
+                style={{
+                  width: "100%", display: "flex", alignItems: "center", gap: 12,
+                  padding: "11px 20px", border: "none", cursor: "pointer",
+                  background: isActive ? "#112847" : "transparent",
+                  borderLeft: isActive ? "3px solid #1A5FA8" : "3px solid transparent",
+                  textAlign: "left",
+                  opacity: mounted ? 1 : 0,
+                  transform: mounted ? "translateX(0)" : "translateX(-16px)",
+                  transition: `opacity 1s cubic-bezier(.4,0,.2,1) 0.7s, transform 1s cubic-bezier(.4,0,.2,1) 0.7s, background 0.2s`,
+                }}>
+                <Users size={16} color={isActive ? "white" : "#4E6478"} strokeWidth={1.8} />
+                <span style={{ fontSize: 13, color: isActive ? "white" : "#8FA3BB", fontWeight: isActive ? 600 : 400, flex: 1 }}>
+                  User Management
+                </span>
+                {isActive && <ChevronRight size={12} color="#4E6478" />}
+              </button>
+            );
+          })()}
         </nav>
 
         {/* User Profile */}

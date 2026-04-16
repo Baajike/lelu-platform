@@ -1,6 +1,7 @@
 import { db } from "../../../lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
+import { upsertViewer } from "../../../lib/viewerStore";
 
 export async function GET(request, { params }) {
   try {
@@ -18,10 +19,14 @@ export async function GET(request, { params }) {
           orderBy: { createdAt: "asc" },
         },
         cdrRequests: true,
+        caseActivities: { orderBy: { createdAt: "desc" } },
       },
     });
 
     if (!caseData) return Response.json({ error: "Case not found" }, { status: 404 });
+
+    upsertViewer(id, session.user.id, session.user.name);
+
     return Response.json(caseData);
   } catch (error) {
     console.error("GET case error:", error);
@@ -41,6 +46,23 @@ export async function PATCH(request, { params }) {
       where: { id },
       data: body,
     });
+
+    let activityAction = null;
+    if (body.status === "Closed") activityAction = "Case closed";
+    else if (body.status === "Declined") activityAction = "Case declined";
+    else if (body.status === "Active") activityAction = "Case reopened";
+
+    if (activityAction) {
+      await db.caseActivity.create({
+        data: {
+          caseId: id,
+          userId: session.user.id,
+          userName: session.user.name,
+          action: activityAction,
+          detail: body.closureReason || null,
+        },
+      }).catch(() => {});
+    }
 
     return Response.json(updated);
   } catch (error) {

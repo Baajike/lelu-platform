@@ -29,7 +29,7 @@ export async function GET(request) {
       return Response.json({ caseData });
     }
 
-    const [cases, cdrs, fraudEntities, activityReports, internationalRequests] = await Promise.all([
+    const [cases, cdrs, activityReports, internationalRequests] = await Promise.all([
       db.case.findMany({
         where: { createdAt: { gte: fromDate, lte: toDate } },
         include: { officer: { select: { name: true } }, entries: true },
@@ -38,9 +38,6 @@ export async function GET(request) {
       db.cdrRequest.findMany({
         where: { requestedAt: { gte: fromDate, lte: toDate } },
         include: { case: { select: { caseNumber: true, title: true } }, officer: { select: { name: true } } },
-      }),
-      db.fraudEntity.findMany({
-        where: { createdAt: { gte: fromDate, lte: toDate } },
       }),
       db.activityReport.findMany({
         where: { createdAt: { gte: fromDate, lte: toDate } },
@@ -53,7 +50,7 @@ export async function GET(request) {
       }),
     ]);
 
-    return Response.json({ cases, cdrs, fraudEntities, activityReports, internationalRequests });
+    return Response.json({ cases, cdrs, activityReports, internationalRequests });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

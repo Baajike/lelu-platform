@@ -59,6 +59,18 @@ export async function POST(request) {
       },
     });
 
+    if (cdr.caseId) {
+      await db.caseActivity.create({
+        data: {
+          caseId: cdr.caseId,
+          userId: session.user.id,
+          userName: session.user.name,
+          action: "CDR request logged",
+          detail: `${cdr.phoneNumber} (${cdr.telco})`,
+        },
+      }).catch(() => {});
+    }
+
     return Response.json(cdr, { status: 201 });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

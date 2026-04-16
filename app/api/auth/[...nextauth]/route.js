@@ -27,6 +27,11 @@ export const authOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        // Record login time
+        await db.user.update({
+          where: { id: user.id },
+          data: { lastActive: new Date() },
+        }).catch((err) => console.error("[auth] Failed to update lastActive:", err));
       }
       return token;
     },

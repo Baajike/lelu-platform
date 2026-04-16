@@ -15,8 +15,11 @@ model User {
   password  String
   role      String   @default("OFFICER")
 // Roles: HEAD_OF_UNIT | SUPERVISOR | OFFICE_ADMINISTRATOR | OFFICER | ADMIN
-  approved  Boolean  @default(false)
-  createdAt DateTime @default(now())
+  approved    Boolean   @default(false)
+  deactivated Boolean   @default(false)
+  cdrAccess   Boolean   @default(false)
+  lastActive  DateTime?
+  createdAt  DateTime  @default(now())
   updatedAt DateTime @updatedAt
   cases     Case[]
   entries   JournalEntry[]
@@ -31,18 +34,17 @@ model Case {
   title       String
   category    String
   status      String   @default("Active")
-  priority    String   @default("Medium")
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   closedAt    DateTime?
   closureReason String?
-  officer     User     @relation(fields: [officerId], references: [id])
-  officerId   String
+  officer     User?    @relation(fields: [officerId], references: [id])
+  officerId   String?
   entries     JournalEntry[]
   cdrRequests CdrRequest[]
   internationalRequests InternationalRequest[]
-  fraudEntities FraudEntity[]
+  caseActivities CaseActivity[]
 }
 
 model JournalEntry {
@@ -53,8 +55,19 @@ model JournalEntry {
   createdAt DateTime @default(now())
   case      Case     @relation(fields: [caseId], references: [id])
   caseId    String
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  String?
+}
+
+model CaseActivity {
+  id        String   @id @default(cuid())
+  caseId    String
+  case      Case     @relation(fields: [caseId], references: [id])
+  userId    String?
+  userName  String
+  action    String
+  detail    String?
+  createdAt DateTime @default(now())
 }
 
 model CdrRequest {
@@ -67,24 +80,12 @@ model CdrRequest {
   status      String   @default("Pending")
   requestedAt DateTime @default(now())
   receivedAt  DateTime?
-  case        Case     @relation(fields: [caseId], references: [id])
-  caseId      String
-  officer     User     @relation(fields: [officerId], references: [id])
-  officerId   String
+  case        Case?    @relation(fields: [caseId], references: [id])
+  caseId      String?
+  officer     User?    @relation(fields: [officerId], references: [id])
+  officerId   String?
   attachmentPath String?
   attachmentName String?
-}
-
-model FraudEntity {
-  id        String   @id @default(cuid())
-  type      String
-  value     String
-  category  String
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  caseId    String?
-  case      Case?    @relation(fields: [caseId], references: [id])
 }
 
 model InternationalRequest {
@@ -99,8 +100,8 @@ model InternationalRequest {
   priority     String   @default("Medium")
   caseId       String?
   case         Case?    @relation(fields: [caseId], references: [id])
-  officerId    String
-  officer      User     @relation(fields: [officerId], references: [id])
+  officerId    String?
+  officer      User?    @relation(fields: [officerId], references: [id])
   createdAt    DateTime @default(now())
   respondedAt  DateTime?
   attachmentPath String?
@@ -116,7 +117,7 @@ model ActivityReport {
   challenges  String?
   nextSteps   String?
   status      String   @default("Submitted")
-  officerId   String
-  officer     User     @relation(fields: [officerId], references: [id])
+  officerId   String?
+  officer     User?    @relation(fields: [officerId], references: [id])
   createdAt   DateTime @default(now())
 }

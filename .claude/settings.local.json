@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx prisma migrate deploy:*)",
+      "Bash(node -e ' *)",
+      "Bash(npx prisma *)",
+      "Bash(rm -f \"C:/Users/baaji/lelu-platform/app/api/fraud/route.js\" \"C:/Users/baaji/lelu-platform/app/api/fraud/[fraudId]/route.js\")",
+      "Bash(rmdir \"C:/Users/baaji/lelu-platform/app/api/fraud/[fraudId]\")",
+      "Bash(node prisma/seed.js)",
+      "Bash(node *)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:3000/api/cases -H \"Cookie: \")",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(taskkill /F /IM node.exe)"
+    ]
+  }
+}

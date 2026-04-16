@@ -1,6 +1,7 @@
 import { db } from "../../../../lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../auth/[...nextauth]/route";
+import bcrypt from "bcryptjs";
 
 export async function PATCH(request, { params }) {
   try {
@@ -13,7 +14,20 @@ export async function PATCH(request, { params }) {
     }
 
     const { userId } = await params;
-    const { action } = await request.json();
+    const body = await request.json();
+    const { action, cdrAccess } = body;
+
+    // Update CDR access toggle
+    if (cdrAccess !== undefined && action === undefined) {
+      if (role !== "HEAD_OF_UNIT") {
+        return Response.json({ error: "Only HEAD_OF_UNIT can manage CDR access." }, { status: 403 });
+      }
+      const user = await db.user.update({
+        where: { id: userId },
+        data: { cdrAccess: Boolean(cdrAccess) },
+      });
+      return Response.json(user);
+    }
 
     if (action === "approve") {
       const user = await db.user.update({
@@ -25,6 +39,44 @@ export async function PATCH(request, { params }) {
 
     if (action === "reject") {
       await db.user.delete({ where: { id: userId } });
+      return Response.json({ success: true });
+    }
+
+    if (action === "deactivate") {
+      if (role !== "HEAD_OF_UNIT") {
+        return Response.json({ error: "Only HEAD_OF_UNIT can deactivate users." }, { status: 403 });
+      }
+      const user = await db.user.update({
+        where: { id: userId },
+        data: { approved: false, deactivated: true },
+      });
+      return Response.json(user);
+    }
+
+    if (action === "reactivate") {
+      if (role !== "HEAD_OF_UNIT") {
+        return Response.json({ error: "Only HEAD_OF_UNIT can reactivate users." }, { status: 403 });
+      }
+      const user = await db.user.update({
+        where: { id: userId },
+        data: { approved: true, deactivated: false },
+      });
+      return Response.json(user);
+    }
+
+    if (action === "reset_password") {
+      if (role !== "HEAD_OF_UNIT") {
+        return Response.json({ error: "Only HEAD_OF_UNIT can reset passwords." }, { status: 403 });
+      }
+      const { newPassword } = body;
+      if (!newPassword || newPassword.length < 8) {
+        return Response.json({ error: "Password must be at least 8 characters." }, { status: 400 });
+      }
+      const hashed = await bcrypt.hash(newPassword, 10);
+      await db.user.update({
+        where: { id: userId },
+        data: { password: hashed },
+      });
       return Response.json({ success: true });
     }
 

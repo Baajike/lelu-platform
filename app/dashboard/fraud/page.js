@@ -1,435 +1,474 @@
 "use client";
-import { useState, useEffect } from "react";
-import { Plus, Search, X, ShieldAlert, Phone, Globe, Mail, User, CreditCard, FileText, Filter, ExternalLink } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Search, X, Briefcase, PhoneCall, BookOpen, Globe, AlertTriangle, Activity } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const TYPES = ["Phone Number", "URL", "Email Address", "Nickname", "Bank Account", "ID Document", "Other"];
-const CATEGORIES = ["Extortion", "Investment Scams", "Impersonation", "Mobile Money Fraud", "SIM Swap", "Phishing", "Other"];
-
-const TYPE_ICON = {
-  "Phone Number": Phone, "URL": Globe, "Email Address": Mail,
-  "Nickname": User, "Bank Account": CreditCard, "ID Document": FileText, "Other": ShieldAlert,
+const TYPE_CONFIG = {
+  CASE:    { label: "CASE",    color: "#1A5FA8", bg: "#EBF3FB", Icon: Briefcase },
+  CDR:     { label: "CDR",     color: "#D4730A", bg: "#FEF3E2", Icon: PhoneCall },
+  JOURNAL: { label: "JOURNAL", color: "#1A7A4A", bg: "#E6F5EE", Icon: BookOpen },
+  NETWORK: { label: "NETWORK", color: "#6B3FA0", bg: "#F3EDFC", Icon: Globe },
 };
 
-const categoryColor = (cat) => {
-  const map = {
-    "Extortion": "#C0392B", "Investment Scams": "#6B3FA0",
-    "Impersonation": "#1A5FA8", "Mobile Money Fraud": "#D4730A",
-    "SIM Swap": "#1A7A4A", "Phishing": "#8A6200",
+const TYPE_MAP = { Cases: "CASE", CDR: "CDR", Journal: "JOURNAL", Network: "NETWORK" };
+
+const extractPhoneTokens = (text) => {
+  if (!text) return [];
+  const raw = text.match(/\+?[\d][\d\s\-\.\(\)]{5,}[\d]/g) || [];
+  return [...new Set(raw.map(m => m.replace(/[^\d]/g, "")).filter(m => m.length >= 7))];
+};
+
+const computeCrossRefs = (cases, cdrs, entries, intl) => {
+  const tokenToItems = new Map();
+
+  const addTokens = (id, tokens) => {
+    tokens.forEach(token => {
+      if (token.length < 7) return;
+      if (!tokenToItems.has(token)) tokenToItems.set(token, new Set());
+      tokenToItems.get(token).add(id);
+    });
   };
-  return map[cat] || "#4E6478";
+
+  cases.forEach(c => addTokens(c.id, extractPhoneTokens(`${c.title} ${c.description || ""}`)));
+  cdrs.forEach(c => {
+    const norm = c.phoneNumber.replace(/[^\d]/g, "");
+    addTokens(c.id, [...new Set([norm, ...extractPhoneTokens(c.phoneNumber)])]);
+  });
+  entries.forEach(e => addTokens(e.id, extractPhoneTokens(`${e.content} ${e.actions || ""}`)));
+  intl.forEach(r => addTokens(r.id, extractPhoneTokens(`${r.subject} ${r.details || ""}`)));
+
+  const crossRefs = {};
+  tokenToItems.forEach((itemSet) => {
+    if (itemSet.size >= 2) {
+      itemSet.forEach(id => {
+        crossRefs[id] = Math.max(crossRefs[id] || 0, itemSet.size);
+      });
+    }
+  });
+  return crossRefs;
 };
+
+const isThisWeek = (dateStr) => {
+  const now = new Date();
+  const d = new Date(dateStr);
+  const day = now.getDay();
+  const start = new Date(now);
+  start.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
+  start.setHours(0, 0, 0, 0);
+  return d >= start;
+};
+
+const isThisMonth = (dateStr) => {
+  const now = new Date();
+  const d = new Date(dateStr);
+  return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+};
+
+function SearchSection({ title, icon: Icon, color, count, children }) {
+  return (
+    <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
+      <div style={{ padding: "14px 20px", borderBottom: "1px solid #E2E8F0", background: "#F7F9FC", display: "flex", alignItems: "center", gap: 10 }}>
+        <Icon size={14} color={color} strokeWidth={2} />
+        <span style={{ fontSize: 11, fontWeight: 700, color: "#0B1F3A", textTransform: "uppercase", letterSpacing: "0.08em" }}>{title}</span>
+        <span style={{ fontSize: 11, color: "#8FA3BB", background: "#EEF2F7", padding: "1px 8px", borderRadius: 10, fontWeight: 600 }}>{count}</span>
+      </div>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <tbody>{children}</tbody>
+      </table>
+    </div>
+  );
+}
 
 export default function FraudPage() {
   const router = useRouter();
-  const [entities, setEntities] = useState([]);
-  const [cases, setCases] = useState([]);
+  const [allData, setAllData] = useState({ cases: [], cdrs: [], entries: [], international: [] });
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedEntity, setSelectedEntity] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [typeFilter, setTypeFilter] = useState("All");
+  const [dateFilter, setDateFilter] = useState("All Time");
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
-  const [form, setForm] = useState({ type: "Phone Number", otherType: "", value: "", category: "Extortion", otherCategory: "", notes: "", caseId: "" });
-  const [editOtherCategory, setEditOtherCategory] = useState("");
 
-  const fetchEntities = async (s = "", t = "") => {
+  const fetchAll = async () => {
     setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (s) params.set("search", s);
-      if (t && t !== "Other") params.set("type", t);
-      const res = await fetch(`/api/fraud?${params.toString()}`);
-      const data = await res.json();
-      setEntities(Array.isArray(data) ? data : []);
-    } catch { setEntities([]); }
-    finally { setLoading(false); }
-  };
-
-  const fetchCases = async () => {
-    try {
-      const res = await fetch("/api/cases");
-      const data = await res.json();
-      setCases(Array.isArray(data) ? data : []);
-    } catch { setCases([]); }
-  };
-
-  useEffect(() => { fetchEntities(); fetchCases(); }, []);
-
-  const handleSearch = () => { setSearch(searchInput); fetchEntities(searchInput, typeFilter); };
-  const handleTypeFilter = (t) => { setTypeFilter(t); fetchEntities(search, t); };
-
-  const handleSubmit = async () => {
-    if (!form.value.trim()) { alert("Value is required."); return; }
-    if (form.type === "Other" && !form.otherType.trim()) { alert("Please specify the entity type."); return; }
-    if (form.category === "Other" && !form.otherCategory.trim()) { alert("Please specify the category."); return; }
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/fraud", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          type: form.type === "Other" ? form.otherType : form.type,
-          category: form.category === "Other" ? form.otherCategory : form.category,
-          caseId: form.caseId || null,
-        }),
-      });
-      if (res.ok) {
-        setShowModal(false);
-        setForm({ type: "Phone Number", otherType: "", value: "", category: "Extortion", otherCategory: "", notes: "", caseId: "" });
-        fetchEntities(search, typeFilter);
+    const safeGet = async (url) => {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) return [];
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch {
+        return [];
       }
-    } finally { setSubmitting(false); }
+    };
+    const [cases, cdrs, entries, international] = await Promise.all([
+      safeGet("/api/cases"),
+      safeGet("/api/cdr"),
+      safeGet("/api/entries"),
+      safeGet("/api/international"),
+    ]);
+    setAllData({ cases, cdrs, entries, international });
+    setLoading(false);
   };
 
-  const handleEdit = async () => {
-    if (selectedEntity.category === "Other" && !editOtherCategory.trim()) { alert("Please specify the category."); return; }
-    setSubmitting(true);
-    try {
-      await fetch(`/api/fraud/${selectedEntity.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          notes: selectedEntity.notes,
-          category: selectedEntity.category === "Other" ? editOtherCategory : selectedEntity.category,
-          caseId: selectedEntity.caseId || null,
-        }),
-      });
-      setShowEditModal(false); setSelectedEntity(null); setEditOtherCategory("");
-      fetchEntities(search, typeFilter);
-    } finally { setSubmitting(false); }
-  };
+  useEffect(() => {
+    fetchAll();
 
-  const handleDelete = async (id) => {
-    if (!confirm("Remove this entity from the fraud database?")) return;
-    await fetch(`/api/fraud/${id}`, { method: "DELETE" });
-    fetchEntities(search, typeFilter);
-  };
+    const onFocus = () => fetchAll();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, []);
 
-  const TypeIcon = ({ type, size = 14, color = "#4E6478" }) => {
-    const Icon = TYPE_ICON[type] || ShieldAlert;
-    return <Icon size={size} color={color} strokeWidth={1.8} />;
-  };
+  const crossRefs = useMemo(
+    () => computeCrossRefs(allData.cases, allData.cdrs, allData.entries, allData.international),
+    [allData]
+  );
+
+  const feedItems = useMemo(() => {
+    const { cases, cdrs, entries, international } = allData;
+    const items = [
+      ...cases.map(c => ({
+        id: c.id, type: "CASE", date: c.createdAt,
+        label: c.title,
+        sub: `${c.caseNumber} · ${c.category}`,
+        officer: c.officer?.name,
+        navigateTo: `/dashboard/cases/${c.id}`,
+        status: c.status,
+      })),
+      ...cdrs.map(c => ({
+        id: c.id, type: "CDR", date: c.requestedAt,
+        label: c.phoneNumber,
+        sub: `${c.telco}${c.case ? ` · ${c.case.caseNumber}` : ""}`,
+        officer: c.officer?.name,
+        navigateTo: `/dashboard/cdr`,
+        status: c.status,
+      })),
+      ...entries.map(e => ({
+        id: e.id, type: "JOURNAL", date: e.createdAt,
+        label: e.content?.length > 90 ? e.content.slice(0, 90) + "…" : e.content,
+        sub: `Input ${e.dayNumber}${e.case ? ` · ${e.case.caseNumber}` : ""}`,
+        officer: e.author?.name,
+        navigateTo: e.case?.id ? `/dashboard/cases/${e.case.id}` : null,
+      })),
+      ...international.map(r => ({
+        id: r.id, type: "NETWORK", date: r.createdAt,
+        label: r.subject,
+        sub: `${r.country} · ${r.agency}`,
+        officer: r.officer?.name,
+        navigateTo: `/dashboard/international`,
+        status: r.status,
+      })),
+    ];
+    return items.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }, [allData]);
+
+  const filteredFeed = useMemo(() => {
+    return feedItems.filter(item => {
+      if (typeFilter !== "All" && item.type !== TYPE_MAP[typeFilter]) return false;
+      if (dateFilter === "This Week" && !isThisWeek(item.date)) return false;
+      if (dateFilter === "This Month" && !isThisMonth(item.date)) return false;
+      return true;
+    });
+  }, [feedItems, typeFilter, dateFilter]);
+
+  const searchResults = useMemo(() => {
+    if (!search.trim()) return null;
+    const q = search.toLowerCase();
+    return {
+      cases: allData.cases.filter(c =>
+        c.title?.toLowerCase().includes(q) ||
+        c.caseNumber?.toLowerCase().includes(q) ||
+        c.description?.toLowerCase().includes(q) ||
+        c.category?.toLowerCase().includes(q)
+      ),
+      entries: allData.entries.filter(e =>
+        e.content?.toLowerCase().includes(q) ||
+        e.actions?.toLowerCase().includes(q)
+      ),
+      cdrs: allData.cdrs.filter(c => c.phoneNumber?.toLowerCase().includes(q)),
+      international: allData.international.filter(r =>
+        r.subject?.toLowerCase().includes(q) ||
+        r.agency?.toLowerCase().includes(q) ||
+        r.country?.toLowerCase().includes(q)
+      ),
+    };
+  }, [search, allData]);
+
+  const handleSearch = () => setSearch(searchInput);
+  const handleClear = () => { setSearch(""); setSearchInput(""); };
+
+  const total = allData.cases.length + allData.cdrs.length + allData.entries.length + allData.international.length;
 
   return (
     <div style={{ padding: 32 }}>
       <style>{`
-        .modal-input {
-          width: 100%; border: 1.5px solid #E2E8F0; border-radius: 4px;
-          padding: 11px 14px; font-size: 13px; color: #0B1F3A;
-          outline: none; box-sizing: border-box; font-family: 'Segoe UI', sans-serif;
-          transition: border-color 0.2s; background: white;
-        }
-        .modal-input:focus { border-color: #1A5FA8; }
-        .modal-input::placeholder { color: #A8BFCF; }
+        .intel-item { transition: background 0.12s; cursor: pointer; }
+        .intel-item:hover { background: #F7F9FC !important; }
+        .filter-pill { transition: all 0.15s; cursor: pointer; }
+        .filter-pill:hover { border-color: #1A5FA8 !important; }
         .fraud-row:hover td { background: #F7F9FC; }
-        .primary-btn:hover { background: #154d8a !important; }
-        .type-chip { transition: all 0.15s; cursor: pointer; }
-        .type-chip:hover { border-color: #1A5FA8 !important; color: #1A5FA8 !important; }
-        .case-link:hover { text-decoration: underline; color: #1A5FA8 !important; }
       `}</style>
 
-      {/* Top: Search + Stats */}
-      <div style={{ display: "flex", gap: 16, marginBottom: 24 }}>
-        <div style={{ flex: 1, background: "white", borderRadius: 6, border: "1px solid #E2E8F0", padding: "20px 24px", boxShadow: "0 1px 4px rgba(11,31,58,0.05)" }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: "#0B1F3A", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>Entity Search</div>
-          <div style={{ fontSize: 11, color: "#8FA3BB", marginBottom: 14 }}>Search phone numbers, URLs, emails, nicknames or bank accounts across all fraud records.</div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <div style={{ position: "relative", flex: 1 }}>
-              <Search size={14} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#8FA3BB" }} />
-              <input value={searchInput} onChange={e => setSearchInput(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && handleSearch()}
-                placeholder="Search any entity..."
-                style={{ width: "100%", border: "1.5px solid #E2E8F0", borderRadius: 4, padding: "10px 14px 10px 34px", fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "'Segoe UI', sans-serif", color: "#0B1F3A", transition: "border-color 0.2s" }}
-              />
-            </div>
-            <button onClick={handleSearch} style={{ background: "#0B1F3A", color: "white", border: "none", padding: "10px 22px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
-              Search
-            </button>
-            {search && (
-              <button onClick={() => { setSearch(""); setSearchInput(""); fetchEntities("", typeFilter); }}
-                style={{ background: "#F7F9FC", color: "#4E6478", border: "1px solid #E2E8F0", padding: "10px 14px", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif" }}>
-                Clear
-              </button>
-            )}
+      {/* Stats Row */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 24 }}>
+        {[
+          { label: "Total Intel Items", value: total,                          color: "#0B1F3A" },
+          { label: "Cases",             value: allData.cases.length,           color: "#1A5FA8" },
+          { label: "CDR Requests",      value: allData.cdrs.length,            color: "#D4730A" },
+          { label: "Network Requests",  value: allData.international.length,   color: "#6B3FA0" },
+          { label: "Journal Entries",   value: allData.entries.length,         color: "#1A7A4A" },
+        ].map((s, i) => (
+          <div key={i} style={{ background: "white", borderRadius: 6, padding: "16px 20px", border: "1px solid #E2E8F0", borderTop: `3px solid ${s.color}`, boxShadow: "0 1px 4px rgba(11,31,58,0.05)" }}>
+            <div style={{ fontSize: 10, color: "#8FA3BB", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>{s.label}</div>
+            <div style={{ fontSize: 28, fontWeight: 800, color: s.color }}>{loading ? "—" : s.value}</div>
           </div>
+        ))}
+      </div>
+
+      {/* Search */}
+      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", padding: "20px 24px", marginBottom: 16, boxShadow: "0 1px 4px rgba(11,31,58,0.05)" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#0B1F3A", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>Master Search</div>
+        <div style={{ fontSize: 11, color: "#8FA3BB", marginBottom: 14 }}>Search across Cases, CDR Requests, Journal Entries and Network Requests simultaneously.</div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ position: "relative", flex: 1 }}>
+            <Search size={14} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#8FA3BB" }} />
+            <input
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleSearch()}
+              placeholder="Search any value, case number, phone number, subject..."
+              style={{ width: "100%", border: "1.5px solid #E2E8F0", borderRadius: 4, padding: "10px 14px 10px 34px", fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "'Segoe UI', sans-serif", color: "#0B1F3A", transition: "border-color 0.2s" }}
+            />
+          </div>
+          <button onClick={handleSearch}
+            style={{ background: "#0B1F3A", color: "white", border: "none", padding: "10px 22px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
+            Search
+          </button>
           {search && (
-            <div style={{ marginTop: 10, fontSize: 12, color: "#4E6478" }}>
-              Showing <strong style={{ color: "#0B1F3A" }}>{entities.length}</strong> {entities.length === 1 ? "result" : "results"} for <strong style={{ color: "#1A5FA8" }}>"{search}"</strong>
-            </div>
+            <button onClick={handleClear}
+              style={{ background: "#F7F9FC", color: "#4E6478", border: "1px solid #E2E8F0", padding: "10px 14px", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", display: "flex", alignItems: "center", gap: 6 }}>
+              <X size={12} /> Clear
+            </button>
           )}
         </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, minWidth: 180 }}>
-          {[
-            { label: "Total Entities", value: entities.length, color: "#1A5FA8" },
-            { label: "Phone Numbers", value: entities.filter(e => e.type === "Phone Number").length, color: "#D4730A" },
-            { label: "Other Types", value: entities.filter(e => e.type !== "Phone Number").length, color: "#6B3FA0" },
-          ].map((s, i) => (
-            <div key={i} style={{ background: "white", borderRadius: 6, padding: "12px 18px", border: "1px solid #E2E8F0", borderLeft: `3px solid ${s.color}`, boxShadow: "0 1px 4px rgba(11,31,58,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ fontSize: 11, color: "#8FA3BB", fontWeight: 600 }}>{s.label}</div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: s.color }}>{s.value}</div>
-            </div>
-          ))}
-        </div>
+        {search && searchResults && (
+          <div style={{ marginTop: 10, fontSize: 12, color: "#4E6478" }}>
+            {(() => {
+              const t = (searchResults.cases?.length || 0) + (searchResults.entries?.length || 0) + (searchResults.cdrs?.length || 0) + (searchResults.international?.length || 0);
+              return <><strong style={{ color: "#0B1F3A" }}>{t}</strong> {t === 1 ? "result" : "results"} across all modules for <strong style={{ color: "#1A5FA8" }}>"{search}"</strong></>;
+            })()}
+          </div>
+        )}
       </div>
 
-      {/* Toolbar */}
-      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", padding: "16px 20px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", boxShadow: "0 1px 4px rgba(11,31,58,0.05)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#8FA3BB", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginRight: 4 }}>
-          <Filter size={12} /> Filter
-        </div>
-        {["All", ...TYPES.filter(t => t !== "Other")].map(t => {
-          const isActive = t === "All" ? !typeFilter : typeFilter === t;
-          const Icon = t === "All" ? null : TYPE_ICON[t];
-          return (
-            <button key={t} className="type-chip"
-              onClick={() => handleTypeFilter(t === "All" ? "" : t)}
-              style={{
-                display: "flex", alignItems: "center", gap: 6,
-                padding: "6px 14px", borderRadius: 20, fontSize: 12,
-                fontWeight: isActive ? 700 : 400,
-                background: isActive ? "#0B1F3A" : "white",
-                color: isActive ? "white" : "#4E6478",
-                border: `1px solid ${isActive ? "#0B1F3A" : "#E2E8F0"}`,
-                fontFamily: "'Segoe UI', sans-serif",
-              }}>
-              {Icon && <Icon size={12} strokeWidth={2} />}
-              {t}
-            </button>
-          );
-        })}
-        <button className="primary-btn" onClick={() => setShowModal(true)} style={{
-          marginLeft: "auto", background: "#1A5FA8", color: "white", border: "none",
-          padding: "9px 20px", borderRadius: 4, fontSize: 12, fontWeight: 600,
-          cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
-          fontFamily: "'Segoe UI', sans-serif", letterSpacing: "0.05em", transition: "background 0.15s",
-        }}>
-          <Plus size={14} /> Add Entity
-        </button>
-      </div>
-
-      {/* Table */}
-      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ background: "#F7F9FC", borderBottom: "1px solid #E2E8F0" }}>
-              {["Type", "Value", "Category", "Linked Case", "Notes", "Date Added", "Actions"].map(h => (
-                <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase" }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={7} style={{ padding: 48, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading...</td></tr>
-            ) : entities.length === 0 ? (
-              <tr>
-                <td colSpan={7} style={{ padding: 72, textAlign: "center" }}>
-                  <ShieldAlert size={40} color="#D8E2EE" strokeWidth={1} style={{ margin: "0 auto 14px", display: "block" }} />
-                  <div style={{ fontSize: 13, color: "#8FA3BB", fontWeight: 500 }}>
-                    {search ? `No results for "${search}"` : "No fraud entities in the database."}
-                  </div>
-                  <div style={{ fontSize: 11, color: "#C4D0DC", marginTop: 4 }}>
-                    {!search && "Add confirmed fraud entities from your cases to build intelligence."}
-                  </div>
-                </td>
-              </tr>
-            ) : entities.map((e, i) => {
-              const color = categoryColor(e.category);
-              return (
-                <tr key={e.id} className="fraud-row"
-                  style={{ borderBottom: i < entities.length - 1 ? "1px solid #F7F9FC" : "none" }}>
-                  <td style={{ padding: "14px 16px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <div style={{ width: 30, height: 30, borderRadius: 6, background: "#F0F4F8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                        <TypeIcon type={e.type} size={14} color="#4E6478" />
-                      </div>
-                      <div style={{ fontSize: 12, color: "#4E6478", fontWeight: 500 }}>{e.type}</div>
-                    </div>
-                  </td>
-                  <td style={{ padding: "14px 16px", fontSize: 13, fontWeight: 700, color: "#0B1F3A", maxWidth: 180 }}>
-                    <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.value}</div>
-                  </td>
-                  <td style={{ padding: "14px 16px" }}>
-                    <span style={{ background: color + "15", color, fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 3, letterSpacing: "0.05em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
-                      {e.category}
-                    </span>
-                  </td>
-                  {/* Linked Case */}
-                  <td style={{ padding: "14px 16px" }}>
-                    {e.case ? (
-                      <button className="case-link"
-                        onClick={() => router.push(`/dashboard/cases/${e.case.id}`)}
-                        style={{ background: "#EBF3FB", border: "none", borderRadius: 4, padding: "4px 10px", cursor: "pointer", display: "flex", alignItems: "center", gap: 5, fontFamily: "'Segoe UI', sans-serif" }}>
-                        <ExternalLink size={11} color="#1A5FA8" />
-                        <span style={{ fontSize: 11, fontWeight: 700, color: "#1A5FA8" }}>{e.case.caseNumber}</span>
-                      </button>
-                    ) : (
-                      <span style={{ fontSize: 11, color: "#C4D0DC" }}>—</span>
-                    )}
-                  </td>
-                  <td style={{ padding: "14px 16px", fontSize: 12, color: "#4E6478", maxWidth: 180 }}>
-                    <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.notes || <span style={{ color: "#C4D0DC" }}>—</span>}</div>
-                  </td>
-                  <td style={{ padding: "14px 16px", fontSize: 11, color: "#8FA3BB", whiteSpace: "nowrap" }}>
-                    {new Date(e.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-                  </td>
-                  <td style={{ padding: "14px 16px" }}>
-                    <div style={{ display: "flex", gap: 6 }}>
-                      <button onClick={() => { setSelectedEntity(e); setEditOtherCategory(""); setShowEditModal(true); }}
-                        style={{ fontSize: 11, color: "#1A5FA8", background: "#EBF3FB", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif" }}>
-                        Edit
-                      </button>
-                      <button onClick={() => handleDelete(e.id)}
-                        style={{ fontSize: 11, color: "#C0392B", background: "#FDECEA", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif" }}>
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Modal: Add Entity */}
-      {showModal && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(11,31,58,0.6)", backdropFilter: "blur(4px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: "white", borderRadius: 6, padding: "36px 40px", width: 540, boxShadow: "0 24px 64px rgba(11,31,58,0.25)", maxHeight: "90vh", overflowY: "auto" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
-              <div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "#0B1F3A" }}>Add Fraud Entity</div>
-                <div style={{ fontSize: 12, color: "#8FA3BB", marginTop: 3 }}>Add a confirmed fraud entity to the intelligence database.</div>
-              </div>
-              <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB" }}><X size={18} /></button>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-              <div>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Entity Type *</label>
-                <select className="modal-input" value={form.type} onChange={e => setForm({ ...form, type: e.target.value, otherType: "" })}>
-                  {TYPES.map(t => <option key={t}>{t}</option>)}
-                </select>
-                {form.type === "Other" && (
-                  <input className="modal-input" value={form.otherType} onChange={e => setForm({ ...form, otherType: e.target.value })}
-                    placeholder="Specify type..." style={{ marginTop: 8 }} />
-                )}
-              </div>
-              <div>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Fraud Category *</label>
-                <select className="modal-input" value={form.category} onChange={e => setForm({ ...form, category: e.target.value, otherCategory: "" })}>
-                  {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                </select>
-                {form.category === "Other" && (
-                  <input className="modal-input" value={form.otherCategory} onChange={e => setForm({ ...form, otherCategory: e.target.value })}
-                    placeholder="Specify category..." style={{ marginTop: 8 }} />
-                )}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Value *</label>
-              <input className="modal-input" value={form.value} onChange={e => setForm({ ...form, value: e.target.value })}
-                placeholder={
-                  form.type === "Phone Number" ? "+233244000000" :
-                  form.type === "URL" ? "https://scam-site.com" :
-                  form.type === "Email Address" ? "scammer@fake.com" :
-                  form.type === "Bank Account" ? "Account number..." : "Enter value..."
-                } />
-            </div>
-
-            {/* Link to Case */}
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Link to Case (optional)</label>
-              <select className="modal-input" value={form.caseId} onChange={e => setForm({ ...form, caseId: e.target.value })}>
-                <option value="">— No case linked —</option>
-                {cases.map(c => (
-                  <option key={c.id} value={c.id}>{c.caseNumber} — {c.title}</option>
-                ))}
-              </select>
-            </div>
-
-            <div style={{ marginBottom: 28 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Notes</label>
-              <textarea className="modal-input" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })}
-                placeholder="Any relevant context about this entity..."
-                style={{ height: 80, resize: "none" }} />
-            </div>
-
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-              <button onClick={() => setShowModal(false)} style={{ background: "white", border: "1px solid #E2E8F0", padding: "10px 22px", borderRadius: 4, fontSize: 13, cursor: "pointer", color: "#4E6478", fontFamily: "'Segoe UI', sans-serif" }}>Cancel</button>
-              <button className="primary-btn" onClick={handleSubmit} disabled={submitting} style={{ background: "#1A5FA8", color: "white", border: "none", padding: "10px 28px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", transition: "background 0.15s" }}>
-                {submitting ? "Saving..." : "Add to Database"}
+      {/* Filter Bar — live feed only */}
+      {!search && (
+        <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", padding: "14px 20px", marginBottom: 16, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", boxShadow: "0 1px 4px rgba(11,31,58,0.05)" }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase", marginRight: 4 }}>Type</div>
+          {["All", "Cases", "CDR", "Journal", "Network"].map(t => {
+            const cfg = TYPE_CONFIG[TYPE_MAP[t]];
+            const isActive = typeFilter === t;
+            return (
+              <button key={t} className="filter-pill" onClick={() => setTypeFilter(t)}
+                style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: isActive ? 700 : 400, background: isActive ? "#0B1F3A" : "white", color: isActive ? "white" : "#4E6478", border: `1px solid ${isActive ? "#0B1F3A" : "#E2E8F0"}`, fontFamily: "'Segoe UI', sans-serif", cursor: "pointer" }}>
+                {cfg && <cfg.Icon size={11} strokeWidth={2} />}
+                {t}
               </button>
-            </div>
+            );
+          })}
+          <div style={{ width: 1, height: 20, background: "#E2E8F0", margin: "0 4px" }} />
+          <div style={{ fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase", marginRight: 4 }}>Date</div>
+          {["All Time", "This Month", "This Week"].map(d => {
+            const isActive = dateFilter === d;
+            return (
+              <button key={d} className="filter-pill" onClick={() => setDateFilter(d)}
+                style={{ padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: isActive ? 700 : 400, background: isActive ? "#1A5FA8" : "white", color: isActive ? "white" : "#4E6478", border: `1px solid ${isActive ? "#1A5FA8" : "#E2E8F0"}`, fontFamily: "'Segoe UI', sans-serif", cursor: "pointer" }}>
+                {d}
+              </button>
+            );
+          })}
+          <div style={{ marginLeft: "auto", fontSize: 11, color: "#8FA3BB" }}>
+            {filteredFeed.length} item{filteredFeed.length !== 1 ? "s" : ""}
           </div>
         </div>
       )}
 
-      {/* Modal: Edit Entity */}
-      {showEditModal && selectedEntity && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(11,31,58,0.6)", backdropFilter: "blur(4px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: "white", borderRadius: 6, padding: "36px 40px", width: 480, boxShadow: "0 24px 64px rgba(11,31,58,0.25)" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-              <div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "#0B1F3A" }}>Edit Entity</div>
-                <div style={{ fontSize: 12, color: "#8FA3BB", marginTop: 3 }}>Update the category, case link or notes.</div>
+      {/* Search Results View */}
+      {search && searchResults ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+          {searchResults.cases?.length > 0 && (
+            <SearchSection title="Cases" icon={Briefcase} color="#1A5FA8" count={searchResults.cases.length}>
+              {searchResults.cases.map((c, i) => (
+                <tr key={c.id} className="fraud-row"
+                  onClick={() => router.push(`/dashboard/cases/${c.id}`)}
+                  style={{ borderBottom: i < searchResults.cases.length - 1 ? "1px solid #F7F9FC" : "none", cursor: "pointer" }}>
+                  <td style={{ padding: "12px 16px", fontSize: 11, fontWeight: 700, color: "#1A5FA8", whiteSpace: "nowrap" }}>{c.caseNumber}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 600, color: "#0B1F3A", maxWidth: 280 }}>
+                    <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.title}</div>
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span style={{ background: "#F3EDFC", color: "#6B3FA0", fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 3, letterSpacing: "0.05em", textTransform: "uppercase" }}>{c.category}</span>
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 3, letterSpacing: "0.05em", textTransform: "uppercase", background: c.status === "Active" ? "#E6F5EE" : "#EEF2F7", color: c.status === "Active" ? "#1A7A4A" : "#4E6478" }}>{c.status}</span>
+                  </td>
+                  <td style={{ padding: "12px 16px", fontSize: 12, color: "#4E6478" }}>{c.officer?.name || "—"}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 12, color: "#C4D0DC" }}>›</td>
+                </tr>
+              ))}
+            </SearchSection>
+          )}
+
+          {searchResults.entries?.length > 0 && (
+            <SearchSection title="Journal Entries" icon={BookOpen} color="#1A7A4A" count={searchResults.entries.length}>
+              {searchResults.entries.map((e, i) => (
+                <tr key={e.id} className="fraud-row"
+                  onClick={() => e.case?.id && router.push(`/dashboard/cases/${e.case.id}`)}
+                  style={{ borderBottom: i < searchResults.entries.length - 1 ? "1px solid #F7F9FC" : "none", cursor: "pointer" }}>
+                  <td style={{ padding: "12px 16px", whiteSpace: "nowrap" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#1A5FA8" }}>{e.case?.caseNumber || "—"}</div>
+                    <div style={{ fontSize: 10, color: "#8FA3BB", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.case?.title}</div>
+                  </td>
+                  <td style={{ padding: "12px 16px", fontSize: 12, fontWeight: 600, color: "#4E6478" }}>Input {e.dayNumber}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 12, color: "#0B1F3A", maxWidth: 380 }}>
+                    <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.content}</div>
+                  </td>
+                  <td style={{ padding: "12px 16px", fontSize: 12, color: "#4E6478" }}>{e.author?.name || "—"}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 11, color: "#8FA3BB", whiteSpace: "nowrap" }}>
+                    {new Date(e.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                  </td>
+                  <td style={{ padding: "12px 16px", fontSize: 12, color: "#C4D0DC" }}>›</td>
+                </tr>
+              ))}
+            </SearchSection>
+          )}
+
+          {searchResults.cdrs?.length > 0 && (
+            <SearchSection title="CDR Requests" icon={PhoneCall} color="#D4730A" count={searchResults.cdrs.length}>
+              {searchResults.cdrs.map((c, i) => (
+                <tr key={c.id} className="fraud-row"
+                  style={{ borderBottom: i < searchResults.cdrs.length - 1 ? "1px solid #F7F9FC" : "none" }}>
+                  <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700, color: "#0B1F3A" }}>{c.phoneNumber}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 12, color: "#4E6478" }}>{c.telco}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 11, color: "#8FA3BB", whiteSpace: "nowrap" }}>
+                    {new Date(c.periodStart).toLocaleDateString("en-GB", { day: "numeric", month: "short" })} – {new Date(c.periodEnd).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 3, letterSpacing: "0.05em", textTransform: "uppercase", background: c.status === "Pending" ? "#FEF3E2" : "#E6F5EE", color: c.status === "Pending" ? "#D4730A" : "#1A7A4A" }}>{c.status}</span>
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    {c.case ? <span style={{ fontSize: 11, fontWeight: 700, color: "#1A5FA8" }}>{c.case.caseNumber}</span> : <span style={{ color: "#C4D0DC", fontSize: 11 }}>—</span>}
+                  </td>
+                  <td style={{ padding: "12px 16px", fontSize: 12, color: "#4E6478" }}>{c.officer?.name || "—"}</td>
+                </tr>
+              ))}
+            </SearchSection>
+          )}
+
+          {searchResults.international?.length > 0 && (
+            <SearchSection title="Network Requests" icon={Globe} color="#6B3FA0" count={searchResults.international.length}>
+              {searchResults.international.map((r, i) => (
+                <tr key={r.id} className="fraud-row"
+                  style={{ borderBottom: i < searchResults.international.length - 1 ? "1px solid #F7F9FC" : "none" }}>
+                  <td style={{ padding: "12px 16px", fontSize: 11, fontWeight: 700, color: "#1A5FA8", whiteSpace: "nowrap" }}>{r.refNumber}</td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, background: r.direction === "Outgoing" ? "#F3EDFC" : "#E6F5EE", color: r.direction === "Outgoing" ? "#6B3FA0" : "#1A7A4A", padding: "3px 10px", borderRadius: 3 }}>{r.direction}</span>
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#0B1F3A" }}>{r.country}</div>
+                    <div style={{ fontSize: 11, color: "#8FA3BB" }}>{r.agency}</div>
+                  </td>
+                  <td style={{ padding: "12px 16px", fontSize: 12, color: "#0B1F3A", maxWidth: 260 }}>
+                    <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.subject}</div>
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 3, letterSpacing: "0.05em", textTransform: "uppercase", background: r.status === "Pending" ? "#FEF3E2" : r.status === "Responded" ? "#E6F5EE" : "#EEF2F7", color: r.status === "Pending" ? "#D4730A" : r.status === "Responded" ? "#1A7A4A" : "#4E6478" }}>{r.status}</span>
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    {r.case ? <span style={{ fontSize: 11, fontWeight: 700, color: "#1A5FA8" }}>{r.case.caseNumber}</span> : <span style={{ color: "#C4D0DC", fontSize: 11 }}>—</span>}
+                  </td>
+                </tr>
+              ))}
+            </SearchSection>
+          )}
+
+          {searchResults.cases?.length === 0 && searchResults.entries?.length === 0 && searchResults.cdrs?.length === 0 && searchResults.international?.length === 0 && (
+            <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", padding: 72, textAlign: "center", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
+              <Activity size={40} color="#D8E2EE" strokeWidth={1} style={{ margin: "0 auto 14px", display: "block" }} />
+              <div style={{ fontSize: 13, color: "#8FA3BB", fontWeight: 500 }}>No results for "{search}" across any module.</div>
+              <div style={{ fontSize: 11, color: "#C4D0DC", marginTop: 4 }}>Try a different term or check the spelling.</div>
+            </div>
+          )}
+        </div>
+      ) : (
+        /* Live Intelligence Feed */
+        <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
+          {loading ? (
+            <div style={{ padding: 64, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading intelligence feed...</div>
+          ) : filteredFeed.length === 0 ? (
+            <div style={{ padding: 72, textAlign: "center" }}>
+              <Activity size={40} color="#D8E2EE" strokeWidth={1} style={{ margin: "0 auto 14px", display: "block" }} />
+              <div style={{ fontSize: 13, color: "#8FA3BB", fontWeight: 500 }}>No intelligence items match your filters.</div>
+              <div style={{ fontSize: 11, color: "#C4D0DC", marginTop: 4 }}>Try a different type or date range.</div>
+            </div>
+          ) : filteredFeed.map((item, i) => {
+            const cfg = TYPE_CONFIG[item.type];
+            const xref = crossRefs[item.id];
+            return (
+              <div key={item.id} className="intel-item"
+                onClick={() => item.navigateTo && router.push(item.navigateTo)}
+                style={{ display: "flex", alignItems: "center", gap: 16, padding: "14px 20px", borderBottom: i < filteredFeed.length - 1 ? "1px solid #F7F9FC" : "none", background: "white" }}>
+
+                {/* Type badge */}
+                <div style={{ flexShrink: 0, width: 80 }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5, background: cfg.bg, color: cfg.color, fontSize: 9, fontWeight: 800, padding: "4px 10px", borderRadius: 3, letterSpacing: "0.08em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                    <cfg.Icon size={10} strokeWidth={2.5} />
+                    {cfg.label}
+                  </span>
+                </div>
+
+                {/* Main content */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 500 }}>
+                      {item.label}
+                    </div>
+                    {xref >= 2 && (
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "#FEF3E2", color: "#D4730A", fontSize: 9, fontWeight: 800, padding: "3px 8px", borderRadius: 3, letterSpacing: "0.05em", whiteSpace: "nowrap", flexShrink: 0 }}>
+                        <AlertTriangle size={9} strokeWidth={2.5} />
+                        {xref} RECORDS
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {item.sub}{item.officer && <span> · {item.officer}</span>}
+                  </div>
+                </div>
+
+                {/* Status badge */}
+                {item.status && (
+                  <div style={{ flexShrink: 0 }}>
+                    {item.type === "CASE" && (
+                      <span style={{ fontSize: 9, fontWeight: 700, padding: "3px 9px", borderRadius: 3, letterSpacing: "0.05em", textTransform: "uppercase", background: item.status === "Active" ? "#E6F5EE" : "#EEF2F7", color: item.status === "Active" ? "#1A7A4A" : "#4E6478" }}>{item.status}</span>
+                    )}
+                    {(item.type === "CDR" || item.type === "NETWORK") && (
+                      <span style={{ fontSize: 9, fontWeight: 700, padding: "3px 9px", borderRadius: 3, letterSpacing: "0.05em", textTransform: "uppercase", background: item.status === "Pending" ? "#FEF3E2" : item.status === "Responded" ? "#E6F5EE" : "#EEF2F7", color: item.status === "Pending" ? "#D4730A" : item.status === "Responded" ? "#1A7A4A" : "#4E6478" }}>{item.status}</span>
+                    )}
+                  </div>
+                )}
+
+                {/* Date */}
+                <div style={{ flexShrink: 0, fontSize: 11, color: "#8FA3BB", minWidth: 84, textAlign: "right" }}>
+                  {new Date(item.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                </div>
+
+                {/* Arrow */}
+                {item.navigateTo && (
+                  <div style={{ flexShrink: 0, fontSize: 14, color: "#C4D0DC" }}>›</div>
+                )}
               </div>
-              <button onClick={() => { setShowEditModal(false); setSelectedEntity(null); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB" }}><X size={18} /></button>
-            </div>
-
-            <div style={{ background: "#F7F9FC", borderRadius: 4, padding: "14px 16px", marginBottom: 18, border: "1px solid #E2E8F0", display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 6, background: "white", border: "1px solid #E2E8F0", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <TypeIcon type={selectedEntity.type} size={16} color="#4E6478" />
-              </div>
-              <div>
-                <div style={{ fontSize: 11, color: "#8FA3BB", marginBottom: 2 }}>{selectedEntity.type}</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#0B1F3A" }}>{selectedEntity.value}</div>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Fraud Category</label>
-              <select className="modal-input" value={selectedEntity.category}
-                onChange={e => { setSelectedEntity({ ...selectedEntity, category: e.target.value }); setEditOtherCategory(""); }}>
-                {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-              </select>
-              {selectedEntity.category === "Other" && (
-                <input className="modal-input" value={editOtherCategory} onChange={e => setEditOtherCategory(e.target.value)}
-                  placeholder="Specify category..." style={{ marginTop: 8 }} />
-              )}
-            </div>
-
-            {/* Link to Case */}
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Linked Case</label>
-              <select className="modal-input" value={selectedEntity.caseId || ""}
-                onChange={e => setSelectedEntity({ ...selectedEntity, caseId: e.target.value })}>
-                <option value="">— No case linked —</option>
-                {cases.map(c => (
-                  <option key={c.id} value={c.id}>{c.caseNumber} — {c.title}</option>
-                ))}
-              </select>
-            </div>
-
-            <div style={{ marginBottom: 28 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Notes</label>
-              <textarea className="modal-input" value={selectedEntity.notes || ""}
-                onChange={e => setSelectedEntity({ ...selectedEntity, notes: e.target.value })}
-                style={{ height: 80, resize: "none" }} />
-            </div>
-
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-              <button onClick={() => { setShowEditModal(false); setSelectedEntity(null); }} style={{ background: "white", border: "1px solid #E2E8F0", padding: "10px 22px", borderRadius: 4, fontSize: 13, cursor: "pointer", color: "#4E6478", fontFamily: "'Segoe UI', sans-serif" }}>Cancel</button>
-              <button onClick={handleEdit} disabled={submitting} style={{ background: "#1A5FA8", color: "white", border: "none", padding: "10px 28px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif" }}>
-                {submitting ? "Saving..." : "Save Changes"}
-              </button>
-            </div>
-          </div>
+            );
+          })}
         </div>
       )}
     </div>

@@ -5,9 +5,7 @@ import { Eye, EyeOff, CheckCircle } from "lucide-react";
 
 const ROLES = [
   { value: "HEAD_OF_UNIT", label: "Head of Unit", desc: "Unit commander with full platform access" },
-  { value: "SUPERVISOR", label: "Supervisor", desc: "Oversees officers and reviews cases" },
-  { value: "OFFICE_ADMINISTRATOR", label: "Office Administrator", desc: "Manages administrative operations" },
-  { value: "OFFICER", label: "Officer", desc: "Investigates cases and logs intelligence" },
+  { value: "OFFICER", label: "Staff", desc: "Investigates cases and logs intelligence" },
 ];
 
 export default function RegisterPage() {

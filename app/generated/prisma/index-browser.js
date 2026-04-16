@@ -126,6 +126,9 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   approved: 'approved',
+  deactivated: 'deactivated',
+  cdrAccess: 'cdrAccess',
+  lastActive: 'lastActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -136,7 +139,6 @@ exports.Prisma.CaseScalarFieldEnum = {
   title: 'title',
   category: 'category',
   status: 'status',
-  priority: 'priority',
   description: 'description',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -155,6 +157,16 @@ exports.Prisma.JournalEntryScalarFieldEnum = {
   authorId: 'authorId'
 };
 
+exports.Prisma.CaseActivityScalarFieldEnum = {
+  id: 'id',
+  caseId: 'caseId',
+  userId: 'userId',
+  userName: 'userName',
+  action: 'action',
+  detail: 'detail',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.CdrRequestScalarFieldEnum = {
   id: 'id',
   phoneNumber: 'phoneNumber',
@@ -169,17 +181,6 @@ exports.Prisma.CdrRequestScalarFieldEnum = {
   officerId: 'officerId',
   attachmentPath: 'attachmentPath',
   attachmentName: 'attachmentName'
-};
-
-exports.Prisma.FraudEntityScalarFieldEnum = {
-  id: 'id',
-  type: 'type',
-  value: 'value',
-  category: 'category',
-  notes: 'notes',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  caseId: 'caseId'
 };
 
 exports.Prisma.InternationalRequestScalarFieldEnum = {
@@ -228,8 +229,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Case: 'Case',
   JournalEntry: 'JournalEntry',
+  CaseActivity: 'CaseActivity',
   CdrRequest: 'CdrRequest',
-  FraudEntity: 'FraudEntity',
   InternationalRequest: 'InternationalRequest',
   ActivityReport: 'ActivityReport'
 };

@@ -29,15 +29,15 @@ export type Case = $Result.DefaultSelection<Prisma.$CasePayload>
  */
 export type JournalEntry = $Result.DefaultSelection<Prisma.$JournalEntryPayload>
 /**
+ * Model CaseActivity
+ * 
+ */
+export type CaseActivity = $Result.DefaultSelection<Prisma.$CaseActivityPayload>
+/**
  * Model CdrRequest
  * 
  */
 export type CdrRequest = $Result.DefaultSelection<Prisma.$CdrRequestPayload>
-/**
- * Model FraudEntity
- * 
- */
-export type FraudEntity = $Result.DefaultSelection<Prisma.$FraudEntityPayload>
 /**
  * Model InternationalRequest
  * 
@@ -203,6 +203,16 @@ export class PrismaClient<
   get journalEntry(): Prisma.JournalEntryDelegate<ExtArgs>;
 
   /**
+   * `prisma.caseActivity`: Exposes CRUD operations for the **CaseActivity** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CaseActivities
+    * const caseActivities = await prisma.caseActivity.findMany()
+    * ```
+    */
+  get caseActivity(): Prisma.CaseActivityDelegate<ExtArgs>;
+
+  /**
    * `prisma.cdrRequest`: Exposes CRUD operations for the **CdrRequest** model.
     * Example usage:
     * ```ts
@@ -211,16 +221,6 @@ export class PrismaClient<
     * ```
     */
   get cdrRequest(): Prisma.CdrRequestDelegate<ExtArgs>;
-
-  /**
-   * `prisma.fraudEntity`: Exposes CRUD operations for the **FraudEntity** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more FraudEntities
-    * const fraudEntities = await prisma.fraudEntity.findMany()
-    * ```
-    */
-  get fraudEntity(): Prisma.FraudEntityDelegate<ExtArgs>;
 
   /**
    * `prisma.internationalRequest`: Exposes CRUD operations for the **InternationalRequest** model.
@@ -685,8 +685,8 @@ export namespace Prisma {
     User: 'User',
     Case: 'Case',
     JournalEntry: 'JournalEntry',
+    CaseActivity: 'CaseActivity',
     CdrRequest: 'CdrRequest',
-    FraudEntity: 'FraudEntity',
     InternationalRequest: 'InternationalRequest',
     ActivityReport: 'ActivityReport'
   };
@@ -704,7 +704,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "case" | "journalEntry" | "cdrRequest" | "fraudEntity" | "internationalRequest" | "activityReport"
+      modelProps: "user" | "case" | "journalEntry" | "caseActivity" | "cdrRequest" | "internationalRequest" | "activityReport"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -918,6 +918,76 @@ export namespace Prisma {
           }
         }
       }
+      CaseActivity: {
+        payload: Prisma.$CaseActivityPayload<ExtArgs>
+        fields: Prisma.CaseActivityFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CaseActivityFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseActivityPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CaseActivityFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseActivityPayload>
+          }
+          findFirst: {
+            args: Prisma.CaseActivityFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseActivityPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CaseActivityFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseActivityPayload>
+          }
+          findMany: {
+            args: Prisma.CaseActivityFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseActivityPayload>[]
+          }
+          create: {
+            args: Prisma.CaseActivityCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseActivityPayload>
+          }
+          createMany: {
+            args: Prisma.CaseActivityCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CaseActivityCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseActivityPayload>[]
+          }
+          delete: {
+            args: Prisma.CaseActivityDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseActivityPayload>
+          }
+          update: {
+            args: Prisma.CaseActivityUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseActivityPayload>
+          }
+          deleteMany: {
+            args: Prisma.CaseActivityDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CaseActivityUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.CaseActivityUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseActivityPayload>
+          }
+          aggregate: {
+            args: Prisma.CaseActivityAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCaseActivity>
+          }
+          groupBy: {
+            args: Prisma.CaseActivityGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CaseActivityGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CaseActivityCountArgs<ExtArgs>
+            result: $Utils.Optional<CaseActivityCountAggregateOutputType> | number
+          }
+        }
+      }
       CdrRequest: {
         payload: Prisma.$CdrRequestPayload<ExtArgs>
         fields: Prisma.CdrRequestFieldRefs
@@ -985,76 +1055,6 @@ export namespace Prisma {
           count: {
             args: Prisma.CdrRequestCountArgs<ExtArgs>
             result: $Utils.Optional<CdrRequestCountAggregateOutputType> | number
-          }
-        }
-      }
-      FraudEntity: {
-        payload: Prisma.$FraudEntityPayload<ExtArgs>
-        fields: Prisma.FraudEntityFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.FraudEntityFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FraudEntityPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.FraudEntityFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FraudEntityPayload>
-          }
-          findFirst: {
-            args: Prisma.FraudEntityFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FraudEntityPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.FraudEntityFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FraudEntityPayload>
-          }
-          findMany: {
-            args: Prisma.FraudEntityFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FraudEntityPayload>[]
-          }
-          create: {
-            args: Prisma.FraudEntityCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FraudEntityPayload>
-          }
-          createMany: {
-            args: Prisma.FraudEntityCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.FraudEntityCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FraudEntityPayload>[]
-          }
-          delete: {
-            args: Prisma.FraudEntityDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FraudEntityPayload>
-          }
-          update: {
-            args: Prisma.FraudEntityUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FraudEntityPayload>
-          }
-          deleteMany: {
-            args: Prisma.FraudEntityDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.FraudEntityUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.FraudEntityUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FraudEntityPayload>
-          }
-          aggregate: {
-            args: Prisma.FraudEntityAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateFraudEntity>
-          }
-          groupBy: {
-            args: Prisma.FraudEntityGroupByArgs<ExtArgs>
-            result: $Utils.Optional<FraudEntityGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.FraudEntityCountArgs<ExtArgs>
-            result: $Utils.Optional<FraudEntityCountAggregateOutputType> | number
           }
         }
       }
@@ -1429,14 +1429,14 @@ export namespace Prisma {
     entries: number
     cdrRequests: number
     internationalRequests: number
-    fraudEntities: number
+    caseActivities: number
   }
 
   export type CaseCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     entries?: boolean | CaseCountOutputTypeCountEntriesArgs
     cdrRequests?: boolean | CaseCountOutputTypeCountCdrRequestsArgs
     internationalRequests?: boolean | CaseCountOutputTypeCountInternationalRequestsArgs
-    fraudEntities?: boolean | CaseCountOutputTypeCountFraudEntitiesArgs
+    caseActivities?: boolean | CaseCountOutputTypeCountCaseActivitiesArgs
   }
 
   // Custom InputTypes
@@ -1474,8 +1474,8 @@ export namespace Prisma {
   /**
    * CaseCountOutputType without action
    */
-  export type CaseCountOutputTypeCountFraudEntitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FraudEntityWhereInput
+  export type CaseCountOutputTypeCountCaseActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CaseActivityWhereInput
   }
 
 
@@ -1500,6 +1500,9 @@ export namespace Prisma {
     password: string | null
     role: string | null
     approved: boolean | null
+    deactivated: boolean | null
+    cdrAccess: boolean | null
+    lastActive: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1511,6 +1514,9 @@ export namespace Prisma {
     password: string | null
     role: string | null
     approved: boolean | null
+    deactivated: boolean | null
+    cdrAccess: boolean | null
+    lastActive: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1522,6 +1528,9 @@ export namespace Prisma {
     password: number
     role: number
     approved: number
+    deactivated: number
+    cdrAccess: number
+    lastActive: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -1535,6 +1544,9 @@ export namespace Prisma {
     password?: true
     role?: true
     approved?: true
+    deactivated?: true
+    cdrAccess?: true
+    lastActive?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1546,6 +1558,9 @@ export namespace Prisma {
     password?: true
     role?: true
     approved?: true
+    deactivated?: true
+    cdrAccess?: true
+    lastActive?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1557,6 +1572,9 @@ export namespace Prisma {
     password?: true
     role?: true
     approved?: true
+    deactivated?: true
+    cdrAccess?: true
+    lastActive?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -1641,6 +1659,9 @@ export namespace Prisma {
     password: string
     role: string
     approved: boolean
+    deactivated: boolean
+    cdrAccess: boolean
+    lastActive: Date | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -1669,6 +1690,9 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     cases?: boolean | User$casesArgs<ExtArgs>
@@ -1686,6 +1710,9 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -1697,6 +1724,9 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
@@ -1727,6 +1757,9 @@ export namespace Prisma {
       password: string
       role: string
       approved: boolean
+      deactivated: boolean
+      cdrAccess: boolean
+      lastActive: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2133,6 +2166,9 @@ export namespace Prisma {
     readonly password: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'String'>
     readonly approved: FieldRef<"User", 'Boolean'>
+    readonly deactivated: FieldRef<"User", 'Boolean'>
+    readonly cdrAccess: FieldRef<"User", 'Boolean'>
+    readonly lastActive: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -2577,7 +2613,6 @@ export namespace Prisma {
     title: string | null
     category: string | null
     status: string | null
-    priority: string | null
     description: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -2592,7 +2627,6 @@ export namespace Prisma {
     title: string | null
     category: string | null
     status: string | null
-    priority: string | null
     description: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -2607,7 +2641,6 @@ export namespace Prisma {
     title: number
     category: number
     status: number
-    priority: number
     description: number
     createdAt: number
     updatedAt: number
@@ -2624,7 +2657,6 @@ export namespace Prisma {
     title?: true
     category?: true
     status?: true
-    priority?: true
     description?: true
     createdAt?: true
     updatedAt?: true
@@ -2639,7 +2671,6 @@ export namespace Prisma {
     title?: true
     category?: true
     status?: true
-    priority?: true
     description?: true
     createdAt?: true
     updatedAt?: true
@@ -2654,7 +2685,6 @@ export namespace Prisma {
     title?: true
     category?: true
     status?: true
-    priority?: true
     description?: true
     createdAt?: true
     updatedAt?: true
@@ -2742,13 +2772,12 @@ export namespace Prisma {
     title: string
     category: string
     status: string
-    priority: string
     description: string | null
     createdAt: Date
     updatedAt: Date
     closedAt: Date | null
     closureReason: string | null
-    officerId: string
+    officerId: string | null
     _count: CaseCountAggregateOutputType | null
     _min: CaseMinAggregateOutputType | null
     _max: CaseMaxAggregateOutputType | null
@@ -2774,18 +2803,17 @@ export namespace Prisma {
     title?: boolean
     category?: boolean
     status?: boolean
-    priority?: boolean
     description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     closedAt?: boolean
     closureReason?: boolean
     officerId?: boolean
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | Case$officerArgs<ExtArgs>
     entries?: boolean | Case$entriesArgs<ExtArgs>
     cdrRequests?: boolean | Case$cdrRequestsArgs<ExtArgs>
     internationalRequests?: boolean | Case$internationalRequestsArgs<ExtArgs>
-    fraudEntities?: boolean | Case$fraudEntitiesArgs<ExtArgs>
+    caseActivities?: boolean | Case$caseActivitiesArgs<ExtArgs>
     _count?: boolean | CaseCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["case"]>
 
@@ -2795,14 +2823,13 @@ export namespace Prisma {
     title?: boolean
     category?: boolean
     status?: boolean
-    priority?: boolean
     description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     closedAt?: boolean
     closureReason?: boolean
     officerId?: boolean
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | Case$officerArgs<ExtArgs>
   }, ExtArgs["result"]["case"]>
 
   export type CaseSelectScalar = {
@@ -2811,7 +2838,6 @@ export namespace Prisma {
     title?: boolean
     category?: boolean
     status?: boolean
-    priority?: boolean
     description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -2821,25 +2847,25 @@ export namespace Prisma {
   }
 
   export type CaseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | Case$officerArgs<ExtArgs>
     entries?: boolean | Case$entriesArgs<ExtArgs>
     cdrRequests?: boolean | Case$cdrRequestsArgs<ExtArgs>
     internationalRequests?: boolean | Case$internationalRequestsArgs<ExtArgs>
-    fraudEntities?: boolean | Case$fraudEntitiesArgs<ExtArgs>
+    caseActivities?: boolean | Case$caseActivitiesArgs<ExtArgs>
     _count?: boolean | CaseCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CaseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | Case$officerArgs<ExtArgs>
   }
 
   export type $CasePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Case"
     objects: {
-      officer: Prisma.$UserPayload<ExtArgs>
+      officer: Prisma.$UserPayload<ExtArgs> | null
       entries: Prisma.$JournalEntryPayload<ExtArgs>[]
       cdrRequests: Prisma.$CdrRequestPayload<ExtArgs>[]
       internationalRequests: Prisma.$InternationalRequestPayload<ExtArgs>[]
-      fraudEntities: Prisma.$FraudEntityPayload<ExtArgs>[]
+      caseActivities: Prisma.$CaseActivityPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2847,13 +2873,12 @@ export namespace Prisma {
       title: string
       category: string
       status: string
-      priority: string
       description: string | null
       createdAt: Date
       updatedAt: Date
       closedAt: Date | null
       closureReason: string | null
-      officerId: string
+      officerId: string | null
     }, ExtArgs["result"]["case"]>
     composites: {}
   }
@@ -3218,11 +3243,11 @@ export namespace Prisma {
    */
   export interface Prisma__CaseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    officer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    officer<T extends Case$officerArgs<ExtArgs> = {}>(args?: Subset<T, Case$officerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     entries<T extends Case$entriesArgs<ExtArgs> = {}>(args?: Subset<T, Case$entriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JournalEntryPayload<ExtArgs>, T, "findMany"> | Null>
     cdrRequests<T extends Case$cdrRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Case$cdrRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CdrRequestPayload<ExtArgs>, T, "findMany"> | Null>
     internationalRequests<T extends Case$internationalRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Case$internationalRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InternationalRequestPayload<ExtArgs>, T, "findMany"> | Null>
-    fraudEntities<T extends Case$fraudEntitiesArgs<ExtArgs> = {}>(args?: Subset<T, Case$fraudEntitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FraudEntityPayload<ExtArgs>, T, "findMany"> | Null>
+    caseActivities<T extends Case$caseActivitiesArgs<ExtArgs> = {}>(args?: Subset<T, Case$caseActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3257,7 +3282,6 @@ export namespace Prisma {
     readonly title: FieldRef<"Case", 'String'>
     readonly category: FieldRef<"Case", 'String'>
     readonly status: FieldRef<"Case", 'String'>
-    readonly priority: FieldRef<"Case", 'String'>
     readonly description: FieldRef<"Case", 'String'>
     readonly createdAt: FieldRef<"Case", 'DateTime'>
     readonly updatedAt: FieldRef<"Case", 'DateTime'>
@@ -3580,6 +3604,21 @@ export namespace Prisma {
   }
 
   /**
+   * Case.officer
+   */
+  export type Case$officerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * Case.entries
    */
   export type Case$entriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3640,23 +3679,23 @@ export namespace Prisma {
   }
 
   /**
-   * Case.fraudEntities
+   * Case.caseActivities
    */
-  export type Case$fraudEntitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Case$caseActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the FraudEntity
+     * Select specific fields to fetch from the CaseActivity
      */
-    select?: FraudEntitySelect<ExtArgs> | null
+    select?: CaseActivitySelect<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: FraudEntityInclude<ExtArgs> | null
-    where?: FraudEntityWhereInput
-    orderBy?: FraudEntityOrderByWithRelationInput | FraudEntityOrderByWithRelationInput[]
-    cursor?: FraudEntityWhereUniqueInput
+    include?: CaseActivityInclude<ExtArgs> | null
+    where?: CaseActivityWhereInput
+    orderBy?: CaseActivityOrderByWithRelationInput | CaseActivityOrderByWithRelationInput[]
+    cursor?: CaseActivityWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: FraudEntityScalarFieldEnum | FraudEntityScalarFieldEnum[]
+    distinct?: CaseActivityScalarFieldEnum | CaseActivityScalarFieldEnum[]
   }
 
   /**
@@ -3858,7 +3897,7 @@ export namespace Prisma {
     actions: string | null
     createdAt: Date
     caseId: string
-    authorId: string
+    authorId: string | null
     _count: JournalEntryCountAggregateOutputType | null
     _avg: JournalEntryAvgAggregateOutputType | null
     _sum: JournalEntrySumAggregateOutputType | null
@@ -3889,7 +3928,7 @@ export namespace Prisma {
     caseId?: boolean
     authorId?: boolean
     case?: boolean | CaseDefaultArgs<ExtArgs>
-    author?: boolean | UserDefaultArgs<ExtArgs>
+    author?: boolean | JournalEntry$authorArgs<ExtArgs>
   }, ExtArgs["result"]["journalEntry"]>
 
   export type JournalEntrySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3901,7 +3940,7 @@ export namespace Prisma {
     caseId?: boolean
     authorId?: boolean
     case?: boolean | CaseDefaultArgs<ExtArgs>
-    author?: boolean | UserDefaultArgs<ExtArgs>
+    author?: boolean | JournalEntry$authorArgs<ExtArgs>
   }, ExtArgs["result"]["journalEntry"]>
 
   export type JournalEntrySelectScalar = {
@@ -3916,18 +3955,18 @@ export namespace Prisma {
 
   export type JournalEntryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     case?: boolean | CaseDefaultArgs<ExtArgs>
-    author?: boolean | UserDefaultArgs<ExtArgs>
+    author?: boolean | JournalEntry$authorArgs<ExtArgs>
   }
   export type JournalEntryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     case?: boolean | CaseDefaultArgs<ExtArgs>
-    author?: boolean | UserDefaultArgs<ExtArgs>
+    author?: boolean | JournalEntry$authorArgs<ExtArgs>
   }
 
   export type $JournalEntryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "JournalEntry"
     objects: {
       case: Prisma.$CasePayload<ExtArgs>
-      author: Prisma.$UserPayload<ExtArgs>
+      author: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3936,7 +3975,7 @@ export namespace Prisma {
       actions: string | null
       createdAt: Date
       caseId: string
-      authorId: string
+      authorId: string | null
     }, ExtArgs["result"]["journalEntry"]>
     composites: {}
   }
@@ -4302,7 +4341,7 @@ export namespace Prisma {
   export interface Prisma__JournalEntryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     case<T extends CaseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CaseDefaultArgs<ExtArgs>>): Prisma__CaseClient<$Result.GetResult<Prisma.$CasePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    author<T extends JournalEntry$authorArgs<ExtArgs> = {}>(args?: Subset<T, JournalEntry$authorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4655,6 +4694,21 @@ export namespace Prisma {
   }
 
   /**
+   * JournalEntry.author
+   */
+  export type JournalEntry$authorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * JournalEntry without action
    */
   export type JournalEntryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4666,6 +4720,961 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: JournalEntryInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CaseActivity
+   */
+
+  export type AggregateCaseActivity = {
+    _count: CaseActivityCountAggregateOutputType | null
+    _min: CaseActivityMinAggregateOutputType | null
+    _max: CaseActivityMaxAggregateOutputType | null
+  }
+
+  export type CaseActivityMinAggregateOutputType = {
+    id: string | null
+    caseId: string | null
+    userId: string | null
+    userName: string | null
+    action: string | null
+    detail: string | null
+    createdAt: Date | null
+  }
+
+  export type CaseActivityMaxAggregateOutputType = {
+    id: string | null
+    caseId: string | null
+    userId: string | null
+    userName: string | null
+    action: string | null
+    detail: string | null
+    createdAt: Date | null
+  }
+
+  export type CaseActivityCountAggregateOutputType = {
+    id: number
+    caseId: number
+    userId: number
+    userName: number
+    action: number
+    detail: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type CaseActivityMinAggregateInputType = {
+    id?: true
+    caseId?: true
+    userId?: true
+    userName?: true
+    action?: true
+    detail?: true
+    createdAt?: true
+  }
+
+  export type CaseActivityMaxAggregateInputType = {
+    id?: true
+    caseId?: true
+    userId?: true
+    userName?: true
+    action?: true
+    detail?: true
+    createdAt?: true
+  }
+
+  export type CaseActivityCountAggregateInputType = {
+    id?: true
+    caseId?: true
+    userId?: true
+    userName?: true
+    action?: true
+    detail?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type CaseActivityAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CaseActivity to aggregate.
+     */
+    where?: CaseActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CaseActivities to fetch.
+     */
+    orderBy?: CaseActivityOrderByWithRelationInput | CaseActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CaseActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CaseActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CaseActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CaseActivities
+    **/
+    _count?: true | CaseActivityCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CaseActivityMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CaseActivityMaxAggregateInputType
+  }
+
+  export type GetCaseActivityAggregateType<T extends CaseActivityAggregateArgs> = {
+        [P in keyof T & keyof AggregateCaseActivity]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCaseActivity[P]>
+      : GetScalarType<T[P], AggregateCaseActivity[P]>
+  }
+
+
+
+
+  export type CaseActivityGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CaseActivityWhereInput
+    orderBy?: CaseActivityOrderByWithAggregationInput | CaseActivityOrderByWithAggregationInput[]
+    by: CaseActivityScalarFieldEnum[] | CaseActivityScalarFieldEnum
+    having?: CaseActivityScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CaseActivityCountAggregateInputType | true
+    _min?: CaseActivityMinAggregateInputType
+    _max?: CaseActivityMaxAggregateInputType
+  }
+
+  export type CaseActivityGroupByOutputType = {
+    id: string
+    caseId: string
+    userId: string | null
+    userName: string
+    action: string
+    detail: string | null
+    createdAt: Date
+    _count: CaseActivityCountAggregateOutputType | null
+    _min: CaseActivityMinAggregateOutputType | null
+    _max: CaseActivityMaxAggregateOutputType | null
+  }
+
+  type GetCaseActivityGroupByPayload<T extends CaseActivityGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CaseActivityGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CaseActivityGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CaseActivityGroupByOutputType[P]>
+            : GetScalarType<T[P], CaseActivityGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CaseActivitySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    caseId?: boolean
+    userId?: boolean
+    userName?: boolean
+    action?: boolean
+    detail?: boolean
+    createdAt?: boolean
+    case?: boolean | CaseDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["caseActivity"]>
+
+  export type CaseActivitySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    caseId?: boolean
+    userId?: boolean
+    userName?: boolean
+    action?: boolean
+    detail?: boolean
+    createdAt?: boolean
+    case?: boolean | CaseDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["caseActivity"]>
+
+  export type CaseActivitySelectScalar = {
+    id?: boolean
+    caseId?: boolean
+    userId?: boolean
+    userName?: boolean
+    action?: boolean
+    detail?: boolean
+    createdAt?: boolean
+  }
+
+  export type CaseActivityInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    case?: boolean | CaseDefaultArgs<ExtArgs>
+  }
+  export type CaseActivityIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    case?: boolean | CaseDefaultArgs<ExtArgs>
+  }
+
+  export type $CaseActivityPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CaseActivity"
+    objects: {
+      case: Prisma.$CasePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      caseId: string
+      userId: string | null
+      userName: string
+      action: string
+      detail: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["caseActivity"]>
+    composites: {}
+  }
+
+  type CaseActivityGetPayload<S extends boolean | null | undefined | CaseActivityDefaultArgs> = $Result.GetResult<Prisma.$CaseActivityPayload, S>
+
+  type CaseActivityCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<CaseActivityFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: CaseActivityCountAggregateInputType | true
+    }
+
+  export interface CaseActivityDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CaseActivity'], meta: { name: 'CaseActivity' } }
+    /**
+     * Find zero or one CaseActivity that matches the filter.
+     * @param {CaseActivityFindUniqueArgs} args - Arguments to find a CaseActivity
+     * @example
+     * // Get one CaseActivity
+     * const caseActivity = await prisma.caseActivity.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CaseActivityFindUniqueArgs>(args: SelectSubset<T, CaseActivityFindUniqueArgs<ExtArgs>>): Prisma__CaseActivityClient<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one CaseActivity that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {CaseActivityFindUniqueOrThrowArgs} args - Arguments to find a CaseActivity
+     * @example
+     * // Get one CaseActivity
+     * const caseActivity = await prisma.caseActivity.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CaseActivityFindUniqueOrThrowArgs>(args: SelectSubset<T, CaseActivityFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CaseActivityClient<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first CaseActivity that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseActivityFindFirstArgs} args - Arguments to find a CaseActivity
+     * @example
+     * // Get one CaseActivity
+     * const caseActivity = await prisma.caseActivity.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CaseActivityFindFirstArgs>(args?: SelectSubset<T, CaseActivityFindFirstArgs<ExtArgs>>): Prisma__CaseActivityClient<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first CaseActivity that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseActivityFindFirstOrThrowArgs} args - Arguments to find a CaseActivity
+     * @example
+     * // Get one CaseActivity
+     * const caseActivity = await prisma.caseActivity.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CaseActivityFindFirstOrThrowArgs>(args?: SelectSubset<T, CaseActivityFindFirstOrThrowArgs<ExtArgs>>): Prisma__CaseActivityClient<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more CaseActivities that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseActivityFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CaseActivities
+     * const caseActivities = await prisma.caseActivity.findMany()
+     * 
+     * // Get first 10 CaseActivities
+     * const caseActivities = await prisma.caseActivity.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const caseActivityWithIdOnly = await prisma.caseActivity.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CaseActivityFindManyArgs>(args?: SelectSubset<T, CaseActivityFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a CaseActivity.
+     * @param {CaseActivityCreateArgs} args - Arguments to create a CaseActivity.
+     * @example
+     * // Create one CaseActivity
+     * const CaseActivity = await prisma.caseActivity.create({
+     *   data: {
+     *     // ... data to create a CaseActivity
+     *   }
+     * })
+     * 
+     */
+    create<T extends CaseActivityCreateArgs>(args: SelectSubset<T, CaseActivityCreateArgs<ExtArgs>>): Prisma__CaseActivityClient<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many CaseActivities.
+     * @param {CaseActivityCreateManyArgs} args - Arguments to create many CaseActivities.
+     * @example
+     * // Create many CaseActivities
+     * const caseActivity = await prisma.caseActivity.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CaseActivityCreateManyArgs>(args?: SelectSubset<T, CaseActivityCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CaseActivities and returns the data saved in the database.
+     * @param {CaseActivityCreateManyAndReturnArgs} args - Arguments to create many CaseActivities.
+     * @example
+     * // Create many CaseActivities
+     * const caseActivity = await prisma.caseActivity.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CaseActivities and only return the `id`
+     * const caseActivityWithIdOnly = await prisma.caseActivity.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CaseActivityCreateManyAndReturnArgs>(args?: SelectSubset<T, CaseActivityCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a CaseActivity.
+     * @param {CaseActivityDeleteArgs} args - Arguments to delete one CaseActivity.
+     * @example
+     * // Delete one CaseActivity
+     * const CaseActivity = await prisma.caseActivity.delete({
+     *   where: {
+     *     // ... filter to delete one CaseActivity
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CaseActivityDeleteArgs>(args: SelectSubset<T, CaseActivityDeleteArgs<ExtArgs>>): Prisma__CaseActivityClient<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one CaseActivity.
+     * @param {CaseActivityUpdateArgs} args - Arguments to update one CaseActivity.
+     * @example
+     * // Update one CaseActivity
+     * const caseActivity = await prisma.caseActivity.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CaseActivityUpdateArgs>(args: SelectSubset<T, CaseActivityUpdateArgs<ExtArgs>>): Prisma__CaseActivityClient<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more CaseActivities.
+     * @param {CaseActivityDeleteManyArgs} args - Arguments to filter CaseActivities to delete.
+     * @example
+     * // Delete a few CaseActivities
+     * const { count } = await prisma.caseActivity.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CaseActivityDeleteManyArgs>(args?: SelectSubset<T, CaseActivityDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CaseActivities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseActivityUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CaseActivities
+     * const caseActivity = await prisma.caseActivity.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CaseActivityUpdateManyArgs>(args: SelectSubset<T, CaseActivityUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one CaseActivity.
+     * @param {CaseActivityUpsertArgs} args - Arguments to update or create a CaseActivity.
+     * @example
+     * // Update or create a CaseActivity
+     * const caseActivity = await prisma.caseActivity.upsert({
+     *   create: {
+     *     // ... data to create a CaseActivity
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CaseActivity we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CaseActivityUpsertArgs>(args: SelectSubset<T, CaseActivityUpsertArgs<ExtArgs>>): Prisma__CaseActivityClient<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of CaseActivities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseActivityCountArgs} args - Arguments to filter CaseActivities to count.
+     * @example
+     * // Count the number of CaseActivities
+     * const count = await prisma.caseActivity.count({
+     *   where: {
+     *     // ... the filter for the CaseActivities we want to count
+     *   }
+     * })
+    **/
+    count<T extends CaseActivityCountArgs>(
+      args?: Subset<T, CaseActivityCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CaseActivityCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CaseActivity.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseActivityAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CaseActivityAggregateArgs>(args: Subset<T, CaseActivityAggregateArgs>): Prisma.PrismaPromise<GetCaseActivityAggregateType<T>>
+
+    /**
+     * Group by CaseActivity.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseActivityGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CaseActivityGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CaseActivityGroupByArgs['orderBy'] }
+        : { orderBy?: CaseActivityGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CaseActivityGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCaseActivityGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CaseActivity model
+   */
+  readonly fields: CaseActivityFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CaseActivity.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CaseActivityClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    case<T extends CaseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CaseDefaultArgs<ExtArgs>>): Prisma__CaseClient<$Result.GetResult<Prisma.$CasePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CaseActivity model
+   */ 
+  interface CaseActivityFieldRefs {
+    readonly id: FieldRef<"CaseActivity", 'String'>
+    readonly caseId: FieldRef<"CaseActivity", 'String'>
+    readonly userId: FieldRef<"CaseActivity", 'String'>
+    readonly userName: FieldRef<"CaseActivity", 'String'>
+    readonly action: FieldRef<"CaseActivity", 'String'>
+    readonly detail: FieldRef<"CaseActivity", 'String'>
+    readonly createdAt: FieldRef<"CaseActivity", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CaseActivity findUnique
+   */
+  export type CaseActivityFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseActivity
+     */
+    select?: CaseActivitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which CaseActivity to fetch.
+     */
+    where: CaseActivityWhereUniqueInput
+  }
+
+  /**
+   * CaseActivity findUniqueOrThrow
+   */
+  export type CaseActivityFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseActivity
+     */
+    select?: CaseActivitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which CaseActivity to fetch.
+     */
+    where: CaseActivityWhereUniqueInput
+  }
+
+  /**
+   * CaseActivity findFirst
+   */
+  export type CaseActivityFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseActivity
+     */
+    select?: CaseActivitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which CaseActivity to fetch.
+     */
+    where?: CaseActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CaseActivities to fetch.
+     */
+    orderBy?: CaseActivityOrderByWithRelationInput | CaseActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CaseActivities.
+     */
+    cursor?: CaseActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CaseActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CaseActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CaseActivities.
+     */
+    distinct?: CaseActivityScalarFieldEnum | CaseActivityScalarFieldEnum[]
+  }
+
+  /**
+   * CaseActivity findFirstOrThrow
+   */
+  export type CaseActivityFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseActivity
+     */
+    select?: CaseActivitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which CaseActivity to fetch.
+     */
+    where?: CaseActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CaseActivities to fetch.
+     */
+    orderBy?: CaseActivityOrderByWithRelationInput | CaseActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CaseActivities.
+     */
+    cursor?: CaseActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CaseActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CaseActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CaseActivities.
+     */
+    distinct?: CaseActivityScalarFieldEnum | CaseActivityScalarFieldEnum[]
+  }
+
+  /**
+   * CaseActivity findMany
+   */
+  export type CaseActivityFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseActivity
+     */
+    select?: CaseActivitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which CaseActivities to fetch.
+     */
+    where?: CaseActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CaseActivities to fetch.
+     */
+    orderBy?: CaseActivityOrderByWithRelationInput | CaseActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CaseActivities.
+     */
+    cursor?: CaseActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CaseActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CaseActivities.
+     */
+    skip?: number
+    distinct?: CaseActivityScalarFieldEnum | CaseActivityScalarFieldEnum[]
+  }
+
+  /**
+   * CaseActivity create
+   */
+  export type CaseActivityCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseActivity
+     */
+    select?: CaseActivitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseActivityInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CaseActivity.
+     */
+    data: XOR<CaseActivityCreateInput, CaseActivityUncheckedCreateInput>
+  }
+
+  /**
+   * CaseActivity createMany
+   */
+  export type CaseActivityCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CaseActivities.
+     */
+    data: CaseActivityCreateManyInput | CaseActivityCreateManyInput[]
+  }
+
+  /**
+   * CaseActivity createManyAndReturn
+   */
+  export type CaseActivityCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseActivity
+     */
+    select?: CaseActivitySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many CaseActivities.
+     */
+    data: CaseActivityCreateManyInput | CaseActivityCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseActivityIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CaseActivity update
+   */
+  export type CaseActivityUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseActivity
+     */
+    select?: CaseActivitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseActivityInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CaseActivity.
+     */
+    data: XOR<CaseActivityUpdateInput, CaseActivityUncheckedUpdateInput>
+    /**
+     * Choose, which CaseActivity to update.
+     */
+    where: CaseActivityWhereUniqueInput
+  }
+
+  /**
+   * CaseActivity updateMany
+   */
+  export type CaseActivityUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CaseActivities.
+     */
+    data: XOR<CaseActivityUpdateManyMutationInput, CaseActivityUncheckedUpdateManyInput>
+    /**
+     * Filter which CaseActivities to update
+     */
+    where?: CaseActivityWhereInput
+  }
+
+  /**
+   * CaseActivity upsert
+   */
+  export type CaseActivityUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseActivity
+     */
+    select?: CaseActivitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseActivityInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CaseActivity to update in case it exists.
+     */
+    where: CaseActivityWhereUniqueInput
+    /**
+     * In case the CaseActivity found by the `where` argument doesn't exist, create a new CaseActivity with this data.
+     */
+    create: XOR<CaseActivityCreateInput, CaseActivityUncheckedCreateInput>
+    /**
+     * In case the CaseActivity was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CaseActivityUpdateInput, CaseActivityUncheckedUpdateInput>
+  }
+
+  /**
+   * CaseActivity delete
+   */
+  export type CaseActivityDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseActivity
+     */
+    select?: CaseActivitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseActivityInclude<ExtArgs> | null
+    /**
+     * Filter which CaseActivity to delete.
+     */
+    where: CaseActivityWhereUniqueInput
+  }
+
+  /**
+   * CaseActivity deleteMany
+   */
+  export type CaseActivityDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CaseActivities to delete
+     */
+    where?: CaseActivityWhereInput
+  }
+
+  /**
+   * CaseActivity without action
+   */
+  export type CaseActivityDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseActivity
+     */
+    select?: CaseActivitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseActivityInclude<ExtArgs> | null
   }
 
 
@@ -4860,8 +5869,8 @@ export namespace Prisma {
     status: string
     requestedAt: Date
     receivedAt: Date | null
-    caseId: string
-    officerId: string
+    caseId: string | null
+    officerId: string | null
     attachmentPath: string | null
     attachmentName: string | null
     _count: CdrRequestCountAggregateOutputType | null
@@ -4897,8 +5906,8 @@ export namespace Prisma {
     officerId?: boolean
     attachmentPath?: boolean
     attachmentName?: boolean
-    case?: boolean | CaseDefaultArgs<ExtArgs>
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    case?: boolean | CdrRequest$caseArgs<ExtArgs>
+    officer?: boolean | CdrRequest$officerArgs<ExtArgs>
   }, ExtArgs["result"]["cdrRequest"]>
 
   export type CdrRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4915,8 +5924,8 @@ export namespace Prisma {
     officerId?: boolean
     attachmentPath?: boolean
     attachmentName?: boolean
-    case?: boolean | CaseDefaultArgs<ExtArgs>
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    case?: boolean | CdrRequest$caseArgs<ExtArgs>
+    officer?: boolean | CdrRequest$officerArgs<ExtArgs>
   }, ExtArgs["result"]["cdrRequest"]>
 
   export type CdrRequestSelectScalar = {
@@ -4936,19 +5945,19 @@ export namespace Prisma {
   }
 
   export type CdrRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    case?: boolean | CaseDefaultArgs<ExtArgs>
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    case?: boolean | CdrRequest$caseArgs<ExtArgs>
+    officer?: boolean | CdrRequest$officerArgs<ExtArgs>
   }
   export type CdrRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    case?: boolean | CaseDefaultArgs<ExtArgs>
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    case?: boolean | CdrRequest$caseArgs<ExtArgs>
+    officer?: boolean | CdrRequest$officerArgs<ExtArgs>
   }
 
   export type $CdrRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "CdrRequest"
     objects: {
-      case: Prisma.$CasePayload<ExtArgs>
-      officer: Prisma.$UserPayload<ExtArgs>
+      case: Prisma.$CasePayload<ExtArgs> | null
+      officer: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4960,8 +5969,8 @@ export namespace Prisma {
       status: string
       requestedAt: Date
       receivedAt: Date | null
-      caseId: string
-      officerId: string
+      caseId: string | null
+      officerId: string | null
       attachmentPath: string | null
       attachmentName: string | null
     }, ExtArgs["result"]["cdrRequest"]>
@@ -5328,8 +6337,8 @@ export namespace Prisma {
    */
   export interface Prisma__CdrRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    case<T extends CaseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CaseDefaultArgs<ExtArgs>>): Prisma__CaseClient<$Result.GetResult<Prisma.$CasePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    officer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    case<T extends CdrRequest$caseArgs<ExtArgs> = {}>(args?: Subset<T, CdrRequest$caseArgs<ExtArgs>>): Prisma__CaseClient<$Result.GetResult<Prisma.$CasePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    officer<T extends CdrRequest$officerArgs<ExtArgs> = {}>(args?: Subset<T, CdrRequest$officerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5688,976 +6697,9 @@ export namespace Prisma {
   }
 
   /**
-   * CdrRequest without action
+   * CdrRequest.case
    */
-  export type CdrRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CdrRequest
-     */
-    select?: CdrRequestSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CdrRequestInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model FraudEntity
-   */
-
-  export type AggregateFraudEntity = {
-    _count: FraudEntityCountAggregateOutputType | null
-    _min: FraudEntityMinAggregateOutputType | null
-    _max: FraudEntityMaxAggregateOutputType | null
-  }
-
-  export type FraudEntityMinAggregateOutputType = {
-    id: string | null
-    type: string | null
-    value: string | null
-    category: string | null
-    notes: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    caseId: string | null
-  }
-
-  export type FraudEntityMaxAggregateOutputType = {
-    id: string | null
-    type: string | null
-    value: string | null
-    category: string | null
-    notes: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    caseId: string | null
-  }
-
-  export type FraudEntityCountAggregateOutputType = {
-    id: number
-    type: number
-    value: number
-    category: number
-    notes: number
-    createdAt: number
-    updatedAt: number
-    caseId: number
-    _all: number
-  }
-
-
-  export type FraudEntityMinAggregateInputType = {
-    id?: true
-    type?: true
-    value?: true
-    category?: true
-    notes?: true
-    createdAt?: true
-    updatedAt?: true
-    caseId?: true
-  }
-
-  export type FraudEntityMaxAggregateInputType = {
-    id?: true
-    type?: true
-    value?: true
-    category?: true
-    notes?: true
-    createdAt?: true
-    updatedAt?: true
-    caseId?: true
-  }
-
-  export type FraudEntityCountAggregateInputType = {
-    id?: true
-    type?: true
-    value?: true
-    category?: true
-    notes?: true
-    createdAt?: true
-    updatedAt?: true
-    caseId?: true
-    _all?: true
-  }
-
-  export type FraudEntityAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which FraudEntity to aggregate.
-     */
-    where?: FraudEntityWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of FraudEntities to fetch.
-     */
-    orderBy?: FraudEntityOrderByWithRelationInput | FraudEntityOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: FraudEntityWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` FraudEntities from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` FraudEntities.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned FraudEntities
-    **/
-    _count?: true | FraudEntityCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: FraudEntityMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: FraudEntityMaxAggregateInputType
-  }
-
-  export type GetFraudEntityAggregateType<T extends FraudEntityAggregateArgs> = {
-        [P in keyof T & keyof AggregateFraudEntity]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateFraudEntity[P]>
-      : GetScalarType<T[P], AggregateFraudEntity[P]>
-  }
-
-
-
-
-  export type FraudEntityGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FraudEntityWhereInput
-    orderBy?: FraudEntityOrderByWithAggregationInput | FraudEntityOrderByWithAggregationInput[]
-    by: FraudEntityScalarFieldEnum[] | FraudEntityScalarFieldEnum
-    having?: FraudEntityScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: FraudEntityCountAggregateInputType | true
-    _min?: FraudEntityMinAggregateInputType
-    _max?: FraudEntityMaxAggregateInputType
-  }
-
-  export type FraudEntityGroupByOutputType = {
-    id: string
-    type: string
-    value: string
-    category: string
-    notes: string | null
-    createdAt: Date
-    updatedAt: Date
-    caseId: string | null
-    _count: FraudEntityCountAggregateOutputType | null
-    _min: FraudEntityMinAggregateOutputType | null
-    _max: FraudEntityMaxAggregateOutputType | null
-  }
-
-  type GetFraudEntityGroupByPayload<T extends FraudEntityGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<FraudEntityGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof FraudEntityGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], FraudEntityGroupByOutputType[P]>
-            : GetScalarType<T[P], FraudEntityGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type FraudEntitySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    type?: boolean
-    value?: boolean
-    category?: boolean
-    notes?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    caseId?: boolean
-    case?: boolean | FraudEntity$caseArgs<ExtArgs>
-  }, ExtArgs["result"]["fraudEntity"]>
-
-  export type FraudEntitySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    type?: boolean
-    value?: boolean
-    category?: boolean
-    notes?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    caseId?: boolean
-    case?: boolean | FraudEntity$caseArgs<ExtArgs>
-  }, ExtArgs["result"]["fraudEntity"]>
-
-  export type FraudEntitySelectScalar = {
-    id?: boolean
-    type?: boolean
-    value?: boolean
-    category?: boolean
-    notes?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    caseId?: boolean
-  }
-
-  export type FraudEntityInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    case?: boolean | FraudEntity$caseArgs<ExtArgs>
-  }
-  export type FraudEntityIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    case?: boolean | FraudEntity$caseArgs<ExtArgs>
-  }
-
-  export type $FraudEntityPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "FraudEntity"
-    objects: {
-      case: Prisma.$CasePayload<ExtArgs> | null
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      type: string
-      value: string
-      category: string
-      notes: string | null
-      createdAt: Date
-      updatedAt: Date
-      caseId: string | null
-    }, ExtArgs["result"]["fraudEntity"]>
-    composites: {}
-  }
-
-  type FraudEntityGetPayload<S extends boolean | null | undefined | FraudEntityDefaultArgs> = $Result.GetResult<Prisma.$FraudEntityPayload, S>
-
-  type FraudEntityCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<FraudEntityFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: FraudEntityCountAggregateInputType | true
-    }
-
-  export interface FraudEntityDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FraudEntity'], meta: { name: 'FraudEntity' } }
-    /**
-     * Find zero or one FraudEntity that matches the filter.
-     * @param {FraudEntityFindUniqueArgs} args - Arguments to find a FraudEntity
-     * @example
-     * // Get one FraudEntity
-     * const fraudEntity = await prisma.fraudEntity.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends FraudEntityFindUniqueArgs>(args: SelectSubset<T, FraudEntityFindUniqueArgs<ExtArgs>>): Prisma__FraudEntityClient<$Result.GetResult<Prisma.$FraudEntityPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one FraudEntity that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {FraudEntityFindUniqueOrThrowArgs} args - Arguments to find a FraudEntity
-     * @example
-     * // Get one FraudEntity
-     * const fraudEntity = await prisma.fraudEntity.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends FraudEntityFindUniqueOrThrowArgs>(args: SelectSubset<T, FraudEntityFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FraudEntityClient<$Result.GetResult<Prisma.$FraudEntityPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first FraudEntity that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FraudEntityFindFirstArgs} args - Arguments to find a FraudEntity
-     * @example
-     * // Get one FraudEntity
-     * const fraudEntity = await prisma.fraudEntity.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends FraudEntityFindFirstArgs>(args?: SelectSubset<T, FraudEntityFindFirstArgs<ExtArgs>>): Prisma__FraudEntityClient<$Result.GetResult<Prisma.$FraudEntityPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first FraudEntity that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FraudEntityFindFirstOrThrowArgs} args - Arguments to find a FraudEntity
-     * @example
-     * // Get one FraudEntity
-     * const fraudEntity = await prisma.fraudEntity.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends FraudEntityFindFirstOrThrowArgs>(args?: SelectSubset<T, FraudEntityFindFirstOrThrowArgs<ExtArgs>>): Prisma__FraudEntityClient<$Result.GetResult<Prisma.$FraudEntityPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more FraudEntities that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FraudEntityFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all FraudEntities
-     * const fraudEntities = await prisma.fraudEntity.findMany()
-     * 
-     * // Get first 10 FraudEntities
-     * const fraudEntities = await prisma.fraudEntity.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const fraudEntityWithIdOnly = await prisma.fraudEntity.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends FraudEntityFindManyArgs>(args?: SelectSubset<T, FraudEntityFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FraudEntityPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a FraudEntity.
-     * @param {FraudEntityCreateArgs} args - Arguments to create a FraudEntity.
-     * @example
-     * // Create one FraudEntity
-     * const FraudEntity = await prisma.fraudEntity.create({
-     *   data: {
-     *     // ... data to create a FraudEntity
-     *   }
-     * })
-     * 
-     */
-    create<T extends FraudEntityCreateArgs>(args: SelectSubset<T, FraudEntityCreateArgs<ExtArgs>>): Prisma__FraudEntityClient<$Result.GetResult<Prisma.$FraudEntityPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many FraudEntities.
-     * @param {FraudEntityCreateManyArgs} args - Arguments to create many FraudEntities.
-     * @example
-     * // Create many FraudEntities
-     * const fraudEntity = await prisma.fraudEntity.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends FraudEntityCreateManyArgs>(args?: SelectSubset<T, FraudEntityCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many FraudEntities and returns the data saved in the database.
-     * @param {FraudEntityCreateManyAndReturnArgs} args - Arguments to create many FraudEntities.
-     * @example
-     * // Create many FraudEntities
-     * const fraudEntity = await prisma.fraudEntity.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many FraudEntities and only return the `id`
-     * const fraudEntityWithIdOnly = await prisma.fraudEntity.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends FraudEntityCreateManyAndReturnArgs>(args?: SelectSubset<T, FraudEntityCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FraudEntityPayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a FraudEntity.
-     * @param {FraudEntityDeleteArgs} args - Arguments to delete one FraudEntity.
-     * @example
-     * // Delete one FraudEntity
-     * const FraudEntity = await prisma.fraudEntity.delete({
-     *   where: {
-     *     // ... filter to delete one FraudEntity
-     *   }
-     * })
-     * 
-     */
-    delete<T extends FraudEntityDeleteArgs>(args: SelectSubset<T, FraudEntityDeleteArgs<ExtArgs>>): Prisma__FraudEntityClient<$Result.GetResult<Prisma.$FraudEntityPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one FraudEntity.
-     * @param {FraudEntityUpdateArgs} args - Arguments to update one FraudEntity.
-     * @example
-     * // Update one FraudEntity
-     * const fraudEntity = await prisma.fraudEntity.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends FraudEntityUpdateArgs>(args: SelectSubset<T, FraudEntityUpdateArgs<ExtArgs>>): Prisma__FraudEntityClient<$Result.GetResult<Prisma.$FraudEntityPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more FraudEntities.
-     * @param {FraudEntityDeleteManyArgs} args - Arguments to filter FraudEntities to delete.
-     * @example
-     * // Delete a few FraudEntities
-     * const { count } = await prisma.fraudEntity.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends FraudEntityDeleteManyArgs>(args?: SelectSubset<T, FraudEntityDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more FraudEntities.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FraudEntityUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many FraudEntities
-     * const fraudEntity = await prisma.fraudEntity.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends FraudEntityUpdateManyArgs>(args: SelectSubset<T, FraudEntityUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one FraudEntity.
-     * @param {FraudEntityUpsertArgs} args - Arguments to update or create a FraudEntity.
-     * @example
-     * // Update or create a FraudEntity
-     * const fraudEntity = await prisma.fraudEntity.upsert({
-     *   create: {
-     *     // ... data to create a FraudEntity
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the FraudEntity we want to update
-     *   }
-     * })
-     */
-    upsert<T extends FraudEntityUpsertArgs>(args: SelectSubset<T, FraudEntityUpsertArgs<ExtArgs>>): Prisma__FraudEntityClient<$Result.GetResult<Prisma.$FraudEntityPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of FraudEntities.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FraudEntityCountArgs} args - Arguments to filter FraudEntities to count.
-     * @example
-     * // Count the number of FraudEntities
-     * const count = await prisma.fraudEntity.count({
-     *   where: {
-     *     // ... the filter for the FraudEntities we want to count
-     *   }
-     * })
-    **/
-    count<T extends FraudEntityCountArgs>(
-      args?: Subset<T, FraudEntityCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], FraudEntityCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a FraudEntity.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FraudEntityAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends FraudEntityAggregateArgs>(args: Subset<T, FraudEntityAggregateArgs>): Prisma.PrismaPromise<GetFraudEntityAggregateType<T>>
-
-    /**
-     * Group by FraudEntity.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FraudEntityGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends FraudEntityGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: FraudEntityGroupByArgs['orderBy'] }
-        : { orderBy?: FraudEntityGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, FraudEntityGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFraudEntityGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the FraudEntity model
-   */
-  readonly fields: FraudEntityFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for FraudEntity.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__FraudEntityClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    case<T extends FraudEntity$caseArgs<ExtArgs> = {}>(args?: Subset<T, FraudEntity$caseArgs<ExtArgs>>): Prisma__CaseClient<$Result.GetResult<Prisma.$CasePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the FraudEntity model
-   */ 
-  interface FraudEntityFieldRefs {
-    readonly id: FieldRef<"FraudEntity", 'String'>
-    readonly type: FieldRef<"FraudEntity", 'String'>
-    readonly value: FieldRef<"FraudEntity", 'String'>
-    readonly category: FieldRef<"FraudEntity", 'String'>
-    readonly notes: FieldRef<"FraudEntity", 'String'>
-    readonly createdAt: FieldRef<"FraudEntity", 'DateTime'>
-    readonly updatedAt: FieldRef<"FraudEntity", 'DateTime'>
-    readonly caseId: FieldRef<"FraudEntity", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * FraudEntity findUnique
-   */
-  export type FraudEntityFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FraudEntity
-     */
-    select?: FraudEntitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FraudEntityInclude<ExtArgs> | null
-    /**
-     * Filter, which FraudEntity to fetch.
-     */
-    where: FraudEntityWhereUniqueInput
-  }
-
-  /**
-   * FraudEntity findUniqueOrThrow
-   */
-  export type FraudEntityFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FraudEntity
-     */
-    select?: FraudEntitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FraudEntityInclude<ExtArgs> | null
-    /**
-     * Filter, which FraudEntity to fetch.
-     */
-    where: FraudEntityWhereUniqueInput
-  }
-
-  /**
-   * FraudEntity findFirst
-   */
-  export type FraudEntityFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FraudEntity
-     */
-    select?: FraudEntitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FraudEntityInclude<ExtArgs> | null
-    /**
-     * Filter, which FraudEntity to fetch.
-     */
-    where?: FraudEntityWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of FraudEntities to fetch.
-     */
-    orderBy?: FraudEntityOrderByWithRelationInput | FraudEntityOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for FraudEntities.
-     */
-    cursor?: FraudEntityWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` FraudEntities from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` FraudEntities.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of FraudEntities.
-     */
-    distinct?: FraudEntityScalarFieldEnum | FraudEntityScalarFieldEnum[]
-  }
-
-  /**
-   * FraudEntity findFirstOrThrow
-   */
-  export type FraudEntityFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FraudEntity
-     */
-    select?: FraudEntitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FraudEntityInclude<ExtArgs> | null
-    /**
-     * Filter, which FraudEntity to fetch.
-     */
-    where?: FraudEntityWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of FraudEntities to fetch.
-     */
-    orderBy?: FraudEntityOrderByWithRelationInput | FraudEntityOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for FraudEntities.
-     */
-    cursor?: FraudEntityWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` FraudEntities from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` FraudEntities.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of FraudEntities.
-     */
-    distinct?: FraudEntityScalarFieldEnum | FraudEntityScalarFieldEnum[]
-  }
-
-  /**
-   * FraudEntity findMany
-   */
-  export type FraudEntityFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FraudEntity
-     */
-    select?: FraudEntitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FraudEntityInclude<ExtArgs> | null
-    /**
-     * Filter, which FraudEntities to fetch.
-     */
-    where?: FraudEntityWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of FraudEntities to fetch.
-     */
-    orderBy?: FraudEntityOrderByWithRelationInput | FraudEntityOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing FraudEntities.
-     */
-    cursor?: FraudEntityWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` FraudEntities from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` FraudEntities.
-     */
-    skip?: number
-    distinct?: FraudEntityScalarFieldEnum | FraudEntityScalarFieldEnum[]
-  }
-
-  /**
-   * FraudEntity create
-   */
-  export type FraudEntityCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FraudEntity
-     */
-    select?: FraudEntitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FraudEntityInclude<ExtArgs> | null
-    /**
-     * The data needed to create a FraudEntity.
-     */
-    data: XOR<FraudEntityCreateInput, FraudEntityUncheckedCreateInput>
-  }
-
-  /**
-   * FraudEntity createMany
-   */
-  export type FraudEntityCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many FraudEntities.
-     */
-    data: FraudEntityCreateManyInput | FraudEntityCreateManyInput[]
-  }
-
-  /**
-   * FraudEntity createManyAndReturn
-   */
-  export type FraudEntityCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FraudEntity
-     */
-    select?: FraudEntitySelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many FraudEntities.
-     */
-    data: FraudEntityCreateManyInput | FraudEntityCreateManyInput[]
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FraudEntityIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * FraudEntity update
-   */
-  export type FraudEntityUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FraudEntity
-     */
-    select?: FraudEntitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FraudEntityInclude<ExtArgs> | null
-    /**
-     * The data needed to update a FraudEntity.
-     */
-    data: XOR<FraudEntityUpdateInput, FraudEntityUncheckedUpdateInput>
-    /**
-     * Choose, which FraudEntity to update.
-     */
-    where: FraudEntityWhereUniqueInput
-  }
-
-  /**
-   * FraudEntity updateMany
-   */
-  export type FraudEntityUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update FraudEntities.
-     */
-    data: XOR<FraudEntityUpdateManyMutationInput, FraudEntityUncheckedUpdateManyInput>
-    /**
-     * Filter which FraudEntities to update
-     */
-    where?: FraudEntityWhereInput
-  }
-
-  /**
-   * FraudEntity upsert
-   */
-  export type FraudEntityUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FraudEntity
-     */
-    select?: FraudEntitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FraudEntityInclude<ExtArgs> | null
-    /**
-     * The filter to search for the FraudEntity to update in case it exists.
-     */
-    where: FraudEntityWhereUniqueInput
-    /**
-     * In case the FraudEntity found by the `where` argument doesn't exist, create a new FraudEntity with this data.
-     */
-    create: XOR<FraudEntityCreateInput, FraudEntityUncheckedCreateInput>
-    /**
-     * In case the FraudEntity was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<FraudEntityUpdateInput, FraudEntityUncheckedUpdateInput>
-  }
-
-  /**
-   * FraudEntity delete
-   */
-  export type FraudEntityDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FraudEntity
-     */
-    select?: FraudEntitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FraudEntityInclude<ExtArgs> | null
-    /**
-     * Filter which FraudEntity to delete.
-     */
-    where: FraudEntityWhereUniqueInput
-  }
-
-  /**
-   * FraudEntity deleteMany
-   */
-  export type FraudEntityDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which FraudEntities to delete
-     */
-    where?: FraudEntityWhereInput
-  }
-
-  /**
-   * FraudEntity.case
-   */
-  export type FraudEntity$caseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type CdrRequest$caseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Case
      */
@@ -6670,17 +6712,32 @@ export namespace Prisma {
   }
 
   /**
-   * FraudEntity without action
+   * CdrRequest.officer
    */
-  export type FraudEntityDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type CdrRequest$officerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the FraudEntity
+     * Select specific fields to fetch from the User
      */
-    select?: FraudEntitySelect<ExtArgs> | null
+    select?: UserSelect<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: FraudEntityInclude<ExtArgs> | null
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * CdrRequest without action
+   */
+  export type CdrRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CdrRequest
+     */
+    select?: CdrRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CdrRequestInclude<ExtArgs> | null
   }
 
 
@@ -6888,7 +6945,7 @@ export namespace Prisma {
     status: string
     priority: string
     caseId: string | null
-    officerId: string
+    officerId: string | null
     createdAt: Date
     respondedAt: Date | null
     attachmentPath: string | null
@@ -6929,7 +6986,7 @@ export namespace Prisma {
     attachmentPath?: boolean
     attachmentName?: boolean
     case?: boolean | InternationalRequest$caseArgs<ExtArgs>
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | InternationalRequest$officerArgs<ExtArgs>
   }, ExtArgs["result"]["internationalRequest"]>
 
   export type InternationalRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6949,7 +7006,7 @@ export namespace Prisma {
     attachmentPath?: boolean
     attachmentName?: boolean
     case?: boolean | InternationalRequest$caseArgs<ExtArgs>
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | InternationalRequest$officerArgs<ExtArgs>
   }, ExtArgs["result"]["internationalRequest"]>
 
   export type InternationalRequestSelectScalar = {
@@ -6972,18 +7029,18 @@ export namespace Prisma {
 
   export type InternationalRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     case?: boolean | InternationalRequest$caseArgs<ExtArgs>
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | InternationalRequest$officerArgs<ExtArgs>
   }
   export type InternationalRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     case?: boolean | InternationalRequest$caseArgs<ExtArgs>
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | InternationalRequest$officerArgs<ExtArgs>
   }
 
   export type $InternationalRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "InternationalRequest"
     objects: {
       case: Prisma.$CasePayload<ExtArgs> | null
-      officer: Prisma.$UserPayload<ExtArgs>
+      officer: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6996,7 +7053,7 @@ export namespace Prisma {
       status: string
       priority: string
       caseId: string | null
-      officerId: string
+      officerId: string | null
       createdAt: Date
       respondedAt: Date | null
       attachmentPath: string | null
@@ -7366,7 +7423,7 @@ export namespace Prisma {
   export interface Prisma__InternationalRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     case<T extends InternationalRequest$caseArgs<ExtArgs> = {}>(args?: Subset<T, InternationalRequest$caseArgs<ExtArgs>>): Prisma__CaseClient<$Result.GetResult<Prisma.$CasePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
-    officer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    officer<T extends InternationalRequest$officerArgs<ExtArgs> = {}>(args?: Subset<T, InternationalRequest$officerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7742,6 +7799,21 @@ export namespace Prisma {
   }
 
   /**
+   * InternationalRequest.officer
+   */
+  export type InternationalRequest$officerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * InternationalRequest without action
    */
   export type InternationalRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7928,7 +8000,7 @@ export namespace Prisma {
     challenges: string | null
     nextSteps: string | null
     status: string
-    officerId: string
+    officerId: string | null
     createdAt: Date
     _count: ActivityReportCountAggregateOutputType | null
     _min: ActivityReportMinAggregateOutputType | null
@@ -7960,7 +8032,7 @@ export namespace Prisma {
     status?: boolean
     officerId?: boolean
     createdAt?: boolean
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | ActivityReport$officerArgs<ExtArgs>
   }, ExtArgs["result"]["activityReport"]>
 
   export type ActivityReportSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7974,7 +8046,7 @@ export namespace Prisma {
     status?: boolean
     officerId?: boolean
     createdAt?: boolean
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | ActivityReport$officerArgs<ExtArgs>
   }, ExtArgs["result"]["activityReport"]>
 
   export type ActivityReportSelectScalar = {
@@ -7991,16 +8063,16 @@ export namespace Prisma {
   }
 
   export type ActivityReportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | ActivityReport$officerArgs<ExtArgs>
   }
   export type ActivityReportIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    officer?: boolean | UserDefaultArgs<ExtArgs>
+    officer?: boolean | ActivityReport$officerArgs<ExtArgs>
   }
 
   export type $ActivityReportPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ActivityReport"
     objects: {
-      officer: Prisma.$UserPayload<ExtArgs>
+      officer: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8011,7 +8083,7 @@ export namespace Prisma {
       challenges: string | null
       nextSteps: string | null
       status: string
-      officerId: string
+      officerId: string | null
       createdAt: Date
     }, ExtArgs["result"]["activityReport"]>
     composites: {}
@@ -8377,7 +8449,7 @@ export namespace Prisma {
    */
   export interface Prisma__ActivityReportClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    officer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    officer<T extends ActivityReport$officerArgs<ExtArgs> = {}>(args?: Subset<T, ActivityReport$officerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8733,6 +8805,21 @@ export namespace Prisma {
   }
 
   /**
+   * ActivityReport.officer
+   */
+  export type ActivityReport$officerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * ActivityReport without action
    */
   export type ActivityReportDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8765,6 +8852,9 @@ export namespace Prisma {
     password: 'password',
     role: 'role',
     approved: 'approved',
+    deactivated: 'deactivated',
+    cdrAccess: 'cdrAccess',
+    lastActive: 'lastActive',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -8778,7 +8868,6 @@ export namespace Prisma {
     title: 'title',
     category: 'category',
     status: 'status',
-    priority: 'priority',
     description: 'description',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
@@ -8803,6 +8892,19 @@ export namespace Prisma {
   export type JournalEntryScalarFieldEnum = (typeof JournalEntryScalarFieldEnum)[keyof typeof JournalEntryScalarFieldEnum]
 
 
+  export const CaseActivityScalarFieldEnum: {
+    id: 'id',
+    caseId: 'caseId',
+    userId: 'userId',
+    userName: 'userName',
+    action: 'action',
+    detail: 'detail',
+    createdAt: 'createdAt'
+  };
+
+  export type CaseActivityScalarFieldEnum = (typeof CaseActivityScalarFieldEnum)[keyof typeof CaseActivityScalarFieldEnum]
+
+
   export const CdrRequestScalarFieldEnum: {
     id: 'id',
     phoneNumber: 'phoneNumber',
@@ -8820,20 +8922,6 @@ export namespace Prisma {
   };
 
   export type CdrRequestScalarFieldEnum = (typeof CdrRequestScalarFieldEnum)[keyof typeof CdrRequestScalarFieldEnum]
-
-
-  export const FraudEntityScalarFieldEnum: {
-    id: 'id',
-    type: 'type',
-    value: 'value',
-    category: 'category',
-    notes: 'notes',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    caseId: 'caseId'
-  };
-
-  export type FraudEntityScalarFieldEnum = (typeof FraudEntityScalarFieldEnum)[keyof typeof FraudEntityScalarFieldEnum]
 
 
   export const InternationalRequestScalarFieldEnum: {
@@ -8942,6 +9030,9 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     role?: StringFilter<"User"> | string
     approved?: BoolFilter<"User"> | boolean
+    deactivated?: BoolFilter<"User"> | boolean
+    cdrAccess?: BoolFilter<"User"> | boolean
+    lastActive?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     cases?: CaseListRelationFilter
@@ -8958,6 +9049,9 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     approved?: SortOrder
+    deactivated?: SortOrder
+    cdrAccess?: SortOrder
+    lastActive?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     cases?: CaseOrderByRelationAggregateInput
@@ -8977,6 +9071,9 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     role?: StringFilter<"User"> | string
     approved?: BoolFilter<"User"> | boolean
+    deactivated?: BoolFilter<"User"> | boolean
+    cdrAccess?: BoolFilter<"User"> | boolean
+    lastActive?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     cases?: CaseListRelationFilter
@@ -8993,6 +9090,9 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     approved?: SortOrder
+    deactivated?: SortOrder
+    cdrAccess?: SortOrder
+    lastActive?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -9010,6 +9110,9 @@ export namespace Prisma {
     password?: StringWithAggregatesFilter<"User"> | string
     role?: StringWithAggregatesFilter<"User"> | string
     approved?: BoolWithAggregatesFilter<"User"> | boolean
+    deactivated?: BoolWithAggregatesFilter<"User"> | boolean
+    cdrAccess?: BoolWithAggregatesFilter<"User"> | boolean
+    lastActive?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -9023,18 +9126,17 @@ export namespace Prisma {
     title?: StringFilter<"Case"> | string
     category?: StringFilter<"Case"> | string
     status?: StringFilter<"Case"> | string
-    priority?: StringFilter<"Case"> | string
     description?: StringNullableFilter<"Case"> | string | null
     createdAt?: DateTimeFilter<"Case"> | Date | string
     updatedAt?: DateTimeFilter<"Case"> | Date | string
     closedAt?: DateTimeNullableFilter<"Case"> | Date | string | null
     closureReason?: StringNullableFilter<"Case"> | string | null
-    officerId?: StringFilter<"Case"> | string
-    officer?: XOR<UserRelationFilter, UserWhereInput>
+    officerId?: StringNullableFilter<"Case"> | string | null
+    officer?: XOR<UserNullableRelationFilter, UserWhereInput> | null
     entries?: JournalEntryListRelationFilter
     cdrRequests?: CdrRequestListRelationFilter
     internationalRequests?: InternationalRequestListRelationFilter
-    fraudEntities?: FraudEntityListRelationFilter
+    caseActivities?: CaseActivityListRelationFilter
   }
 
   export type CaseOrderByWithRelationInput = {
@@ -9043,18 +9145,17 @@ export namespace Prisma {
     title?: SortOrder
     category?: SortOrder
     status?: SortOrder
-    priority?: SortOrder
     description?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     closedAt?: SortOrderInput | SortOrder
     closureReason?: SortOrderInput | SortOrder
-    officerId?: SortOrder
+    officerId?: SortOrderInput | SortOrder
     officer?: UserOrderByWithRelationInput
     entries?: JournalEntryOrderByRelationAggregateInput
     cdrRequests?: CdrRequestOrderByRelationAggregateInput
     internationalRequests?: InternationalRequestOrderByRelationAggregateInput
-    fraudEntities?: FraudEntityOrderByRelationAggregateInput
+    caseActivities?: CaseActivityOrderByRelationAggregateInput
   }
 
   export type CaseWhereUniqueInput = Prisma.AtLeast<{
@@ -9066,18 +9167,17 @@ export namespace Prisma {
     title?: StringFilter<"Case"> | string
     category?: StringFilter<"Case"> | string
     status?: StringFilter<"Case"> | string
-    priority?: StringFilter<"Case"> | string
     description?: StringNullableFilter<"Case"> | string | null
     createdAt?: DateTimeFilter<"Case"> | Date | string
     updatedAt?: DateTimeFilter<"Case"> | Date | string
     closedAt?: DateTimeNullableFilter<"Case"> | Date | string | null
     closureReason?: StringNullableFilter<"Case"> | string | null
-    officerId?: StringFilter<"Case"> | string
-    officer?: XOR<UserRelationFilter, UserWhereInput>
+    officerId?: StringNullableFilter<"Case"> | string | null
+    officer?: XOR<UserNullableRelationFilter, UserWhereInput> | null
     entries?: JournalEntryListRelationFilter
     cdrRequests?: CdrRequestListRelationFilter
     internationalRequests?: InternationalRequestListRelationFilter
-    fraudEntities?: FraudEntityListRelationFilter
+    caseActivities?: CaseActivityListRelationFilter
   }, "id" | "caseNumber">
 
   export type CaseOrderByWithAggregationInput = {
@@ -9086,13 +9186,12 @@ export namespace Prisma {
     title?: SortOrder
     category?: SortOrder
     status?: SortOrder
-    priority?: SortOrder
     description?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     closedAt?: SortOrderInput | SortOrder
     closureReason?: SortOrderInput | SortOrder
-    officerId?: SortOrder
+    officerId?: SortOrderInput | SortOrder
     _count?: CaseCountOrderByAggregateInput
     _max?: CaseMaxOrderByAggregateInput
     _min?: CaseMinOrderByAggregateInput
@@ -9107,13 +9206,12 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Case"> | string
     category?: StringWithAggregatesFilter<"Case"> | string
     status?: StringWithAggregatesFilter<"Case"> | string
-    priority?: StringWithAggregatesFilter<"Case"> | string
     description?: StringNullableWithAggregatesFilter<"Case"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Case"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Case"> | Date | string
     closedAt?: DateTimeNullableWithAggregatesFilter<"Case"> | Date | string | null
     closureReason?: StringNullableWithAggregatesFilter<"Case"> | string | null
-    officerId?: StringWithAggregatesFilter<"Case"> | string
+    officerId?: StringNullableWithAggregatesFilter<"Case"> | string | null
   }
 
   export type JournalEntryWhereInput = {
@@ -9126,9 +9224,9 @@ export namespace Prisma {
     actions?: StringNullableFilter<"JournalEntry"> | string | null
     createdAt?: DateTimeFilter<"JournalEntry"> | Date | string
     caseId?: StringFilter<"JournalEntry"> | string
-    authorId?: StringFilter<"JournalEntry"> | string
+    authorId?: StringNullableFilter<"JournalEntry"> | string | null
     case?: XOR<CaseRelationFilter, CaseWhereInput>
-    author?: XOR<UserRelationFilter, UserWhereInput>
+    author?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }
 
   export type JournalEntryOrderByWithRelationInput = {
@@ -9138,7 +9236,7 @@ export namespace Prisma {
     actions?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     caseId?: SortOrder
-    authorId?: SortOrder
+    authorId?: SortOrderInput | SortOrder
     case?: CaseOrderByWithRelationInput
     author?: UserOrderByWithRelationInput
   }
@@ -9153,9 +9251,9 @@ export namespace Prisma {
     actions?: StringNullableFilter<"JournalEntry"> | string | null
     createdAt?: DateTimeFilter<"JournalEntry"> | Date | string
     caseId?: StringFilter<"JournalEntry"> | string
-    authorId?: StringFilter<"JournalEntry"> | string
+    authorId?: StringNullableFilter<"JournalEntry"> | string | null
     case?: XOR<CaseRelationFilter, CaseWhereInput>
-    author?: XOR<UserRelationFilter, UserWhereInput>
+    author?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type JournalEntryOrderByWithAggregationInput = {
@@ -9165,7 +9263,7 @@ export namespace Prisma {
     actions?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     caseId?: SortOrder
-    authorId?: SortOrder
+    authorId?: SortOrderInput | SortOrder
     _count?: JournalEntryCountOrderByAggregateInput
     _avg?: JournalEntryAvgOrderByAggregateInput
     _max?: JournalEntryMaxOrderByAggregateInput
@@ -9183,7 +9281,72 @@ export namespace Prisma {
     actions?: StringNullableWithAggregatesFilter<"JournalEntry"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"JournalEntry"> | Date | string
     caseId?: StringWithAggregatesFilter<"JournalEntry"> | string
-    authorId?: StringWithAggregatesFilter<"JournalEntry"> | string
+    authorId?: StringNullableWithAggregatesFilter<"JournalEntry"> | string | null
+  }
+
+  export type CaseActivityWhereInput = {
+    AND?: CaseActivityWhereInput | CaseActivityWhereInput[]
+    OR?: CaseActivityWhereInput[]
+    NOT?: CaseActivityWhereInput | CaseActivityWhereInput[]
+    id?: StringFilter<"CaseActivity"> | string
+    caseId?: StringFilter<"CaseActivity"> | string
+    userId?: StringNullableFilter<"CaseActivity"> | string | null
+    userName?: StringFilter<"CaseActivity"> | string
+    action?: StringFilter<"CaseActivity"> | string
+    detail?: StringNullableFilter<"CaseActivity"> | string | null
+    createdAt?: DateTimeFilter<"CaseActivity"> | Date | string
+    case?: XOR<CaseRelationFilter, CaseWhereInput>
+  }
+
+  export type CaseActivityOrderByWithRelationInput = {
+    id?: SortOrder
+    caseId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    userName?: SortOrder
+    action?: SortOrder
+    detail?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    case?: CaseOrderByWithRelationInput
+  }
+
+  export type CaseActivityWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CaseActivityWhereInput | CaseActivityWhereInput[]
+    OR?: CaseActivityWhereInput[]
+    NOT?: CaseActivityWhereInput | CaseActivityWhereInput[]
+    caseId?: StringFilter<"CaseActivity"> | string
+    userId?: StringNullableFilter<"CaseActivity"> | string | null
+    userName?: StringFilter<"CaseActivity"> | string
+    action?: StringFilter<"CaseActivity"> | string
+    detail?: StringNullableFilter<"CaseActivity"> | string | null
+    createdAt?: DateTimeFilter<"CaseActivity"> | Date | string
+    case?: XOR<CaseRelationFilter, CaseWhereInput>
+  }, "id">
+
+  export type CaseActivityOrderByWithAggregationInput = {
+    id?: SortOrder
+    caseId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    userName?: SortOrder
+    action?: SortOrder
+    detail?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: CaseActivityCountOrderByAggregateInput
+    _max?: CaseActivityMaxOrderByAggregateInput
+    _min?: CaseActivityMinOrderByAggregateInput
+  }
+
+  export type CaseActivityScalarWhereWithAggregatesInput = {
+    AND?: CaseActivityScalarWhereWithAggregatesInput | CaseActivityScalarWhereWithAggregatesInput[]
+    OR?: CaseActivityScalarWhereWithAggregatesInput[]
+    NOT?: CaseActivityScalarWhereWithAggregatesInput | CaseActivityScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CaseActivity"> | string
+    caseId?: StringWithAggregatesFilter<"CaseActivity"> | string
+    userId?: StringNullableWithAggregatesFilter<"CaseActivity"> | string | null
+    userName?: StringWithAggregatesFilter<"CaseActivity"> | string
+    action?: StringWithAggregatesFilter<"CaseActivity"> | string
+    detail?: StringNullableWithAggregatesFilter<"CaseActivity"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"CaseActivity"> | Date | string
   }
 
   export type CdrRequestWhereInput = {
@@ -9199,12 +9362,12 @@ export namespace Prisma {
     status?: StringFilter<"CdrRequest"> | string
     requestedAt?: DateTimeFilter<"CdrRequest"> | Date | string
     receivedAt?: DateTimeNullableFilter<"CdrRequest"> | Date | string | null
-    caseId?: StringFilter<"CdrRequest"> | string
-    officerId?: StringFilter<"CdrRequest"> | string
+    caseId?: StringNullableFilter<"CdrRequest"> | string | null
+    officerId?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentPath?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentName?: StringNullableFilter<"CdrRequest"> | string | null
-    case?: XOR<CaseRelationFilter, CaseWhereInput>
-    officer?: XOR<UserRelationFilter, UserWhereInput>
+    case?: XOR<CaseNullableRelationFilter, CaseWhereInput> | null
+    officer?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }
 
   export type CdrRequestOrderByWithRelationInput = {
@@ -9217,8 +9380,8 @@ export namespace Prisma {
     status?: SortOrder
     requestedAt?: SortOrder
     receivedAt?: SortOrderInput | SortOrder
-    caseId?: SortOrder
-    officerId?: SortOrder
+    caseId?: SortOrderInput | SortOrder
+    officerId?: SortOrderInput | SortOrder
     attachmentPath?: SortOrderInput | SortOrder
     attachmentName?: SortOrderInput | SortOrder
     case?: CaseOrderByWithRelationInput
@@ -9238,12 +9401,12 @@ export namespace Prisma {
     status?: StringFilter<"CdrRequest"> | string
     requestedAt?: DateTimeFilter<"CdrRequest"> | Date | string
     receivedAt?: DateTimeNullableFilter<"CdrRequest"> | Date | string | null
-    caseId?: StringFilter<"CdrRequest"> | string
-    officerId?: StringFilter<"CdrRequest"> | string
+    caseId?: StringNullableFilter<"CdrRequest"> | string | null
+    officerId?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentPath?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentName?: StringNullableFilter<"CdrRequest"> | string | null
-    case?: XOR<CaseRelationFilter, CaseWhereInput>
-    officer?: XOR<UserRelationFilter, UserWhereInput>
+    case?: XOR<CaseNullableRelationFilter, CaseWhereInput> | null
+    officer?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type CdrRequestOrderByWithAggregationInput = {
@@ -9256,8 +9419,8 @@ export namespace Prisma {
     status?: SortOrder
     requestedAt?: SortOrder
     receivedAt?: SortOrderInput | SortOrder
-    caseId?: SortOrder
-    officerId?: SortOrder
+    caseId?: SortOrderInput | SortOrder
+    officerId?: SortOrderInput | SortOrder
     attachmentPath?: SortOrderInput | SortOrder
     attachmentName?: SortOrderInput | SortOrder
     _count?: CdrRequestCountOrderByAggregateInput
@@ -9278,80 +9441,10 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"CdrRequest"> | string
     requestedAt?: DateTimeWithAggregatesFilter<"CdrRequest"> | Date | string
     receivedAt?: DateTimeNullableWithAggregatesFilter<"CdrRequest"> | Date | string | null
-    caseId?: StringWithAggregatesFilter<"CdrRequest"> | string
-    officerId?: StringWithAggregatesFilter<"CdrRequest"> | string
+    caseId?: StringNullableWithAggregatesFilter<"CdrRequest"> | string | null
+    officerId?: StringNullableWithAggregatesFilter<"CdrRequest"> | string | null
     attachmentPath?: StringNullableWithAggregatesFilter<"CdrRequest"> | string | null
     attachmentName?: StringNullableWithAggregatesFilter<"CdrRequest"> | string | null
-  }
-
-  export type FraudEntityWhereInput = {
-    AND?: FraudEntityWhereInput | FraudEntityWhereInput[]
-    OR?: FraudEntityWhereInput[]
-    NOT?: FraudEntityWhereInput | FraudEntityWhereInput[]
-    id?: StringFilter<"FraudEntity"> | string
-    type?: StringFilter<"FraudEntity"> | string
-    value?: StringFilter<"FraudEntity"> | string
-    category?: StringFilter<"FraudEntity"> | string
-    notes?: StringNullableFilter<"FraudEntity"> | string | null
-    createdAt?: DateTimeFilter<"FraudEntity"> | Date | string
-    updatedAt?: DateTimeFilter<"FraudEntity"> | Date | string
-    caseId?: StringNullableFilter<"FraudEntity"> | string | null
-    case?: XOR<CaseNullableRelationFilter, CaseWhereInput> | null
-  }
-
-  export type FraudEntityOrderByWithRelationInput = {
-    id?: SortOrder
-    type?: SortOrder
-    value?: SortOrder
-    category?: SortOrder
-    notes?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    caseId?: SortOrderInput | SortOrder
-    case?: CaseOrderByWithRelationInput
-  }
-
-  export type FraudEntityWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: FraudEntityWhereInput | FraudEntityWhereInput[]
-    OR?: FraudEntityWhereInput[]
-    NOT?: FraudEntityWhereInput | FraudEntityWhereInput[]
-    type?: StringFilter<"FraudEntity"> | string
-    value?: StringFilter<"FraudEntity"> | string
-    category?: StringFilter<"FraudEntity"> | string
-    notes?: StringNullableFilter<"FraudEntity"> | string | null
-    createdAt?: DateTimeFilter<"FraudEntity"> | Date | string
-    updatedAt?: DateTimeFilter<"FraudEntity"> | Date | string
-    caseId?: StringNullableFilter<"FraudEntity"> | string | null
-    case?: XOR<CaseNullableRelationFilter, CaseWhereInput> | null
-  }, "id">
-
-  export type FraudEntityOrderByWithAggregationInput = {
-    id?: SortOrder
-    type?: SortOrder
-    value?: SortOrder
-    category?: SortOrder
-    notes?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    caseId?: SortOrderInput | SortOrder
-    _count?: FraudEntityCountOrderByAggregateInput
-    _max?: FraudEntityMaxOrderByAggregateInput
-    _min?: FraudEntityMinOrderByAggregateInput
-  }
-
-  export type FraudEntityScalarWhereWithAggregatesInput = {
-    AND?: FraudEntityScalarWhereWithAggregatesInput | FraudEntityScalarWhereWithAggregatesInput[]
-    OR?: FraudEntityScalarWhereWithAggregatesInput[]
-    NOT?: FraudEntityScalarWhereWithAggregatesInput | FraudEntityScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"FraudEntity"> | string
-    type?: StringWithAggregatesFilter<"FraudEntity"> | string
-    value?: StringWithAggregatesFilter<"FraudEntity"> | string
-    category?: StringWithAggregatesFilter<"FraudEntity"> | string
-    notes?: StringNullableWithAggregatesFilter<"FraudEntity"> | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"FraudEntity"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"FraudEntity"> | Date | string
-    caseId?: StringNullableWithAggregatesFilter<"FraudEntity"> | string | null
   }
 
   export type InternationalRequestWhereInput = {
@@ -9368,13 +9461,13 @@ export namespace Prisma {
     status?: StringFilter<"InternationalRequest"> | string
     priority?: StringFilter<"InternationalRequest"> | string
     caseId?: StringNullableFilter<"InternationalRequest"> | string | null
-    officerId?: StringFilter<"InternationalRequest"> | string
+    officerId?: StringNullableFilter<"InternationalRequest"> | string | null
     createdAt?: DateTimeFilter<"InternationalRequest"> | Date | string
     respondedAt?: DateTimeNullableFilter<"InternationalRequest"> | Date | string | null
     attachmentPath?: StringNullableFilter<"InternationalRequest"> | string | null
     attachmentName?: StringNullableFilter<"InternationalRequest"> | string | null
     case?: XOR<CaseNullableRelationFilter, CaseWhereInput> | null
-    officer?: XOR<UserRelationFilter, UserWhereInput>
+    officer?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }
 
   export type InternationalRequestOrderByWithRelationInput = {
@@ -9388,7 +9481,7 @@ export namespace Prisma {
     status?: SortOrder
     priority?: SortOrder
     caseId?: SortOrderInput | SortOrder
-    officerId?: SortOrder
+    officerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     respondedAt?: SortOrderInput | SortOrder
     attachmentPath?: SortOrderInput | SortOrder
@@ -9411,13 +9504,13 @@ export namespace Prisma {
     status?: StringFilter<"InternationalRequest"> | string
     priority?: StringFilter<"InternationalRequest"> | string
     caseId?: StringNullableFilter<"InternationalRequest"> | string | null
-    officerId?: StringFilter<"InternationalRequest"> | string
+    officerId?: StringNullableFilter<"InternationalRequest"> | string | null
     createdAt?: DateTimeFilter<"InternationalRequest"> | Date | string
     respondedAt?: DateTimeNullableFilter<"InternationalRequest"> | Date | string | null
     attachmentPath?: StringNullableFilter<"InternationalRequest"> | string | null
     attachmentName?: StringNullableFilter<"InternationalRequest"> | string | null
     case?: XOR<CaseNullableRelationFilter, CaseWhereInput> | null
-    officer?: XOR<UserRelationFilter, UserWhereInput>
+    officer?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }, "id" | "refNumber">
 
   export type InternationalRequestOrderByWithAggregationInput = {
@@ -9431,7 +9524,7 @@ export namespace Prisma {
     status?: SortOrder
     priority?: SortOrder
     caseId?: SortOrderInput | SortOrder
-    officerId?: SortOrder
+    officerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     respondedAt?: SortOrderInput | SortOrder
     attachmentPath?: SortOrderInput | SortOrder
@@ -9455,7 +9548,7 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"InternationalRequest"> | string
     priority?: StringWithAggregatesFilter<"InternationalRequest"> | string
     caseId?: StringNullableWithAggregatesFilter<"InternationalRequest"> | string | null
-    officerId?: StringWithAggregatesFilter<"InternationalRequest"> | string
+    officerId?: StringNullableWithAggregatesFilter<"InternationalRequest"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"InternationalRequest"> | Date | string
     respondedAt?: DateTimeNullableWithAggregatesFilter<"InternationalRequest"> | Date | string | null
     attachmentPath?: StringNullableWithAggregatesFilter<"InternationalRequest"> | string | null
@@ -9474,9 +9567,9 @@ export namespace Prisma {
     challenges?: StringNullableFilter<"ActivityReport"> | string | null
     nextSteps?: StringNullableFilter<"ActivityReport"> | string | null
     status?: StringFilter<"ActivityReport"> | string
-    officerId?: StringFilter<"ActivityReport"> | string
+    officerId?: StringNullableFilter<"ActivityReport"> | string | null
     createdAt?: DateTimeFilter<"ActivityReport"> | Date | string
-    officer?: XOR<UserRelationFilter, UserWhereInput>
+    officer?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }
 
   export type ActivityReportOrderByWithRelationInput = {
@@ -9488,7 +9581,7 @@ export namespace Prisma {
     challenges?: SortOrderInput | SortOrder
     nextSteps?: SortOrderInput | SortOrder
     status?: SortOrder
-    officerId?: SortOrder
+    officerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     officer?: UserOrderByWithRelationInput
   }
@@ -9505,9 +9598,9 @@ export namespace Prisma {
     challenges?: StringNullableFilter<"ActivityReport"> | string | null
     nextSteps?: StringNullableFilter<"ActivityReport"> | string | null
     status?: StringFilter<"ActivityReport"> | string
-    officerId?: StringFilter<"ActivityReport"> | string
+    officerId?: StringNullableFilter<"ActivityReport"> | string | null
     createdAt?: DateTimeFilter<"ActivityReport"> | Date | string
-    officer?: XOR<UserRelationFilter, UserWhereInput>
+    officer?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type ActivityReportOrderByWithAggregationInput = {
@@ -9519,7 +9612,7 @@ export namespace Prisma {
     challenges?: SortOrderInput | SortOrder
     nextSteps?: SortOrderInput | SortOrder
     status?: SortOrder
-    officerId?: SortOrder
+    officerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: ActivityReportCountOrderByAggregateInput
     _max?: ActivityReportMaxOrderByAggregateInput
@@ -9538,7 +9631,7 @@ export namespace Prisma {
     challenges?: StringNullableWithAggregatesFilter<"ActivityReport"> | string | null
     nextSteps?: StringNullableWithAggregatesFilter<"ActivityReport"> | string | null
     status?: StringWithAggregatesFilter<"ActivityReport"> | string
-    officerId?: StringWithAggregatesFilter<"ActivityReport"> | string
+    officerId?: StringNullableWithAggregatesFilter<"ActivityReport"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"ActivityReport"> | Date | string
   }
 
@@ -9549,6 +9642,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseCreateNestedManyWithoutOfficerInput
@@ -9565,6 +9661,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseUncheckedCreateNestedManyWithoutOfficerInput
@@ -9581,6 +9680,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUpdateManyWithoutOfficerNestedInput
@@ -9597,6 +9699,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUncheckedUpdateManyWithoutOfficerNestedInput
@@ -9613,6 +9718,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -9624,6 +9732,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9635,6 +9746,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9645,17 +9759,16 @@ export namespace Prisma {
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     closedAt?: Date | string | null
     closureReason?: string | null
-    officer: UserCreateNestedOneWithoutCasesInput
+    officer?: UserCreateNestedOneWithoutCasesInput
     entries?: JournalEntryCreateNestedManyWithoutCaseInput
     cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
-    fraudEntities?: FraudEntityCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUncheckedCreateInput = {
@@ -9664,17 +9777,16 @@ export namespace Prisma {
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     closedAt?: Date | string | null
     closureReason?: string | null
-    officerId: string
+    officerId?: string | null
     entries?: JournalEntryUncheckedCreateNestedManyWithoutCaseInput
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
-    fraudEntities?: FraudEntityUncheckedCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityUncheckedCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUpdateInput = {
@@ -9683,17 +9795,16 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closureReason?: NullableStringFieldUpdateOperationsInput | string | null
-    officer?: UserUpdateOneRequiredWithoutCasesNestedInput
+    officer?: UserUpdateOneWithoutCasesNestedInput
     entries?: JournalEntryUpdateManyWithoutCaseNestedInput
     cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
-    fraudEntities?: FraudEntityUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateInput = {
@@ -9702,17 +9813,16 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closureReason?: NullableStringFieldUpdateOperationsInput | string | null
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     entries?: JournalEntryUncheckedUpdateManyWithoutCaseNestedInput
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
-    fraudEntities?: FraudEntityUncheckedUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUncheckedUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseCreateManyInput = {
@@ -9721,13 +9831,12 @@ export namespace Prisma {
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     closedAt?: Date | string | null
     closureReason?: string | null
-    officerId: string
+    officerId?: string | null
   }
 
   export type CaseUpdateManyMutationInput = {
@@ -9736,7 +9845,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9750,13 +9858,12 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closureReason?: NullableStringFieldUpdateOperationsInput | string | null
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type JournalEntryCreateInput = {
@@ -9766,7 +9873,7 @@ export namespace Prisma {
     actions?: string | null
     createdAt?: Date | string
     case: CaseCreateNestedOneWithoutEntriesInput
-    author: UserCreateNestedOneWithoutEntriesInput
+    author?: UserCreateNestedOneWithoutEntriesInput
   }
 
   export type JournalEntryUncheckedCreateInput = {
@@ -9776,7 +9883,7 @@ export namespace Prisma {
     actions?: string | null
     createdAt?: Date | string
     caseId: string
-    authorId: string
+    authorId?: string | null
   }
 
   export type JournalEntryUpdateInput = {
@@ -9786,7 +9893,7 @@ export namespace Prisma {
     actions?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     case?: CaseUpdateOneRequiredWithoutEntriesNestedInput
-    author?: UserUpdateOneRequiredWithoutEntriesNestedInput
+    author?: UserUpdateOneWithoutEntriesNestedInput
   }
 
   export type JournalEntryUncheckedUpdateInput = {
@@ -9796,7 +9903,7 @@ export namespace Prisma {
     actions?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     caseId?: StringFieldUpdateOperationsInput | string
-    authorId?: StringFieldUpdateOperationsInput | string
+    authorId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type JournalEntryCreateManyInput = {
@@ -9806,7 +9913,7 @@ export namespace Prisma {
     actions?: string | null
     createdAt?: Date | string
     caseId: string
-    authorId: string
+    authorId?: string | null
   }
 
   export type JournalEntryUpdateManyMutationInput = {
@@ -9824,7 +9931,76 @@ export namespace Prisma {
     actions?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     caseId?: StringFieldUpdateOperationsInput | string
-    authorId?: StringFieldUpdateOperationsInput | string
+    authorId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CaseActivityCreateInput = {
+    id?: string
+    userId?: string | null
+    userName: string
+    action: string
+    detail?: string | null
+    createdAt?: Date | string
+    case: CaseCreateNestedOneWithoutCaseActivitiesInput
+  }
+
+  export type CaseActivityUncheckedCreateInput = {
+    id?: string
+    caseId: string
+    userId?: string | null
+    userName: string
+    action: string
+    detail?: string | null
+    createdAt?: Date | string
+  }
+
+  export type CaseActivityUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    detail?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    case?: CaseUpdateOneRequiredWithoutCaseActivitiesNestedInput
+  }
+
+  export type CaseActivityUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caseId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    detail?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CaseActivityCreateManyInput = {
+    id?: string
+    caseId: string
+    userId?: string | null
+    userName: string
+    action: string
+    detail?: string | null
+    createdAt?: Date | string
+  }
+
+  export type CaseActivityUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    detail?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CaseActivityUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caseId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    detail?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CdrRequestCreateInput = {
@@ -9839,8 +10015,8 @@ export namespace Prisma {
     receivedAt?: Date | string | null
     attachmentPath?: string | null
     attachmentName?: string | null
-    case: CaseCreateNestedOneWithoutCdrRequestsInput
-    officer: UserCreateNestedOneWithoutCdrRequestsInput
+    case?: CaseCreateNestedOneWithoutCdrRequestsInput
+    officer?: UserCreateNestedOneWithoutCdrRequestsInput
   }
 
   export type CdrRequestUncheckedCreateInput = {
@@ -9853,8 +10029,8 @@ export namespace Prisma {
     status?: string
     requestedAt?: Date | string
     receivedAt?: Date | string | null
-    caseId: string
-    officerId: string
+    caseId?: string | null
+    officerId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
   }
@@ -9871,8 +10047,8 @@ export namespace Prisma {
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
-    case?: CaseUpdateOneRequiredWithoutCdrRequestsNestedInput
-    officer?: UserUpdateOneRequiredWithoutCdrRequestsNestedInput
+    case?: CaseUpdateOneWithoutCdrRequestsNestedInput
+    officer?: UserUpdateOneWithoutCdrRequestsNestedInput
   }
 
   export type CdrRequestUncheckedUpdateInput = {
@@ -9885,8 +10061,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    caseId?: StringFieldUpdateOperationsInput | string
-    officerId?: StringFieldUpdateOperationsInput | string
+    caseId?: NullableStringFieldUpdateOperationsInput | string | null
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -9901,8 +10077,8 @@ export namespace Prisma {
     status?: string
     requestedAt?: Date | string
     receivedAt?: Date | string | null
-    caseId: string
-    officerId: string
+    caseId?: string | null
+    officerId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
   }
@@ -9931,86 +10107,10 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    caseId?: StringFieldUpdateOperationsInput | string
-    officerId?: StringFieldUpdateOperationsInput | string
+    caseId?: NullableStringFieldUpdateOperationsInput | string | null
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type FraudEntityCreateInput = {
-    id?: string
-    type: string
-    value: string
-    category: string
-    notes?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    case?: CaseCreateNestedOneWithoutFraudEntitiesInput
-  }
-
-  export type FraudEntityUncheckedCreateInput = {
-    id?: string
-    type: string
-    value: string
-    category: string
-    notes?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    caseId?: string | null
-  }
-
-  export type FraudEntityUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    value?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    case?: CaseUpdateOneWithoutFraudEntitiesNestedInput
-  }
-
-  export type FraudEntityUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    value?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    caseId?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type FraudEntityCreateManyInput = {
-    id?: string
-    type: string
-    value: string
-    category: string
-    notes?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    caseId?: string | null
-  }
-
-  export type FraudEntityUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    value?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type FraudEntityUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    value?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    caseId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type InternationalRequestCreateInput = {
@@ -10028,7 +10128,7 @@ export namespace Prisma {
     attachmentPath?: string | null
     attachmentName?: string | null
     case?: CaseCreateNestedOneWithoutInternationalRequestsInput
-    officer: UserCreateNestedOneWithoutInternationalRequestsInput
+    officer?: UserCreateNestedOneWithoutInternationalRequestsInput
   }
 
   export type InternationalRequestUncheckedCreateInput = {
@@ -10042,7 +10142,7 @@ export namespace Prisma {
     status?: string
     priority?: string
     caseId?: string | null
-    officerId: string
+    officerId?: string | null
     createdAt?: Date | string
     respondedAt?: Date | string | null
     attachmentPath?: string | null
@@ -10064,7 +10164,7 @@ export namespace Prisma {
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
     case?: CaseUpdateOneWithoutInternationalRequestsNestedInput
-    officer?: UserUpdateOneRequiredWithoutInternationalRequestsNestedInput
+    officer?: UserUpdateOneWithoutInternationalRequestsNestedInput
   }
 
   export type InternationalRequestUncheckedUpdateInput = {
@@ -10078,7 +10178,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     caseId?: NullableStringFieldUpdateOperationsInput | string | null
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10096,7 +10196,7 @@ export namespace Prisma {
     status?: string
     priority?: string
     caseId?: string | null
-    officerId: string
+    officerId?: string | null
     createdAt?: Date | string
     respondedAt?: Date | string | null
     attachmentPath?: string | null
@@ -10130,7 +10230,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     caseId?: NullableStringFieldUpdateOperationsInput | string | null
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10147,7 +10247,7 @@ export namespace Prisma {
     nextSteps?: string | null
     status?: string
     createdAt?: Date | string
-    officer: UserCreateNestedOneWithoutActivityReportsInput
+    officer?: UserCreateNestedOneWithoutActivityReportsInput
   }
 
   export type ActivityReportUncheckedCreateInput = {
@@ -10159,7 +10259,7 @@ export namespace Prisma {
     challenges?: string | null
     nextSteps?: string | null
     status?: string
-    officerId: string
+    officerId?: string | null
     createdAt?: Date | string
   }
 
@@ -10173,7 +10273,7 @@ export namespace Prisma {
     nextSteps?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    officer?: UserUpdateOneRequiredWithoutActivityReportsNestedInput
+    officer?: UserUpdateOneWithoutActivityReportsNestedInput
   }
 
   export type ActivityReportUncheckedUpdateInput = {
@@ -10185,7 +10285,7 @@ export namespace Prisma {
     challenges?: NullableStringFieldUpdateOperationsInput | string | null
     nextSteps?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10198,7 +10298,7 @@ export namespace Prisma {
     challenges?: string | null
     nextSteps?: string | null
     status?: string
-    officerId: string
+    officerId?: string | null
     createdAt?: Date | string
   }
 
@@ -10223,7 +10323,7 @@ export namespace Prisma {
     challenges?: NullableStringFieldUpdateOperationsInput | string | null
     nextSteps?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10244,6 +10344,17 @@ export namespace Prisma {
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -10287,6 +10398,11 @@ export namespace Prisma {
     none?: ActivityReportWhereInput
   }
 
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type CaseOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -10314,6 +10430,9 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     approved?: SortOrder
+    deactivated?: SortOrder
+    cdrAccess?: SortOrder
+    lastActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10325,6 +10444,9 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     approved?: SortOrder
+    deactivated?: SortOrder
+    cdrAccess?: SortOrder
+    lastActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10336,6 +10458,9 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     approved?: SortOrder
+    deactivated?: SortOrder
+    cdrAccess?: SortOrder
+    lastActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10363,6 +10488,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -10393,34 +10532,18 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  export type UserNullableRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
   }
 
-  export type UserRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
+  export type CaseActivityListRelationFilter = {
+    every?: CaseActivityWhereInput
+    some?: CaseActivityWhereInput
+    none?: CaseActivityWhereInput
   }
 
-  export type FraudEntityListRelationFilter = {
-    every?: FraudEntityWhereInput
-    some?: FraudEntityWhereInput
-    none?: FraudEntityWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
-  export type FraudEntityOrderByRelationAggregateInput = {
+  export type CaseActivityOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10430,7 +10553,6 @@ export namespace Prisma {
     title?: SortOrder
     category?: SortOrder
     status?: SortOrder
-    priority?: SortOrder
     description?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10445,7 +10567,6 @@ export namespace Prisma {
     title?: SortOrder
     category?: SortOrder
     status?: SortOrder
-    priority?: SortOrder
     description?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10460,7 +10581,6 @@ export namespace Prisma {
     title?: SortOrder
     category?: SortOrder
     status?: SortOrder
-    priority?: SortOrder
     description?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10484,20 +10604,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -10570,6 +10676,41 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
+  export type CaseActivityCountOrderByAggregateInput = {
+    id?: SortOrder
+    caseId?: SortOrder
+    userId?: SortOrder
+    userName?: SortOrder
+    action?: SortOrder
+    detail?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CaseActivityMaxOrderByAggregateInput = {
+    id?: SortOrder
+    caseId?: SortOrder
+    userId?: SortOrder
+    userName?: SortOrder
+    action?: SortOrder
+    detail?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CaseActivityMinOrderByAggregateInput = {
+    id?: SortOrder
+    caseId?: SortOrder
+    userId?: SortOrder
+    userName?: SortOrder
+    action?: SortOrder
+    detail?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CaseNullableRelationFilter = {
+    is?: CaseWhereInput | null
+    isNot?: CaseWhereInput | null
+  }
+
   export type CdrRequestCountOrderByAggregateInput = {
     id?: SortOrder
     phoneNumber?: SortOrder
@@ -10616,44 +10757,6 @@ export namespace Prisma {
     officerId?: SortOrder
     attachmentPath?: SortOrder
     attachmentName?: SortOrder
-  }
-
-  export type CaseNullableRelationFilter = {
-    is?: CaseWhereInput | null
-    isNot?: CaseWhereInput | null
-  }
-
-  export type FraudEntityCountOrderByAggregateInput = {
-    id?: SortOrder
-    type?: SortOrder
-    value?: SortOrder
-    category?: SortOrder
-    notes?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    caseId?: SortOrder
-  }
-
-  export type FraudEntityMaxOrderByAggregateInput = {
-    id?: SortOrder
-    type?: SortOrder
-    value?: SortOrder
-    category?: SortOrder
-    notes?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    caseId?: SortOrder
-  }
-
-  export type FraudEntityMinOrderByAggregateInput = {
-    id?: SortOrder
-    type?: SortOrder
-    value?: SortOrder
-    category?: SortOrder
-    notes?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    caseId?: SortOrder
   }
 
   export type InternationalRequestCountOrderByAggregateInput = {
@@ -10827,6 +10930,10 @@ export namespace Prisma {
     set?: boolean
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -10998,11 +11105,11 @@ export namespace Prisma {
     connect?: InternationalRequestWhereUniqueInput | InternationalRequestWhereUniqueInput[]
   }
 
-  export type FraudEntityCreateNestedManyWithoutCaseInput = {
-    create?: XOR<FraudEntityCreateWithoutCaseInput, FraudEntityUncheckedCreateWithoutCaseInput> | FraudEntityCreateWithoutCaseInput[] | FraudEntityUncheckedCreateWithoutCaseInput[]
-    connectOrCreate?: FraudEntityCreateOrConnectWithoutCaseInput | FraudEntityCreateOrConnectWithoutCaseInput[]
-    createMany?: FraudEntityCreateManyCaseInputEnvelope
-    connect?: FraudEntityWhereUniqueInput | FraudEntityWhereUniqueInput[]
+  export type CaseActivityCreateNestedManyWithoutCaseInput = {
+    create?: XOR<CaseActivityCreateWithoutCaseInput, CaseActivityUncheckedCreateWithoutCaseInput> | CaseActivityCreateWithoutCaseInput[] | CaseActivityUncheckedCreateWithoutCaseInput[]
+    connectOrCreate?: CaseActivityCreateOrConnectWithoutCaseInput | CaseActivityCreateOrConnectWithoutCaseInput[]
+    createMany?: CaseActivityCreateManyCaseInputEnvelope
+    connect?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
   }
 
   export type JournalEntryUncheckedCreateNestedManyWithoutCaseInput = {
@@ -11026,25 +11133,23 @@ export namespace Prisma {
     connect?: InternationalRequestWhereUniqueInput | InternationalRequestWhereUniqueInput[]
   }
 
-  export type FraudEntityUncheckedCreateNestedManyWithoutCaseInput = {
-    create?: XOR<FraudEntityCreateWithoutCaseInput, FraudEntityUncheckedCreateWithoutCaseInput> | FraudEntityCreateWithoutCaseInput[] | FraudEntityUncheckedCreateWithoutCaseInput[]
-    connectOrCreate?: FraudEntityCreateOrConnectWithoutCaseInput | FraudEntityCreateOrConnectWithoutCaseInput[]
-    createMany?: FraudEntityCreateManyCaseInputEnvelope
-    connect?: FraudEntityWhereUniqueInput | FraudEntityWhereUniqueInput[]
+  export type CaseActivityUncheckedCreateNestedManyWithoutCaseInput = {
+    create?: XOR<CaseActivityCreateWithoutCaseInput, CaseActivityUncheckedCreateWithoutCaseInput> | CaseActivityCreateWithoutCaseInput[] | CaseActivityUncheckedCreateWithoutCaseInput[]
+    connectOrCreate?: CaseActivityCreateOrConnectWithoutCaseInput | CaseActivityCreateOrConnectWithoutCaseInput[]
+    createMany?: CaseActivityCreateManyCaseInputEnvelope
+    connect?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
-  export type UserUpdateOneRequiredWithoutCasesNestedInput = {
+  export type UserUpdateOneWithoutCasesNestedInput = {
     create?: XOR<UserCreateWithoutCasesInput, UserUncheckedCreateWithoutCasesInput>
     connectOrCreate?: UserCreateOrConnectWithoutCasesInput
     upsert?: UserUpsertWithoutCasesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCasesInput, UserUpdateWithoutCasesInput>, UserUncheckedUpdateWithoutCasesInput>
   }
@@ -11091,18 +11196,18 @@ export namespace Prisma {
     deleteMany?: InternationalRequestScalarWhereInput | InternationalRequestScalarWhereInput[]
   }
 
-  export type FraudEntityUpdateManyWithoutCaseNestedInput = {
-    create?: XOR<FraudEntityCreateWithoutCaseInput, FraudEntityUncheckedCreateWithoutCaseInput> | FraudEntityCreateWithoutCaseInput[] | FraudEntityUncheckedCreateWithoutCaseInput[]
-    connectOrCreate?: FraudEntityCreateOrConnectWithoutCaseInput | FraudEntityCreateOrConnectWithoutCaseInput[]
-    upsert?: FraudEntityUpsertWithWhereUniqueWithoutCaseInput | FraudEntityUpsertWithWhereUniqueWithoutCaseInput[]
-    createMany?: FraudEntityCreateManyCaseInputEnvelope
-    set?: FraudEntityWhereUniqueInput | FraudEntityWhereUniqueInput[]
-    disconnect?: FraudEntityWhereUniqueInput | FraudEntityWhereUniqueInput[]
-    delete?: FraudEntityWhereUniqueInput | FraudEntityWhereUniqueInput[]
-    connect?: FraudEntityWhereUniqueInput | FraudEntityWhereUniqueInput[]
-    update?: FraudEntityUpdateWithWhereUniqueWithoutCaseInput | FraudEntityUpdateWithWhereUniqueWithoutCaseInput[]
-    updateMany?: FraudEntityUpdateManyWithWhereWithoutCaseInput | FraudEntityUpdateManyWithWhereWithoutCaseInput[]
-    deleteMany?: FraudEntityScalarWhereInput | FraudEntityScalarWhereInput[]
+  export type CaseActivityUpdateManyWithoutCaseNestedInput = {
+    create?: XOR<CaseActivityCreateWithoutCaseInput, CaseActivityUncheckedCreateWithoutCaseInput> | CaseActivityCreateWithoutCaseInput[] | CaseActivityUncheckedCreateWithoutCaseInput[]
+    connectOrCreate?: CaseActivityCreateOrConnectWithoutCaseInput | CaseActivityCreateOrConnectWithoutCaseInput[]
+    upsert?: CaseActivityUpsertWithWhereUniqueWithoutCaseInput | CaseActivityUpsertWithWhereUniqueWithoutCaseInput[]
+    createMany?: CaseActivityCreateManyCaseInputEnvelope
+    set?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
+    disconnect?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
+    delete?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
+    connect?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
+    update?: CaseActivityUpdateWithWhereUniqueWithoutCaseInput | CaseActivityUpdateWithWhereUniqueWithoutCaseInput[]
+    updateMany?: CaseActivityUpdateManyWithWhereWithoutCaseInput | CaseActivityUpdateManyWithWhereWithoutCaseInput[]
+    deleteMany?: CaseActivityScalarWhereInput | CaseActivityScalarWhereInput[]
   }
 
   export type JournalEntryUncheckedUpdateManyWithoutCaseNestedInput = {
@@ -11147,18 +11252,18 @@ export namespace Prisma {
     deleteMany?: InternationalRequestScalarWhereInput | InternationalRequestScalarWhereInput[]
   }
 
-  export type FraudEntityUncheckedUpdateManyWithoutCaseNestedInput = {
-    create?: XOR<FraudEntityCreateWithoutCaseInput, FraudEntityUncheckedCreateWithoutCaseInput> | FraudEntityCreateWithoutCaseInput[] | FraudEntityUncheckedCreateWithoutCaseInput[]
-    connectOrCreate?: FraudEntityCreateOrConnectWithoutCaseInput | FraudEntityCreateOrConnectWithoutCaseInput[]
-    upsert?: FraudEntityUpsertWithWhereUniqueWithoutCaseInput | FraudEntityUpsertWithWhereUniqueWithoutCaseInput[]
-    createMany?: FraudEntityCreateManyCaseInputEnvelope
-    set?: FraudEntityWhereUniqueInput | FraudEntityWhereUniqueInput[]
-    disconnect?: FraudEntityWhereUniqueInput | FraudEntityWhereUniqueInput[]
-    delete?: FraudEntityWhereUniqueInput | FraudEntityWhereUniqueInput[]
-    connect?: FraudEntityWhereUniqueInput | FraudEntityWhereUniqueInput[]
-    update?: FraudEntityUpdateWithWhereUniqueWithoutCaseInput | FraudEntityUpdateWithWhereUniqueWithoutCaseInput[]
-    updateMany?: FraudEntityUpdateManyWithWhereWithoutCaseInput | FraudEntityUpdateManyWithWhereWithoutCaseInput[]
-    deleteMany?: FraudEntityScalarWhereInput | FraudEntityScalarWhereInput[]
+  export type CaseActivityUncheckedUpdateManyWithoutCaseNestedInput = {
+    create?: XOR<CaseActivityCreateWithoutCaseInput, CaseActivityUncheckedCreateWithoutCaseInput> | CaseActivityCreateWithoutCaseInput[] | CaseActivityUncheckedCreateWithoutCaseInput[]
+    connectOrCreate?: CaseActivityCreateOrConnectWithoutCaseInput | CaseActivityCreateOrConnectWithoutCaseInput[]
+    upsert?: CaseActivityUpsertWithWhereUniqueWithoutCaseInput | CaseActivityUpsertWithWhereUniqueWithoutCaseInput[]
+    createMany?: CaseActivityCreateManyCaseInputEnvelope
+    set?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
+    disconnect?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
+    delete?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
+    connect?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
+    update?: CaseActivityUpdateWithWhereUniqueWithoutCaseInput | CaseActivityUpdateWithWhereUniqueWithoutCaseInput[]
+    updateMany?: CaseActivityUpdateManyWithWhereWithoutCaseInput | CaseActivityUpdateManyWithWhereWithoutCaseInput[]
+    deleteMany?: CaseActivityScalarWhereInput | CaseActivityScalarWhereInput[]
   }
 
   export type CaseCreateNestedOneWithoutEntriesInput = {
@@ -11189,12 +11294,28 @@ export namespace Prisma {
     update?: XOR<XOR<CaseUpdateToOneWithWhereWithoutEntriesInput, CaseUpdateWithoutEntriesInput>, CaseUncheckedUpdateWithoutEntriesInput>
   }
 
-  export type UserUpdateOneRequiredWithoutEntriesNestedInput = {
+  export type UserUpdateOneWithoutEntriesNestedInput = {
     create?: XOR<UserCreateWithoutEntriesInput, UserUncheckedCreateWithoutEntriesInput>
     connectOrCreate?: UserCreateOrConnectWithoutEntriesInput
     upsert?: UserUpsertWithoutEntriesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEntriesInput, UserUpdateWithoutEntriesInput>, UserUncheckedUpdateWithoutEntriesInput>
+  }
+
+  export type CaseCreateNestedOneWithoutCaseActivitiesInput = {
+    create?: XOR<CaseCreateWithoutCaseActivitiesInput, CaseUncheckedCreateWithoutCaseActivitiesInput>
+    connectOrCreate?: CaseCreateOrConnectWithoutCaseActivitiesInput
+    connect?: CaseWhereUniqueInput
+  }
+
+  export type CaseUpdateOneRequiredWithoutCaseActivitiesNestedInput = {
+    create?: XOR<CaseCreateWithoutCaseActivitiesInput, CaseUncheckedCreateWithoutCaseActivitiesInput>
+    connectOrCreate?: CaseCreateOrConnectWithoutCaseActivitiesInput
+    upsert?: CaseUpsertWithoutCaseActivitiesInput
+    connect?: CaseWhereUniqueInput
+    update?: XOR<XOR<CaseUpdateToOneWithWhereWithoutCaseActivitiesInput, CaseUpdateWithoutCaseActivitiesInput>, CaseUncheckedUpdateWithoutCaseActivitiesInput>
   }
 
   export type CaseCreateNestedOneWithoutCdrRequestsInput = {
@@ -11209,36 +11330,24 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type CaseUpdateOneRequiredWithoutCdrRequestsNestedInput = {
+  export type CaseUpdateOneWithoutCdrRequestsNestedInput = {
     create?: XOR<CaseCreateWithoutCdrRequestsInput, CaseUncheckedCreateWithoutCdrRequestsInput>
     connectOrCreate?: CaseCreateOrConnectWithoutCdrRequestsInput
     upsert?: CaseUpsertWithoutCdrRequestsInput
+    disconnect?: CaseWhereInput | boolean
+    delete?: CaseWhereInput | boolean
     connect?: CaseWhereUniqueInput
     update?: XOR<XOR<CaseUpdateToOneWithWhereWithoutCdrRequestsInput, CaseUpdateWithoutCdrRequestsInput>, CaseUncheckedUpdateWithoutCdrRequestsInput>
   }
 
-  export type UserUpdateOneRequiredWithoutCdrRequestsNestedInput = {
+  export type UserUpdateOneWithoutCdrRequestsNestedInput = {
     create?: XOR<UserCreateWithoutCdrRequestsInput, UserUncheckedCreateWithoutCdrRequestsInput>
     connectOrCreate?: UserCreateOrConnectWithoutCdrRequestsInput
     upsert?: UserUpsertWithoutCdrRequestsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCdrRequestsInput, UserUpdateWithoutCdrRequestsInput>, UserUncheckedUpdateWithoutCdrRequestsInput>
-  }
-
-  export type CaseCreateNestedOneWithoutFraudEntitiesInput = {
-    create?: XOR<CaseCreateWithoutFraudEntitiesInput, CaseUncheckedCreateWithoutFraudEntitiesInput>
-    connectOrCreate?: CaseCreateOrConnectWithoutFraudEntitiesInput
-    connect?: CaseWhereUniqueInput
-  }
-
-  export type CaseUpdateOneWithoutFraudEntitiesNestedInput = {
-    create?: XOR<CaseCreateWithoutFraudEntitiesInput, CaseUncheckedCreateWithoutFraudEntitiesInput>
-    connectOrCreate?: CaseCreateOrConnectWithoutFraudEntitiesInput
-    upsert?: CaseUpsertWithoutFraudEntitiesInput
-    disconnect?: CaseWhereInput | boolean
-    delete?: CaseWhereInput | boolean
-    connect?: CaseWhereUniqueInput
-    update?: XOR<XOR<CaseUpdateToOneWithWhereWithoutFraudEntitiesInput, CaseUpdateWithoutFraudEntitiesInput>, CaseUncheckedUpdateWithoutFraudEntitiesInput>
   }
 
   export type CaseCreateNestedOneWithoutInternationalRequestsInput = {
@@ -11263,10 +11372,12 @@ export namespace Prisma {
     update?: XOR<XOR<CaseUpdateToOneWithWhereWithoutInternationalRequestsInput, CaseUpdateWithoutInternationalRequestsInput>, CaseUncheckedUpdateWithoutInternationalRequestsInput>
   }
 
-  export type UserUpdateOneRequiredWithoutInternationalRequestsNestedInput = {
+  export type UserUpdateOneWithoutInternationalRequestsNestedInput = {
     create?: XOR<UserCreateWithoutInternationalRequestsInput, UserUncheckedCreateWithoutInternationalRequestsInput>
     connectOrCreate?: UserCreateOrConnectWithoutInternationalRequestsInput
     upsert?: UserUpsertWithoutInternationalRequestsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutInternationalRequestsInput, UserUpdateWithoutInternationalRequestsInput>, UserUncheckedUpdateWithoutInternationalRequestsInput>
   }
@@ -11277,10 +11388,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutActivityReportsNestedInput = {
+  export type UserUpdateOneWithoutActivityReportsNestedInput = {
     create?: XOR<UserCreateWithoutActivityReportsInput, UserUncheckedCreateWithoutActivityReportsInput>
     connectOrCreate?: UserCreateOrConnectWithoutActivityReportsInput
     upsert?: UserUpsertWithoutActivityReportsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutActivityReportsInput, UserUpdateWithoutActivityReportsInput>, UserUncheckedUpdateWithoutActivityReportsInput>
   }
@@ -11302,6 +11415,17 @@ export namespace Prisma {
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -11351,6 +11475,31 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[]
@@ -11379,17 +11528,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | null
@@ -11405,31 +11543,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -11465,7 +11578,6 @@ export namespace Prisma {
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11474,7 +11586,7 @@ export namespace Prisma {
     entries?: JournalEntryCreateNestedManyWithoutCaseInput
     cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
-    fraudEntities?: FraudEntityCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUncheckedCreateWithoutOfficerInput = {
@@ -11483,7 +11595,6 @@ export namespace Prisma {
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11492,7 +11603,7 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedCreateNestedManyWithoutCaseInput
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
-    fraudEntities?: FraudEntityUncheckedCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityUncheckedCreateNestedManyWithoutCaseInput
   }
 
   export type CaseCreateOrConnectWithoutOfficerInput = {
@@ -11543,7 +11654,7 @@ export namespace Prisma {
     receivedAt?: Date | string | null
     attachmentPath?: string | null
     attachmentName?: string | null
-    case: CaseCreateNestedOneWithoutCdrRequestsInput
+    case?: CaseCreateNestedOneWithoutCdrRequestsInput
   }
 
   export type CdrRequestUncheckedCreateWithoutOfficerInput = {
@@ -11556,7 +11667,7 @@ export namespace Prisma {
     status?: string
     requestedAt?: Date | string
     receivedAt?: Date | string | null
-    caseId: string
+    caseId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
   }
@@ -11671,13 +11782,12 @@ export namespace Prisma {
     title?: StringFilter<"Case"> | string
     category?: StringFilter<"Case"> | string
     status?: StringFilter<"Case"> | string
-    priority?: StringFilter<"Case"> | string
     description?: StringNullableFilter<"Case"> | string | null
     createdAt?: DateTimeFilter<"Case"> | Date | string
     updatedAt?: DateTimeFilter<"Case"> | Date | string
     closedAt?: DateTimeNullableFilter<"Case"> | Date | string | null
     closureReason?: StringNullableFilter<"Case"> | string | null
-    officerId?: StringFilter<"Case"> | string
+    officerId?: StringNullableFilter<"Case"> | string | null
   }
 
   export type JournalEntryUpsertWithWhereUniqueWithoutAuthorInput = {
@@ -11706,7 +11816,7 @@ export namespace Prisma {
     actions?: StringNullableFilter<"JournalEntry"> | string | null
     createdAt?: DateTimeFilter<"JournalEntry"> | Date | string
     caseId?: StringFilter<"JournalEntry"> | string
-    authorId?: StringFilter<"JournalEntry"> | string
+    authorId?: StringNullableFilter<"JournalEntry"> | string | null
   }
 
   export type CdrRequestUpsertWithWhereUniqueWithoutOfficerInput = {
@@ -11738,8 +11848,8 @@ export namespace Prisma {
     status?: StringFilter<"CdrRequest"> | string
     requestedAt?: DateTimeFilter<"CdrRequest"> | Date | string
     receivedAt?: DateTimeNullableFilter<"CdrRequest"> | Date | string | null
-    caseId?: StringFilter<"CdrRequest"> | string
-    officerId?: StringFilter<"CdrRequest"> | string
+    caseId?: StringNullableFilter<"CdrRequest"> | string | null
+    officerId?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentPath?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentName?: StringNullableFilter<"CdrRequest"> | string | null
   }
@@ -11774,7 +11884,7 @@ export namespace Prisma {
     status?: StringFilter<"InternationalRequest"> | string
     priority?: StringFilter<"InternationalRequest"> | string
     caseId?: StringNullableFilter<"InternationalRequest"> | string | null
-    officerId?: StringFilter<"InternationalRequest"> | string
+    officerId?: StringNullableFilter<"InternationalRequest"> | string | null
     createdAt?: DateTimeFilter<"InternationalRequest"> | Date | string
     respondedAt?: DateTimeNullableFilter<"InternationalRequest"> | Date | string | null
     attachmentPath?: StringNullableFilter<"InternationalRequest"> | string | null
@@ -11809,7 +11919,7 @@ export namespace Prisma {
     challenges?: StringNullableFilter<"ActivityReport"> | string | null
     nextSteps?: StringNullableFilter<"ActivityReport"> | string | null
     status?: StringFilter<"ActivityReport"> | string
-    officerId?: StringFilter<"ActivityReport"> | string
+    officerId?: StringNullableFilter<"ActivityReport"> | string | null
     createdAt?: DateTimeFilter<"ActivityReport"> | Date | string
   }
 
@@ -11820,6 +11930,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     entries?: JournalEntryCreateNestedManyWithoutAuthorInput
@@ -11835,6 +11948,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     entries?: JournalEntryUncheckedCreateNestedManyWithoutAuthorInput
@@ -11854,7 +11970,7 @@ export namespace Prisma {
     content: string
     actions?: string | null
     createdAt?: Date | string
-    author: UserCreateNestedOneWithoutEntriesInput
+    author?: UserCreateNestedOneWithoutEntriesInput
   }
 
   export type JournalEntryUncheckedCreateWithoutCaseInput = {
@@ -11863,7 +11979,7 @@ export namespace Prisma {
     content: string
     actions?: string | null
     createdAt?: Date | string
-    authorId: string
+    authorId?: string | null
   }
 
   export type JournalEntryCreateOrConnectWithoutCaseInput = {
@@ -11887,7 +12003,7 @@ export namespace Prisma {
     receivedAt?: Date | string | null
     attachmentPath?: string | null
     attachmentName?: string | null
-    officer: UserCreateNestedOneWithoutCdrRequestsInput
+    officer?: UserCreateNestedOneWithoutCdrRequestsInput
   }
 
   export type CdrRequestUncheckedCreateWithoutCaseInput = {
@@ -11900,7 +12016,7 @@ export namespace Prisma {
     status?: string
     requestedAt?: Date | string
     receivedAt?: Date | string | null
-    officerId: string
+    officerId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
   }
@@ -11928,7 +12044,7 @@ export namespace Prisma {
     respondedAt?: Date | string | null
     attachmentPath?: string | null
     attachmentName?: string | null
-    officer: UserCreateNestedOneWithoutInternationalRequestsInput
+    officer?: UserCreateNestedOneWithoutInternationalRequestsInput
   }
 
   export type InternationalRequestUncheckedCreateWithoutCaseInput = {
@@ -11941,7 +12057,7 @@ export namespace Prisma {
     details?: string | null
     status?: string
     priority?: string
-    officerId: string
+    officerId?: string | null
     createdAt?: Date | string
     respondedAt?: Date | string | null
     attachmentPath?: string | null
@@ -11957,33 +12073,31 @@ export namespace Prisma {
     data: InternationalRequestCreateManyCaseInput | InternationalRequestCreateManyCaseInput[]
   }
 
-  export type FraudEntityCreateWithoutCaseInput = {
+  export type CaseActivityCreateWithoutCaseInput = {
     id?: string
-    type: string
-    value: string
-    category: string
-    notes?: string | null
+    userId?: string | null
+    userName: string
+    action: string
+    detail?: string | null
     createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
-  export type FraudEntityUncheckedCreateWithoutCaseInput = {
+  export type CaseActivityUncheckedCreateWithoutCaseInput = {
     id?: string
-    type: string
-    value: string
-    category: string
-    notes?: string | null
+    userId?: string | null
+    userName: string
+    action: string
+    detail?: string | null
     createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
-  export type FraudEntityCreateOrConnectWithoutCaseInput = {
-    where: FraudEntityWhereUniqueInput
-    create: XOR<FraudEntityCreateWithoutCaseInput, FraudEntityUncheckedCreateWithoutCaseInput>
+  export type CaseActivityCreateOrConnectWithoutCaseInput = {
+    where: CaseActivityWhereUniqueInput
+    create: XOR<CaseActivityCreateWithoutCaseInput, CaseActivityUncheckedCreateWithoutCaseInput>
   }
 
-  export type FraudEntityCreateManyCaseInputEnvelope = {
-    data: FraudEntityCreateManyCaseInput | FraudEntityCreateManyCaseInput[]
+  export type CaseActivityCreateManyCaseInputEnvelope = {
+    data: CaseActivityCreateManyCaseInput | CaseActivityCreateManyCaseInput[]
   }
 
   export type UserUpsertWithoutCasesInput = {
@@ -12004,6 +12118,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     entries?: JournalEntryUpdateManyWithoutAuthorNestedInput
@@ -12019,6 +12136,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     entries?: JournalEntryUncheckedUpdateManyWithoutAuthorNestedInput
@@ -12075,34 +12195,33 @@ export namespace Prisma {
     data: XOR<InternationalRequestUpdateManyMutationInput, InternationalRequestUncheckedUpdateManyWithoutCaseInput>
   }
 
-  export type FraudEntityUpsertWithWhereUniqueWithoutCaseInput = {
-    where: FraudEntityWhereUniqueInput
-    update: XOR<FraudEntityUpdateWithoutCaseInput, FraudEntityUncheckedUpdateWithoutCaseInput>
-    create: XOR<FraudEntityCreateWithoutCaseInput, FraudEntityUncheckedCreateWithoutCaseInput>
+  export type CaseActivityUpsertWithWhereUniqueWithoutCaseInput = {
+    where: CaseActivityWhereUniqueInput
+    update: XOR<CaseActivityUpdateWithoutCaseInput, CaseActivityUncheckedUpdateWithoutCaseInput>
+    create: XOR<CaseActivityCreateWithoutCaseInput, CaseActivityUncheckedCreateWithoutCaseInput>
   }
 
-  export type FraudEntityUpdateWithWhereUniqueWithoutCaseInput = {
-    where: FraudEntityWhereUniqueInput
-    data: XOR<FraudEntityUpdateWithoutCaseInput, FraudEntityUncheckedUpdateWithoutCaseInput>
+  export type CaseActivityUpdateWithWhereUniqueWithoutCaseInput = {
+    where: CaseActivityWhereUniqueInput
+    data: XOR<CaseActivityUpdateWithoutCaseInput, CaseActivityUncheckedUpdateWithoutCaseInput>
   }
 
-  export type FraudEntityUpdateManyWithWhereWithoutCaseInput = {
-    where: FraudEntityScalarWhereInput
-    data: XOR<FraudEntityUpdateManyMutationInput, FraudEntityUncheckedUpdateManyWithoutCaseInput>
+  export type CaseActivityUpdateManyWithWhereWithoutCaseInput = {
+    where: CaseActivityScalarWhereInput
+    data: XOR<CaseActivityUpdateManyMutationInput, CaseActivityUncheckedUpdateManyWithoutCaseInput>
   }
 
-  export type FraudEntityScalarWhereInput = {
-    AND?: FraudEntityScalarWhereInput | FraudEntityScalarWhereInput[]
-    OR?: FraudEntityScalarWhereInput[]
-    NOT?: FraudEntityScalarWhereInput | FraudEntityScalarWhereInput[]
-    id?: StringFilter<"FraudEntity"> | string
-    type?: StringFilter<"FraudEntity"> | string
-    value?: StringFilter<"FraudEntity"> | string
-    category?: StringFilter<"FraudEntity"> | string
-    notes?: StringNullableFilter<"FraudEntity"> | string | null
-    createdAt?: DateTimeFilter<"FraudEntity"> | Date | string
-    updatedAt?: DateTimeFilter<"FraudEntity"> | Date | string
-    caseId?: StringNullableFilter<"FraudEntity"> | string | null
+  export type CaseActivityScalarWhereInput = {
+    AND?: CaseActivityScalarWhereInput | CaseActivityScalarWhereInput[]
+    OR?: CaseActivityScalarWhereInput[]
+    NOT?: CaseActivityScalarWhereInput | CaseActivityScalarWhereInput[]
+    id?: StringFilter<"CaseActivity"> | string
+    caseId?: StringFilter<"CaseActivity"> | string
+    userId?: StringNullableFilter<"CaseActivity"> | string | null
+    userName?: StringFilter<"CaseActivity"> | string
+    action?: StringFilter<"CaseActivity"> | string
+    detail?: StringNullableFilter<"CaseActivity"> | string | null
+    createdAt?: DateTimeFilter<"CaseActivity"> | Date | string
   }
 
   export type CaseCreateWithoutEntriesInput = {
@@ -12111,16 +12230,15 @@ export namespace Prisma {
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     closedAt?: Date | string | null
     closureReason?: string | null
-    officer: UserCreateNestedOneWithoutCasesInput
+    officer?: UserCreateNestedOneWithoutCasesInput
     cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
-    fraudEntities?: FraudEntityCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUncheckedCreateWithoutEntriesInput = {
@@ -12129,16 +12247,15 @@ export namespace Prisma {
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     closedAt?: Date | string | null
     closureReason?: string | null
-    officerId: string
+    officerId?: string | null
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
-    fraudEntities?: FraudEntityUncheckedCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityUncheckedCreateNestedManyWithoutCaseInput
   }
 
   export type CaseCreateOrConnectWithoutEntriesInput = {
@@ -12153,6 +12270,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseCreateNestedManyWithoutOfficerInput
@@ -12168,6 +12288,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseUncheckedCreateNestedManyWithoutOfficerInput
@@ -12198,16 +12321,15 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closureReason?: NullableStringFieldUpdateOperationsInput | string | null
-    officer?: UserUpdateOneRequiredWithoutCasesNestedInput
+    officer?: UserUpdateOneWithoutCasesNestedInput
     cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
-    fraudEntities?: FraudEntityUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateWithoutEntriesInput = {
@@ -12216,16 +12338,15 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closureReason?: NullableStringFieldUpdateOperationsInput | string | null
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
-    fraudEntities?: FraudEntityUncheckedUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUncheckedUpdateManyWithoutCaseNestedInput
   }
 
   export type UserUpsertWithoutEntriesInput = {
@@ -12246,6 +12367,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUpdateManyWithoutOfficerNestedInput
@@ -12261,6 +12385,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUncheckedUpdateManyWithoutOfficerNestedInput
@@ -12269,22 +12396,105 @@ export namespace Prisma {
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
   }
 
+  export type CaseCreateWithoutCaseActivitiesInput = {
+    id?: string
+    caseNumber: string
+    title: string
+    category: string
+    status?: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    closedAt?: Date | string | null
+    closureReason?: string | null
+    officer?: UserCreateNestedOneWithoutCasesInput
+    entries?: JournalEntryCreateNestedManyWithoutCaseInput
+    cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
+    internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
+  }
+
+  export type CaseUncheckedCreateWithoutCaseActivitiesInput = {
+    id?: string
+    caseNumber: string
+    title: string
+    category: string
+    status?: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    closedAt?: Date | string | null
+    closureReason?: string | null
+    officerId?: string | null
+    entries?: JournalEntryUncheckedCreateNestedManyWithoutCaseInput
+    cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
+    internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
+  }
+
+  export type CaseCreateOrConnectWithoutCaseActivitiesInput = {
+    where: CaseWhereUniqueInput
+    create: XOR<CaseCreateWithoutCaseActivitiesInput, CaseUncheckedCreateWithoutCaseActivitiesInput>
+  }
+
+  export type CaseUpsertWithoutCaseActivitiesInput = {
+    update: XOR<CaseUpdateWithoutCaseActivitiesInput, CaseUncheckedUpdateWithoutCaseActivitiesInput>
+    create: XOR<CaseCreateWithoutCaseActivitiesInput, CaseUncheckedCreateWithoutCaseActivitiesInput>
+    where?: CaseWhereInput
+  }
+
+  export type CaseUpdateToOneWithWhereWithoutCaseActivitiesInput = {
+    where?: CaseWhereInput
+    data: XOR<CaseUpdateWithoutCaseActivitiesInput, CaseUncheckedUpdateWithoutCaseActivitiesInput>
+  }
+
+  export type CaseUpdateWithoutCaseActivitiesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caseNumber?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    officer?: UserUpdateOneWithoutCasesNestedInput
+    entries?: JournalEntryUpdateManyWithoutCaseNestedInput
+    cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
+    internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
+  }
+
+  export type CaseUncheckedUpdateWithoutCaseActivitiesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caseNumber?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
+    entries?: JournalEntryUncheckedUpdateManyWithoutCaseNestedInput
+    cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
+    internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
+  }
+
   export type CaseCreateWithoutCdrRequestsInput = {
     id?: string
     caseNumber: string
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     closedAt?: Date | string | null
     closureReason?: string | null
-    officer: UserCreateNestedOneWithoutCasesInput
+    officer?: UserCreateNestedOneWithoutCasesInput
     entries?: JournalEntryCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
-    fraudEntities?: FraudEntityCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUncheckedCreateWithoutCdrRequestsInput = {
@@ -12293,16 +12503,15 @@ export namespace Prisma {
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     closedAt?: Date | string | null
     closureReason?: string | null
-    officerId: string
+    officerId?: string | null
     entries?: JournalEntryUncheckedCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
-    fraudEntities?: FraudEntityUncheckedCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityUncheckedCreateNestedManyWithoutCaseInput
   }
 
   export type CaseCreateOrConnectWithoutCdrRequestsInput = {
@@ -12317,6 +12526,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseCreateNestedManyWithoutOfficerInput
@@ -12332,6 +12544,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseUncheckedCreateNestedManyWithoutOfficerInput
@@ -12362,16 +12577,15 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closureReason?: NullableStringFieldUpdateOperationsInput | string | null
-    officer?: UserUpdateOneRequiredWithoutCasesNestedInput
+    officer?: UserUpdateOneWithoutCasesNestedInput
     entries?: JournalEntryUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
-    fraudEntities?: FraudEntityUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateWithoutCdrRequestsInput = {
@@ -12380,16 +12594,15 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closureReason?: NullableStringFieldUpdateOperationsInput | string | null
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     entries?: JournalEntryUncheckedUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
-    fraudEntities?: FraudEntityUncheckedUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUncheckedUpdateManyWithoutCaseNestedInput
   }
 
   export type UserUpsertWithoutCdrRequestsInput = {
@@ -12410,6 +12623,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUpdateManyWithoutOfficerNestedInput
@@ -12425,6 +12641,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUncheckedUpdateManyWithoutOfficerNestedInput
@@ -12433,110 +12652,21 @@ export namespace Prisma {
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
   }
 
-  export type CaseCreateWithoutFraudEntitiesInput = {
-    id?: string
-    caseNumber: string
-    title: string
-    category: string
-    status?: string
-    priority?: string
-    description?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    closedAt?: Date | string | null
-    closureReason?: string | null
-    officer: UserCreateNestedOneWithoutCasesInput
-    entries?: JournalEntryCreateNestedManyWithoutCaseInput
-    cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
-    internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
-  }
-
-  export type CaseUncheckedCreateWithoutFraudEntitiesInput = {
-    id?: string
-    caseNumber: string
-    title: string
-    category: string
-    status?: string
-    priority?: string
-    description?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    closedAt?: Date | string | null
-    closureReason?: string | null
-    officerId: string
-    entries?: JournalEntryUncheckedCreateNestedManyWithoutCaseInput
-    cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
-    internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
-  }
-
-  export type CaseCreateOrConnectWithoutFraudEntitiesInput = {
-    where: CaseWhereUniqueInput
-    create: XOR<CaseCreateWithoutFraudEntitiesInput, CaseUncheckedCreateWithoutFraudEntitiesInput>
-  }
-
-  export type CaseUpsertWithoutFraudEntitiesInput = {
-    update: XOR<CaseUpdateWithoutFraudEntitiesInput, CaseUncheckedUpdateWithoutFraudEntitiesInput>
-    create: XOR<CaseCreateWithoutFraudEntitiesInput, CaseUncheckedCreateWithoutFraudEntitiesInput>
-    where?: CaseWhereInput
-  }
-
-  export type CaseUpdateToOneWithWhereWithoutFraudEntitiesInput = {
-    where?: CaseWhereInput
-    data: XOR<CaseUpdateWithoutFraudEntitiesInput, CaseUncheckedUpdateWithoutFraudEntitiesInput>
-  }
-
-  export type CaseUpdateWithoutFraudEntitiesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    caseNumber?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closureReason?: NullableStringFieldUpdateOperationsInput | string | null
-    officer?: UserUpdateOneRequiredWithoutCasesNestedInput
-    entries?: JournalEntryUpdateManyWithoutCaseNestedInput
-    cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
-    internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
-  }
-
-  export type CaseUncheckedUpdateWithoutFraudEntitiesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    caseNumber?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closureReason?: NullableStringFieldUpdateOperationsInput | string | null
-    officerId?: StringFieldUpdateOperationsInput | string
-    entries?: JournalEntryUncheckedUpdateManyWithoutCaseNestedInput
-    cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
-    internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
-  }
-
   export type CaseCreateWithoutInternationalRequestsInput = {
     id?: string
     caseNumber: string
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     closedAt?: Date | string | null
     closureReason?: string | null
-    officer: UserCreateNestedOneWithoutCasesInput
+    officer?: UserCreateNestedOneWithoutCasesInput
     entries?: JournalEntryCreateNestedManyWithoutCaseInput
     cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
-    fraudEntities?: FraudEntityCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUncheckedCreateWithoutInternationalRequestsInput = {
@@ -12545,16 +12675,15 @@ export namespace Prisma {
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     closedAt?: Date | string | null
     closureReason?: string | null
-    officerId: string
+    officerId?: string | null
     entries?: JournalEntryUncheckedCreateNestedManyWithoutCaseInput
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
-    fraudEntities?: FraudEntityUncheckedCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityUncheckedCreateNestedManyWithoutCaseInput
   }
 
   export type CaseCreateOrConnectWithoutInternationalRequestsInput = {
@@ -12569,6 +12698,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseCreateNestedManyWithoutOfficerInput
@@ -12584,6 +12716,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseUncheckedCreateNestedManyWithoutOfficerInput
@@ -12614,16 +12749,15 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closureReason?: NullableStringFieldUpdateOperationsInput | string | null
-    officer?: UserUpdateOneRequiredWithoutCasesNestedInput
+    officer?: UserUpdateOneWithoutCasesNestedInput
     entries?: JournalEntryUpdateManyWithoutCaseNestedInput
     cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
-    fraudEntities?: FraudEntityUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateWithoutInternationalRequestsInput = {
@@ -12632,16 +12766,15 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closureReason?: NullableStringFieldUpdateOperationsInput | string | null
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     entries?: JournalEntryUncheckedUpdateManyWithoutCaseNestedInput
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
-    fraudEntities?: FraudEntityUncheckedUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUncheckedUpdateManyWithoutCaseNestedInput
   }
 
   export type UserUpsertWithoutInternationalRequestsInput = {
@@ -12662,6 +12795,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUpdateManyWithoutOfficerNestedInput
@@ -12677,6 +12813,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUncheckedUpdateManyWithoutOfficerNestedInput
@@ -12692,6 +12831,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseCreateNestedManyWithoutOfficerInput
@@ -12707,6 +12849,9 @@ export namespace Prisma {
     password: string
     role?: string
     approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     cases?: CaseUncheckedCreateNestedManyWithoutOfficerInput
@@ -12738,6 +12883,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUpdateManyWithoutOfficerNestedInput
@@ -12753,6 +12901,9 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUncheckedUpdateManyWithoutOfficerNestedInput
@@ -12767,7 +12918,6 @@ export namespace Prisma {
     title: string
     category: string
     status?: string
-    priority?: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12794,7 +12944,7 @@ export namespace Prisma {
     status?: string
     requestedAt?: Date | string
     receivedAt?: Date | string | null
-    caseId: string
+    caseId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
   }
@@ -12834,7 +12984,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12843,7 +12992,7 @@ export namespace Prisma {
     entries?: JournalEntryUpdateManyWithoutCaseNestedInput
     cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
-    fraudEntities?: FraudEntityUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateWithoutOfficerInput = {
@@ -12852,7 +13001,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12861,7 +13009,7 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedUpdateManyWithoutCaseNestedInput
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
-    fraudEntities?: FraudEntityUncheckedUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUncheckedUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateManyWithoutOfficerInput = {
@@ -12870,7 +13018,6 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12917,7 +13064,7 @@ export namespace Prisma {
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
-    case?: CaseUpdateOneRequiredWithoutCdrRequestsNestedInput
+    case?: CaseUpdateOneWithoutCdrRequestsNestedInput
   }
 
   export type CdrRequestUncheckedUpdateWithoutOfficerInput = {
@@ -12930,7 +13077,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    caseId?: StringFieldUpdateOperationsInput | string
+    caseId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -12945,7 +13092,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    caseId?: StringFieldUpdateOperationsInput | string
+    caseId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -13043,7 +13190,7 @@ export namespace Prisma {
     content: string
     actions?: string | null
     createdAt?: Date | string
-    authorId: string
+    authorId?: string | null
   }
 
   export type CdrRequestCreateManyCaseInput = {
@@ -13056,7 +13203,7 @@ export namespace Prisma {
     status?: string
     requestedAt?: Date | string
     receivedAt?: Date | string | null
-    officerId: string
+    officerId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
   }
@@ -13071,21 +13218,20 @@ export namespace Prisma {
     details?: string | null
     status?: string
     priority?: string
-    officerId: string
+    officerId?: string | null
     createdAt?: Date | string
     respondedAt?: Date | string | null
     attachmentPath?: string | null
     attachmentName?: string | null
   }
 
-  export type FraudEntityCreateManyCaseInput = {
+  export type CaseActivityCreateManyCaseInput = {
     id?: string
-    type: string
-    value: string
-    category: string
-    notes?: string | null
+    userId?: string | null
+    userName: string
+    action: string
+    detail?: string | null
     createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type JournalEntryUpdateWithoutCaseInput = {
@@ -13094,7 +13240,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     actions?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    author?: UserUpdateOneRequiredWithoutEntriesNestedInput
+    author?: UserUpdateOneWithoutEntriesNestedInput
   }
 
   export type JournalEntryUncheckedUpdateWithoutCaseInput = {
@@ -13103,7 +13249,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     actions?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    authorId?: StringFieldUpdateOperationsInput | string
+    authorId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type JournalEntryUncheckedUpdateManyWithoutCaseInput = {
@@ -13112,7 +13258,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     actions?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    authorId?: StringFieldUpdateOperationsInput | string
+    authorId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CdrRequestUpdateWithoutCaseInput = {
@@ -13127,7 +13273,7 @@ export namespace Prisma {
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
-    officer?: UserUpdateOneRequiredWithoutCdrRequestsNestedInput
+    officer?: UserUpdateOneWithoutCdrRequestsNestedInput
   }
 
   export type CdrRequestUncheckedUpdateWithoutCaseInput = {
@@ -13140,7 +13286,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -13155,7 +13301,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -13174,7 +13320,7 @@ export namespace Prisma {
     respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
-    officer?: UserUpdateOneRequiredWithoutInternationalRequestsNestedInput
+    officer?: UserUpdateOneWithoutInternationalRequestsNestedInput
   }
 
   export type InternationalRequestUncheckedUpdateWithoutCaseInput = {
@@ -13187,7 +13333,7 @@ export namespace Prisma {
     details?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13204,41 +13350,38 @@ export namespace Prisma {
     details?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
-    officerId?: StringFieldUpdateOperationsInput | string
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type FraudEntityUpdateWithoutCaseInput = {
+  export type CaseActivityUpdateWithoutCaseInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    value?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    detail?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type FraudEntityUncheckedUpdateWithoutCaseInput = {
+  export type CaseActivityUncheckedUpdateWithoutCaseInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    value?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    detail?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type FraudEntityUncheckedUpdateManyWithoutCaseInput = {
+  export type CaseActivityUncheckedUpdateManyWithoutCaseInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    value?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    detail?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 
@@ -13267,13 +13410,13 @@ export namespace Prisma {
      */
     export type JournalEntryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = JournalEntryDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use CaseActivityDefaultArgs instead
+     */
+    export type CaseActivityArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CaseActivityDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use CdrRequestDefaultArgs instead
      */
     export type CdrRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CdrRequestDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use FraudEntityDefaultArgs instead
-     */
-    export type FraudEntityArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = FraudEntityDefaultArgs<ExtArgs>
     /**
      * @deprecated Use InternationalRequestDefaultArgs instead
      */

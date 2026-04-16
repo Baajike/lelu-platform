@@ -130,7 +130,7 @@ export default function InternationalPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this international request?")) return;
+    if (!confirm("Delete this network request?")) return;
     await fetch(`/api/international/${id}`, { method: "DELETE" });
     setShowDetailModal(false);
     fetchRequests(selectedOfficer);
@@ -317,7 +317,7 @@ export default function InternationalPage() {
               <tr>
                 <td colSpan={10} style={{ padding: 72, textAlign: "center" }}>
                   <Globe size={40} color="#D8E2EE" strokeWidth={1} style={{ margin: "0 auto 14px", display: "block" }} />
-                  <div style={{ fontSize: 13, color: "#8FA3BB", fontWeight: 500 }}>No international requests found.</div>
+                  <div style={{ fontSize: 13, color: "#8FA3BB", fontWeight: 500 }}>No network requests found.</div>
                   <div style={{ fontSize: 11, color: "#C4D0DC", marginTop: 4 }}>Log outgoing requests or record incoming ones from partner agencies.</div>
                 </td>
               </tr>
@@ -380,7 +380,7 @@ export default function InternationalPage() {
           <div style={{ background: "white", borderRadius: 6, padding: "36px 40px", width: 560, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 24px 64px rgba(11,31,58,0.25)" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
               <div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "#0B1F3A" }}>New International Request</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#0B1F3A" }}>New Network Request</div>
                 <div style={{ fontSize: 12, color: "#8FA3BB", marginTop: 3 }}>Log an outgoing request or record an incoming one.</div>
               </div>
               <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB" }}><X size={18} /></button>

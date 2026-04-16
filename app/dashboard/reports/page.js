@@ -163,7 +163,7 @@ export default function ReportsPage() {
             </table>`}
         </div>`;
     } else {
-      const cs = data.cases || [], cdrs = data.cdrs || [], fraud = data.fraudEntities || [], intl = data.internationalRequests || [], activities = data.activityReports || [];
+      const cs = data.cases || [], cdrs = data.cdrs || [], intl = data.internationalRequests || [], activities = data.activityReports || [];
       if (type === "weekly") {
         title = "WEEKLY ACTIVITY REPORT";
         periodStr = `Period: ${new Date(form.from).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })} to ${new Date(form.to).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}`;
@@ -201,13 +201,12 @@ export default function ReportsPage() {
           ${cdrs.length > 0 ? `<br/><table class="data-table"><thead><tr><th>Phone Number</th><th>Telco</th><th>Linked Case</th><th>Status</th></tr></thead><tbody>${cdrs.map(c => `<tr><td>${c.phoneNumber}</td><td>${c.telco}</td><td>${c.case?.caseNumber || "—"}</td><td>${c.status}</td></tr>`).join("")}</tbody></table>` : ""}
         </div>
         <div class="section">
-          <div class="section-title">4. FRAUD DATABASE INTELLIGENCE</div>
+          <div class="section-title">4. INTELLIGENCE DATABASE</div>
           <table class="info-table">
-            <tr><td class="label">Entities Added in Period</td><td>${fraud.length}</td></tr>
-            <tr><td class="label">Phone Numbers</td><td>${fraud.filter(f => f.type === "Phone Number").length}</td></tr>
-            <tr><td class="label">URLs</td><td>${fraud.filter(f => f.type === "URL").length}</td></tr>
-            <tr><td class="label">Email Addresses</td><td>${fraud.filter(f => f.type === "Email Address").length}</td></tr>
-            <tr><td class="label">Other Entities</td><td>${fraud.filter(f => !["Phone Number","URL","Email Address"].includes(f.type)).length}</td></tr>
+            <tr><td class="label">Total Cases</td><td>${cs.length}</td></tr>
+            <tr><td class="label">Total CDR Requests</td><td>${cdrs.length}</td></tr>
+            <tr><td class="label">Total Network Requests</td><td>${intl.length}</td></tr>
+            <tr><td class="label">Total Journal Entries</td><td>${cs.reduce((a, c) => a + (c.entries?.length || 0), 0)}</td></tr>
           </table>
         </div>
         <div class="section">

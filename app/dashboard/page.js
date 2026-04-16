@@ -32,7 +32,7 @@ const roleLabel = (role) => {
 export default function DashboardPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  const [stats, setStats] = useState({ cases: 0, pendingCdrs: 0, fraudEntities: 0, activeCases: 0, intlRequests: 0 });
+  const [stats, setStats] = useState({ cases: 0, pendingCdrs: 0, intelItems: 0, activeCases: 0, intlRequests: 0 });
   const [recentCases, setRecentCases] = useState([]);
   const [pendingUsers, setPendingUsers] = useState([]);
   const [teamStats, setTeamStats] = useState([]);
@@ -44,27 +44,24 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [casesRes, cdrsRes, fraudRes, intlRes] = await Promise.all([
+        const [casesRes, cdrsRes, intlRes] = await Promise.all([
           fetch("/api/cases"),
           fetch("/api/cdr"),
-          fetch("/api/fraud"),
           fetch("/api/international"),
         ]);
         const cases = await casesRes.json();
         const cdrs = await cdrsRes.json();
-        const fraud = await fraudRes.json();
         const intl = await intlRes.json();
 
         const caseList = Array.isArray(cases) ? cases : [];
         const cdrList = Array.isArray(cdrs) ? cdrs : [];
-        const fraudList = Array.isArray(fraud) ? fraud : [];
         const intlList = Array.isArray(intl) ? intl : [];
 
         setStats({
           cases: caseList.length,
           activeCases: caseList.filter(c => c.status === "Active").length,
           pendingCdrs: cdrList.filter(c => c.status === "Pending").length,
-          fraudEntities: fraudList.length,
+          intelItems: caseList.length + cdrList.length + intlList.length,
           intlRequests: intlList.filter(r => r.status === "Pending").length,
         });
         setRecentCases(caseList.slice(0, 6));
@@ -217,7 +214,7 @@ export default function DashboardPage() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20, marginBottom: 28 }}>
         <StatCard label="Total Cases" value={stats.cases} icon={FolderOpen} color="#1A5FA8" sub={`${stats.activeCases} active`} />
         <StatCard label="Pending CDRs" value={stats.pendingCdrs} icon={Phone} color="#D4730A" sub="Awaiting telco response" />
-        <StatCard label="Fraud Entities" value={stats.fraudEntities} icon={ShieldAlert} color="#C0392B" sub="In database" />
+        <StatCard label="Intel Items" value={stats.intelItems} icon={ShieldAlert} color="#C0392B" sub="Cases, CDR & network" />
         <StatCard label="Intl. Requests" value={stats.intlRequests} icon={Globe} color="#6B3FA0" sub="Pending response" />
       </div>
 
@@ -336,7 +333,7 @@ export default function DashboardPage() {
               {[
                 { label: "Open New Case", href: "/dashboard/cases", icon: FolderOpen, color: "#1A5FA8" },
                 { label: "Log CDR Request", href: "/dashboard/cdr", icon: Phone, color: "#D4730A" },
-                { label: "Add Fraud Entity", href: "/dashboard/fraud", icon: ShieldAlert, color: "#C0392B" },
+                { label: "Intel DB", href: "/dashboard/fraud", icon: ShieldAlert, color: "#C0392B" },
                 { label: "International Request", href: "/dashboard/international", icon: Globe, color: "#6B3FA0" },
               ].map(a => (
                 <button key={a.href} onClick={() => router.push(a.href)} style={{

@@ -26,6 +26,16 @@ export async function POST(request, { params }) {
       include: { author: { select: { name: true } } },
     });
 
+    await db.caseActivity.create({
+      data: {
+        caseId: id,
+        userId: session.user.id,
+        userName: session.user.name,
+        action: "Journal entry added",
+        detail: `Input ${entry.dayNumber}`,
+      },
+    }).catch(() => {});
+
     return Response.json(entry, { status: 201 });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

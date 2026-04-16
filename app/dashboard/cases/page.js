@@ -4,8 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { FolderOpen, Plus, Search, ChevronRight, X } from "lucide-react";
 
-const CATEGORIES = ["Extortion", "Investment Scams", "Impersonation", "Mobile Money Fraud", "SIM Swap", "Phishing", "Other"];
-const PRIORITIES = ["High", "Medium", "Low"];
+const CATEGORIES = ["Computer Access Offences", "Data Interference", "System Interference", "Electronic Fraud", "Cyberstalking", "Child Exploitation", "Identity Related Crimes", "Critical Infrastructure Attacks", "Other"];
 const STATUSES = ["All", "Active", "Closed"];
 const ADMIN_ROLES = ["HEAD_OF_UNIT", "SUPERVISOR", "ADMIN"];
 
@@ -15,17 +14,6 @@ const StatusBadge = ({ status }) => {
   return (
     <span style={{ background: s.bg, color: s.color, fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 3, letterSpacing: "0.06em", textTransform: "uppercase" }}>
       {status}
-    </span>
-  );
-};
-
-const PriorityBadge = ({ priority }) => {
-  const map = { High: "#C0392B", Medium: "#D4730A", Low: "#1A7A4A" };
-  const color = map[priority] || "#4E6478";
-  return (
-    <span style={{ color, fontSize: 11, fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
-      <span style={{ width: 5, height: 5, borderRadius: "50%", background: color, display: "inline-block" }} />
-      {priority}
     </span>
   );
 };
@@ -41,7 +29,7 @@ export default function CasesPage() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({ title: "", category: "Extortion", priority: "Medium", description: "" });
+  const [form, setForm] = useState({ title: "", category: "Computer Access Offences", description: "" });
   const [otherCategory, setOtherCategory] = useState("");
 
   const isAdmin = ADMIN_ROLES.includes(session?.user?.role);
@@ -93,7 +81,7 @@ export default function CasesPage() {
       if (res.ok) {
         const newCase = await res.json();
         setShowModal(false);
-        setForm({ title: "", category: "Extortion", priority: "Medium", description: "" });
+        setForm({ title: "", category: "Computer Access Offences", description: "" });
         setOtherCategory("");
         router.push(`/dashboard/cases/${newCase.id}`);
       }
@@ -110,6 +98,18 @@ export default function CasesPage() {
 
   const active = cases.filter(c => c.status === "Active").length;
   const closed = cases.filter(c => c.status === "Closed").length;
+
+  const daysOpen = (c) =>
+    Math.floor((Date.now() - new Date(c.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+
+  const isStale = (c) => {
+    if (c.status !== "Active") return false;
+    if (daysOpen(c) <= 30) return false;
+    const entries = c.entries || [];
+    if (entries.length === 0) return true;
+    const lastEntry = entries.reduce((a, b) => new Date(a.createdAt) > new Date(b.createdAt) ? a : b);
+    return (Date.now() - new Date(lastEntry.createdAt).getTime()) > 7 * 24 * 60 * 60 * 1000;
+  };
 
   const selectedOfficerName = selectedOfficer
     ? officers.find(o => o.id === selectedOfficer)?.name
@@ -235,7 +235,7 @@ export default function CasesPage() {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F7F9FC", borderBottom: "1px solid #E2E8F0" }}>
-              {["Case No.", "Title", "Category", "Officer", "Entries", "Priority", "Status", ""].map(h => (
+              {["Case No.", "Title", "Category", "Officer", "Entries", "Status", "Days Open", ""].map(h => (
                 <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase" }}>{h}</th>
               ))}
             </tr>
@@ -273,8 +273,17 @@ export default function CasesPage() {
                   </div>
                 </td>
                 <td style={{ padding: "15px 16px", fontSize: 13, fontWeight: 600, color: "#0B1F3A" }}>{c._count?.entries ?? c.entries?.length ?? 0}</td>
-                <td style={{ padding: "15px 16px" }}><PriorityBadge priority={c.priority} /></td>
                 <td style={{ padding: "15px 16px" }}><StatusBadge status={c.status} /></td>
+                <td style={{ padding: "15px 16px", whiteSpace: "nowrap" }}>
+                  {c.status === "Active" ? (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: isStale(c) ? "#D4730A" : "#4E6478" }}>
+                      {isStale(c) && <span title="No activity in 7+ days">⚠</span>}
+                      {daysOpen(c)}d
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: 12, color: "#C4D0DC" }}>—</span>
+                  )}
+                </td>
                 <td style={{ padding: "15px 16px" }}><ChevronRight size={16} color="#D8E2EE" /></td>
               </tr>
             ))}
@@ -299,23 +308,15 @@ export default function CasesPage() {
               <input className="modal-input" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Brief descriptive title..." />
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-              <div>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Category *</label>
-                <select className="modal-input" value={form.category} onChange={e => { setForm({ ...form, category: e.target.value }); setOtherCategory(""); }}>
-                  {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                </select>
-                {form.category === "Other" && (
-                  <input className="modal-input" value={otherCategory} onChange={e => setOtherCategory(e.target.value)}
-                    placeholder="Specify category..." style={{ marginTop: 8 }} />
-                )}
-              </div>
-              <div>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Priority *</label>
-                <select className="modal-input" value={form.priority} onChange={e => setForm({ ...form, priority: e.target.value })}>
-                  {PRIORITIES.map(p => <option key={p}>{p}</option>)}
-                </select>
-              </div>
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Category *</label>
+              <select className="modal-input" value={form.category} onChange={e => { setForm({ ...form, category: e.target.value }); setOtherCategory(""); }}>
+                {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+              </select>
+              {form.category === "Other" && (
+                <input className="modal-input" value={otherCategory} onChange={e => setOtherCategory(e.target.value)}
+                  placeholder="Specify category..." style={{ marginTop: 8 }} />
+              )}
             </div>
 
             <div style={{ marginBottom: 28 }}>

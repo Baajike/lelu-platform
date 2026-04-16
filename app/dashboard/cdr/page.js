@@ -31,8 +31,19 @@ export default function CdrPage() {
     phoneNumber: "", telco: "MTN", otherTelco: "",
     periodStart: "", periodEnd: "", reason: "", caseId: "",
   });
+  const [currentUser, setCurrentUser] = useState(null);
+  const [accessLoading, setAccessLoading] = useState(true);
+  const [cdrDupeWarning, setCdrDupeWarning] = useState(null);
 
   const isAdmin = ADMIN_ROLES.includes(session?.user?.role);
+
+  useEffect(() => {
+    fetch("/api/users/me")
+      .then(r => r.json())
+      .then(d => setCurrentUser(d))
+      .catch(() => setCurrentUser(null))
+      .finally(() => setAccessLoading(false));
+  }, []);
 
   const fetchCdrs = async (officerId = null) => {
     setLoading(true);
@@ -73,10 +84,7 @@ export default function CdrPage() {
     fetchCdrs(officerId);
   };
 
-  const handleSubmit = async () => {
-    if (!form.phoneNumber.trim() || !form.periodStart || !form.periodEnd || !form.reason.trim()) {
-      alert("Please fill all required fields."); return;
-    }
+  const doSubmit = async () => {
     setSubmitting(true);
     try {
       const res = await fetch("/api/cdr", {
@@ -90,6 +98,7 @@ export default function CdrPage() {
       });
       if (res.ok) {
         setShowModal(false);
+        setCdrDupeWarning(null);
         setForm({ phoneNumber: "", telco: "MTN", otherTelco: "", periodStart: "", periodEnd: "", reason: "", caseId: "" });
         fetchCdrs(selectedOfficer);
       } else {
@@ -97,6 +106,22 @@ export default function CdrPage() {
         alert(err.error || "Failed to log request.");
       }
     } finally { setSubmitting(false); }
+  };
+
+  const handleSubmit = async () => {
+    if (!form.phoneNumber.trim() || !form.periodStart || !form.periodEnd || !form.reason.trim()) {
+      alert("Please fill all required fields."); return;
+    }
+    const normalised = form.phoneNumber.trim().replace(/\s+/g, "");
+    try {
+      const res = await fetch("/api/cdr");
+      const all = await res.json();
+      if (Array.isArray(all)) {
+        const match = all.find(c => c.phoneNumber.replace(/\s+/g, "") === normalised);
+        if (match) { setCdrDupeWarning(match); return; }
+      }
+    } catch {}
+    doSubmit();
   };
 
   const handleStatusChange = async (cdrId, status) => {
@@ -145,6 +170,26 @@ export default function CdrPage() {
     received: cdrs.filter(c => c.status === "Received").length,
     rejected: cdrs.filter(c => c.status === "Rejected").length,
   };
+
+  if (accessLoading) return (
+    <div style={{ padding: 32, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading...</div>
+  );
+
+  const hasAccess = session?.user?.role === "HEAD_OF_UNIT" || currentUser?.cdrAccess === true;
+
+  if (!hasAccess) return (
+    <div style={{ padding: 32, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 400 }}>
+      <div style={{ textAlign: "center", maxWidth: 400 }}>
+        <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#FDECEA", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+          <Phone size={28} color="#C0392B" strokeWidth={1.5} />
+        </div>
+        <div style={{ fontSize: 18, fontWeight: 800, color: "#0B1F3A", marginBottom: 8 }}>Access Restricted</div>
+        <div style={{ fontSize: 13, color: "#8FA3BB", lineHeight: 1.7 }}>
+          You do not have permission to access the CDR dashboard. Contact your Head of Unit to request access.
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div style={{ padding: 32 }}>
@@ -344,7 +389,7 @@ export default function CdrPage() {
                 <div style={{ fontSize: 16, fontWeight: 700, color: "#0B1F3A" }}>New CDR Request</div>
                 <div style={{ fontSize: 12, color: "#8FA3BB", marginTop: 3 }}>Log a call detail record request to a telco.</div>
               </div>
-              <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB" }}><X size={18} /></button>
+              <button onClick={() => { setShowModal(false); setCdrDupeWarning(null); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB" }}><X size={18} /></button>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
@@ -388,11 +433,26 @@ export default function CdrPage() {
                 placeholder="Why is this CDR being requested?" style={{ height: 80, resize: "none" }} />
             </div>
 
+            {cdrDupeWarning && (
+              <div style={{ background: "#FEF3E2", border: "1px solid #F5D79E", borderRadius: 4, padding: "12px 16px", marginBottom: 16 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#8A5200", marginBottom: 3 }}>⚠ Duplicate detected</div>
+                <div style={{ fontSize: 12, color: "#8A5200", lineHeight: 1.6 }}>
+                  This number already has a CDR request{cdrDupeWarning.case ? ` linked to ${cdrDupeWarning.case.caseNumber}` : ""}. Do you still want to proceed?
+                </div>
+              </div>
+            )}
+
             <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-              <button onClick={() => setShowModal(false)} style={{ background: "white", border: "1px solid #E2E8F0", padding: "10px 22px", borderRadius: 4, fontSize: 13, cursor: "pointer", color: "#4E6478", fontFamily: "'Segoe UI', sans-serif" }}>Cancel</button>
-              <button onClick={handleSubmit} disabled={submitting} style={{ background: "#1A5FA8", color: "white", border: "none", padding: "10px 28px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif" }}>
-                {submitting ? "Saving..." : "Log Request"}
-              </button>
+              <button onClick={() => { setShowModal(false); setCdrDupeWarning(null); }} style={{ background: "white", border: "1px solid #E2E8F0", padding: "10px 22px", borderRadius: 4, fontSize: 13, cursor: "pointer", color: "#4E6478", fontFamily: "'Segoe UI', sans-serif" }}>Cancel</button>
+              {cdrDupeWarning ? (
+                <button onClick={doSubmit} disabled={submitting} style={{ background: "#D4730A", color: "white", border: "none", padding: "10px 28px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif" }}>
+                  {submitting ? "Saving..." : "Log Anyway"}
+                </button>
+              ) : (
+                <button onClick={handleSubmit} disabled={submitting} style={{ background: "#1A5FA8", color: "white", border: "none", padding: "10px 28px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif" }}>
+                  {submitting ? "Saving..." : "Log Request"}
+                </button>
+              )}
             </div>
           </div>
         </div>

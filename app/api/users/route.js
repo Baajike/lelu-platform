@@ -10,19 +10,30 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const pending = searchParams.get("pending");
     const withStats = searchParams.get("withStats");
+    const deactivated = searchParams.get("deactivated");
 
     if (pending === "true") {
+      // Pending registrations: never approved and not deactivated accounts
       const users = await db.user.findMany({
-        where: { approved: false },
+        where: { approved: false, deactivated: false },
         select: { id: true, name: true, email: true, role: true, createdAt: true },
         orderBy: { createdAt: "desc" },
       });
       return Response.json(users);
     }
 
+    if (deactivated === "true") {
+      const users = await db.user.findMany({
+        where: { deactivated: true },
+        select: { id: true, name: true, email: true, role: true, cdrAccess: true, lastActive: true },
+        orderBy: { name: "asc" },
+      });
+      return Response.json(users);
+    }
+
     if (withStats === "true") {
       const users = await db.user.findMany({
-        where: { approved: true },
+        where: { approved: true, deactivated: false },
         select: {
           id: true, name: true, email: true, role: true,
           _count: {
@@ -42,8 +53,8 @@ export async function GET(request) {
     }
 
     const users = await db.user.findMany({
-      where: { approved: true },
-      select: { id: true, name: true, email: true, role: true },
+      where: { approved: true, deactivated: false },
+      select: { id: true, name: true, email: true, role: true, cdrAccess: true, lastActive: true },
       orderBy: { name: "asc" },
     });
 

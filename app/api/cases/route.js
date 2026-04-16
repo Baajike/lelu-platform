@@ -45,7 +45,7 @@ export async function POST(request) {
     if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const { title, category, priority, description } = body;
+    const { title, category, description } = body;
 
     const count = await db.case.count();
     const caseNumber = `LELU-${new Date().getFullYear()}-${String(count + 1).padStart(3, "0")}`;
@@ -55,12 +55,21 @@ export async function POST(request) {
         caseNumber,
         title,
         category,
-        priority,
         description,
         officerId: session.user.id,
       },
       include: { officer: { select: { id: true, name: true } } },
     });
+
+    await db.caseActivity.create({
+      data: {
+        caseId: newCase.id,
+        userId: session.user.id,
+        userName: session.user.name,
+        action: "Case opened",
+        detail: `${caseNumber} — ${title}`,
+      },
+    }).catch(() => {});
 
     return Response.json(newCase, { status: 201 });
   } catch (error) {
