@@ -26,6 +26,8 @@ model User {
   cdrRequests           CdrRequest[]
   internationalRequests InternationalRequest[]
   activityReports       ActivityReport[]
+  caseAssignments       CaseAssignment[]
+  notifications         Notification[]
 }
 
 model Case {
@@ -44,8 +46,21 @@ model Case {
   entries               JournalEntry[]
   cdrRequests           CdrRequest[]
   internationalRequests InternationalRequest[]
-  fraudEntities         FraudEntity[]
   caseActivities        CaseActivity[]
+  caseAssignments       CaseAssignment[]
+}
+
+model CaseAssignment {
+  id         String   @id @default(cuid())
+  caseId     String
+  case       Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedBy String
+  assignedAt DateTime @default(now())
+  status     String   @default("Pending") // "Pending" | "Accepted" | "Declined"
+
+  @@unique([caseId, userId])
 }
 
 model JournalEntry {
@@ -74,7 +89,8 @@ model CaseActivity {
 model CdrRequest {
   id             String    @id @default(cuid())
   phoneNumber    String
-  telco          String
+  identifierType String    @default("Phone Number")
+  telco          String?
   periodStart    DateTime
   periodEnd      DateTime
   reason         String
@@ -87,18 +103,6 @@ model CdrRequest {
   officerId      String?
   attachmentPath String?
   attachmentName String?
-}
-
-model FraudEntity {
-  id        String   @id @default(cuid())
-  type      String
-  value     String
-  category  String
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  caseId    String?
-  case      Case?    @relation(fields: [caseId], references: [id])
 }
 
 model InternationalRequest {
@@ -119,6 +123,19 @@ model InternationalRequest {
   respondedAt    DateTime?
   attachmentPath String?
   attachmentName String?
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  message   String
+  link      String?
+  meta      String? // JSON string — stores assignmentId, caseId, etc.
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
 model ActivityReport {

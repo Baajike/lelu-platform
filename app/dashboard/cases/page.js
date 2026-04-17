@@ -116,7 +116,7 @@ export default function CasesPage() {
     : null;
 
   return (
-    <div style={{ padding: 32 }}>
+    <div style={{ padding: 32, overflowX: "hidden" }}>
       <style>{`
         .modal-input {
           width: 100%; border: 1.5px solid #E2E8F0; border-radius: 4px;
@@ -231,12 +231,22 @@ export default function CasesPage() {
       </div>
 
       {/* Table */}
-      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflowX: "auto", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed", minWidth: 720 }}>
+          <colgroup>
+            <col style={{ width: 120 }} />
+            <col style={{ width: "auto" }} />
+            <col style={{ width: 160 }} />
+            <col style={{ width: 140 }} />
+            <col style={{ width: 70 }} />
+            <col style={{ width: 80 }} />
+            <col style={{ width: 85 }} />
+            <col style={{ width: 36 }} />
+          </colgroup>
           <thead>
             <tr style={{ background: "#F7F9FC", borderBottom: "1px solid #E2E8F0" }}>
               {["Case No.", "Title", "Category", "Officer", "Entries", "Status", "Days Open", ""].map(h => (
-                <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase" }}>{h}</th>
+                <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase", overflow: "hidden" }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -260,16 +270,31 @@ export default function CasesPage() {
               >
                 <td style={{ padding: "15px 16px", fontSize: 11, fontWeight: 700, color: "#1A5FA8", letterSpacing: "0.05em" }}>{c.caseNumber}</td>
                 <td style={{ padding: "15px 16px" }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "#0B1F3A" }}>{c.title}</div>
-                  {c.description && <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 2, maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.description}</div>}
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#0B1F3A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.title}</div>
+                  {c.description && <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.description}</div>}
                 </td>
-                <td style={{ padding: "15px 16px", fontSize: 12, color: "#4E6478" }}>{c.category}</td>
+                <td style={{ padding: "15px 16px", fontSize: 12, color: "#4E6478", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.category}</td>
                 <td style={{ padding: "15px 16px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                    <div style={{ width: 26, height: 26, borderRadius: "50%", background: "#0B1F3A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color: "white", flexShrink: 0 }}>
-                      {c.officer?.name?.charAt(0).toUpperCase()}
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      {/* Case owner avatar */}
+                      <div title={c.officer?.name} style={{ width: 26, height: 26, borderRadius: "50%", background: "#0B1F3A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color: "white", flexShrink: 0, border: "2px solid white", zIndex: 3 }}>
+                        {c.officer?.name?.charAt(0).toUpperCase()}
+                      </div>
+                      {/* Accepted assigned officer avatars (up to 2) */}
+                      {(c.caseAssignments || []).filter(a => a.status === "Accepted").slice(0, 2).map((a, ai) => (
+                        <div key={a.id} title={a.user?.name} style={{ width: 26, height: 26, borderRadius: "50%", background: "#4E6478", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color: "white", flexShrink: 0, border: "2px solid white", marginLeft: -8, zIndex: 2 - ai }}>
+                          {a.user?.name?.charAt(0).toUpperCase()}
+                        </div>
+                      ))}
+                      {/* Overflow badge */}
+                      {(c.caseAssignments || []).filter(a => a.status === "Accepted").length > 2 && (
+                        <div style={{ width: 26, height: 26, borderRadius: "50%", background: "#E2E8F0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: "#4E6478", flexShrink: 0, border: "2px solid white", marginLeft: -8 }}>
+                          +{(c.caseAssignments || []).filter(a => a.status === "Accepted").length - 2}
+                        </div>
+                      )}
                     </div>
-                    <span style={{ fontSize: 12, color: "#4E6478" }}>{c.officer?.name}</span>
+                    <span style={{ fontSize: 12, color: "#4E6478", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.officer?.name}</span>
                   </div>
                 </td>
                 <td style={{ padding: "15px 16px", fontSize: 13, fontWeight: 600, color: "#0B1F3A" }}>{c._count?.entries ?? c.entries?.length ?? 0}</td>

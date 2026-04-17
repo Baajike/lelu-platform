@@ -41,12 +41,13 @@ export async function POST(request) {
     if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const { phoneNumber, telco, periodStart, periodEnd, reason, caseId } = body;
+    const { phoneNumber, identifierType, telco, periodStart, periodEnd, reason, caseId } = body;
 
     const cdr = await db.cdrRequest.create({
       data: {
         phoneNumber,
-        telco,
+        identifierType: identifierType || "Phone Number",
+        telco: telco || null,
         periodStart: new Date(periodStart),
         periodEnd: new Date(periodEnd),
         reason,
@@ -66,7 +67,7 @@ export async function POST(request) {
           userId: session.user.id,
           userName: session.user.name,
           action: "CDR request logged",
-          detail: `${cdr.phoneNumber} (${cdr.telco})`,
+          detail: `${cdr.phoneNumber} [${cdr.identifierType}]${cdr.telco ? ` (${cdr.telco})` : ""}`,
         },
       }).catch(() => {});
     }

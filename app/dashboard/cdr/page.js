@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { Plus, X, Phone, Upload, Download, CheckCircle, Clock, XCircle } from "lucide-react";
 
 const TELCOS = ["MTN", "Vodafone", "AirtelTigo", "Other"];
+const IDENTIFIER_TYPES = ["Phone Number", "IMEI", "ID Document", "Email Address", "Physical Address", "Bank Account", "Device Serial Number", "Other"];
 const STATUSES = ["Pending", "Received", "Rejected"];
 const ADMIN_ROLES = ["HEAD_OF_UNIT", "SUPERVISOR", "ADMIN"];
 
@@ -28,7 +29,8 @@ export default function CdrPage() {
   const [uploadingId, setUploadingId] = useState(null);
   const [statusFilter, setStatusFilter] = useState("");
   const [form, setForm] = useState({
-    phoneNumber: "", telco: "MTN", otherTelco: "",
+    phoneNumber: "", identifierType: "Phone Number", otherIdentifierType: "",
+    telco: "MTN", otherTelco: "",
     periodStart: "", periodEnd: "", reason: "", caseId: "",
   });
   const [currentUser, setCurrentUser] = useState(null);
@@ -92,14 +94,17 @@ export default function CdrPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          telco: form.telco === "Other" ? form.otherTelco : form.telco,
+          identifierType: form.identifierType === "Other" ? form.otherIdentifierType : form.identifierType,
+          telco: form.identifierType === "Phone Number"
+            ? (form.telco === "Other" ? form.otherTelco : form.telco)
+            : null,
           caseId: form.caseId || null,
         }),
       });
       if (res.ok) {
         setShowModal(false);
         setCdrDupeWarning(null);
-        setForm({ phoneNumber: "", telco: "MTN", otherTelco: "", periodStart: "", periodEnd: "", reason: "", caseId: "" });
+        setForm({ phoneNumber: "", identifierType: "Phone Number", otherIdentifierType: "", telco: "MTN", otherTelco: "", periodStart: "", periodEnd: "", reason: "", caseId: "" });
         fetchCdrs(selectedOfficer);
       } else {
         const err = await res.json();
@@ -113,11 +118,15 @@ export default function CdrPage() {
       alert("Please fill all required fields."); return;
     }
     const normalised = form.phoneNumber.trim().replace(/\s+/g, "");
+    const resolvedType = form.identifierType === "Other" ? form.otherIdentifierType : form.identifierType;
     try {
       const res = await fetch("/api/cdr");
       const all = await res.json();
       if (Array.isArray(all)) {
-        const match = all.find(c => c.phoneNumber.replace(/\s+/g, "") === normalised);
+        const match = all.find(c =>
+          c.phoneNumber.replace(/\s+/g, "") === normalised &&
+          (c.identifierType || "Phone Number") === resolvedType
+        );
         if (match) { setCdrDupeWarning(match); return; }
       }
     } catch {}
@@ -192,7 +201,7 @@ export default function CdrPage() {
   );
 
   return (
-    <div style={{ padding: 32 }}>
+    <div style={{ padding: 32, overflowX: "hidden" }}>
       <style>{`
         .modal-input {
           width: 100%; border: 1.5px solid #E2E8F0; border-radius: 4px;
@@ -292,12 +301,23 @@ export default function CdrPage() {
       </div>
 
       {/* Table */}
-      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflowX: "auto", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed", minWidth: 860 }}>
+          <colgroup>
+            <col style={{ width: 175 }} />
+            <col style={{ width: 75 }} />
+            <col style={{ width: 155 }} />
+            <col style={{ width: 115 }} />
+            <col style={{ width: 85 }} />
+            <col style={{ width: 130 }} />
+            <col style={{ width: 105 }} />
+            <col style={{ width: 110 }} />
+            <col style={{ width: 75 }} />
+          </colgroup>
           <thead>
             <tr style={{ background: "#F7F9FC", borderBottom: "1px solid #E2E8F0" }}>
-              {["Phone Number", "Telco", "Period", "Officer", "Linked Case", "Reason", "Status", "Attachment", "Actions"].map(h => (
-                <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+              {["Identifier", "Telco", "Period", "Officer", "Linked Case", "Reason", "Status", "Attachment", "Actions"].map(h => (
+                <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden" }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -318,10 +338,16 @@ export default function CdrPage() {
               return (
                 <tr key={c.id} className="cdr-row" style={{ borderBottom: i < filtered.length - 1 ? "1px solid #F7F9FC" : "none" }}>
                   <td style={{ padding: "14px 16px" }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A" }}>{c.phoneNumber}</div>
+                    <span style={{ fontSize: 10, fontWeight: 700, background: "#EEF2F7", color: "#4E6478", padding: "2px 7px", borderRadius: 3, letterSpacing: "0.04em", whiteSpace: "nowrap", display: "inline-block", marginBottom: 3 }}>
+                      {c.identifierType || "Phone Number"}
+                    </span>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.phoneNumber}</div>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: "#4E6478", background: "#F0F4F8", padding: "3px 10px", borderRadius: 3 }}>{c.telco}</span>
+                    {c.telco
+                      ? <span style={{ fontSize: 12, fontWeight: 600, color: "#4E6478", background: "#F0F4F8", padding: "3px 10px", borderRadius: 3 }}>{c.telco}</span>
+                      : <span style={{ color: "#C4D0DC", fontSize: 12 }}>—</span>
+                    }
                   </td>
                   <td style={{ padding: "14px 16px", fontSize: 11, color: "#4E6478", whiteSpace: "nowrap" }}>
                     {new Date(c.periodStart).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
@@ -341,7 +367,7 @@ export default function CdrPage() {
                       <span style={{ fontSize: 11, fontWeight: 700, color: "#1A5FA8", background: "#EBF3FB", padding: "3px 10px", borderRadius: 3 }}>{c.case?.caseNumber}</span>
                     ) : <span style={{ color: "#C4D0DC", fontSize: 12 }}>—</span>}
                   </td>
-                  <td style={{ padding: "14px 16px", fontSize: 12, color: "#4E6478", maxWidth: 160 }}>
+                  <td style={{ padding: "14px 16px", fontSize: 12, color: "#4E6478" }}>
                     <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.reason}</div>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
@@ -392,20 +418,33 @@ export default function CdrPage() {
               <button onClick={() => { setShowModal(false); setCdrDupeWarning(null); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB" }}><X size={18} /></button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Type *</label>
+              <select className="modal-input" value={form.identifierType} onChange={e => setForm({ ...form, identifierType: e.target.value, otherIdentifierType: "" })}>
+                {IDENTIFIER_TYPES.map(t => <option key={t}>{t}</option>)}
+              </select>
+              {form.identifierType === "Other" && (
+                <input className="modal-input" value={form.otherIdentifierType} onChange={e => setForm({ ...form, otherIdentifierType: e.target.value })} placeholder="Specify type..." style={{ marginTop: 8 }} />
+              )}
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: form.identifierType === "Phone Number" ? "1fr 1fr" : "1fr", gap: 14, marginBottom: 14 }}>
               <div>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Phone Number *</label>
-                <input className="modal-input" value={form.phoneNumber} onChange={e => setForm({ ...form, phoneNumber: e.target.value })} placeholder="+233244000000" />
+                <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Identifier *</label>
+                <input className="modal-input" value={form.phoneNumber} onChange={e => setForm({ ...form, phoneNumber: e.target.value })}
+                  placeholder={form.identifierType === "Phone Number" ? "+233244000000" : `Enter ${form.identifierType === "Other" ? "identifier" : form.identifierType.toLowerCase()}...`} />
               </div>
-              <div>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Telco *</label>
-                <select className="modal-input" value={form.telco} onChange={e => setForm({ ...form, telco: e.target.value, otherTelco: "" })}>
-                  {TELCOS.map(t => <option key={t}>{t}</option>)}
-                </select>
-                {form.telco === "Other" && (
-                  <input className="modal-input" value={form.otherTelco} onChange={e => setForm({ ...form, otherTelco: e.target.value })} placeholder="Specify telco..." style={{ marginTop: 8 }} />
-                )}
-              </div>
+              {form.identifierType === "Phone Number" && (
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Telco *</label>
+                  <select className="modal-input" value={form.telco} onChange={e => setForm({ ...form, telco: e.target.value, otherTelco: "" })}>
+                    {TELCOS.map(t => <option key={t}>{t}</option>)}
+                  </select>
+                  {form.telco === "Other" && (
+                    <input className="modal-input" value={form.otherTelco} onChange={e => setForm({ ...form, otherTelco: e.target.value })} placeholder="Specify telco..." style={{ marginTop: 8 }} />
+                  )}
+                </div>
+              )}
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>

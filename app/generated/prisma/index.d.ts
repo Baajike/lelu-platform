@@ -24,6 +24,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type Case = $Result.DefaultSelection<Prisma.$CasePayload>
 /**
+ * Model CaseAssignment
+ * 
+ */
+export type CaseAssignment = $Result.DefaultSelection<Prisma.$CaseAssignmentPayload>
+/**
  * Model JournalEntry
  * 
  */
@@ -43,6 +48,11 @@ export type CdrRequest = $Result.DefaultSelection<Prisma.$CdrRequestPayload>
  * 
  */
 export type InternationalRequest = $Result.DefaultSelection<Prisma.$InternationalRequestPayload>
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
 /**
  * Model ActivityReport
  * 
@@ -193,6 +203,16 @@ export class PrismaClient<
   get case(): Prisma.CaseDelegate<ExtArgs>;
 
   /**
+   * `prisma.caseAssignment`: Exposes CRUD operations for the **CaseAssignment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CaseAssignments
+    * const caseAssignments = await prisma.caseAssignment.findMany()
+    * ```
+    */
+  get caseAssignment(): Prisma.CaseAssignmentDelegate<ExtArgs>;
+
+  /**
    * `prisma.journalEntry`: Exposes CRUD operations for the **JournalEntry** model.
     * Example usage:
     * ```ts
@@ -231,6 +251,16 @@ export class PrismaClient<
     * ```
     */
   get internationalRequest(): Prisma.InternationalRequestDelegate<ExtArgs>;
+
+  /**
+   * `prisma.notification`: Exposes CRUD operations for the **Notification** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Notifications
+    * const notifications = await prisma.notification.findMany()
+    * ```
+    */
+  get notification(): Prisma.NotificationDelegate<ExtArgs>;
 
   /**
    * `prisma.activityReport`: Exposes CRUD operations for the **ActivityReport** model.
@@ -684,10 +714,12 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Case: 'Case',
+    CaseAssignment: 'CaseAssignment',
     JournalEntry: 'JournalEntry',
     CaseActivity: 'CaseActivity',
     CdrRequest: 'CdrRequest',
     InternationalRequest: 'InternationalRequest',
+    Notification: 'Notification',
     ActivityReport: 'ActivityReport'
   };
 
@@ -704,7 +736,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "case" | "journalEntry" | "caseActivity" | "cdrRequest" | "internationalRequest" | "activityReport"
+      modelProps: "user" | "case" | "caseAssignment" | "journalEntry" | "caseActivity" | "cdrRequest" | "internationalRequest" | "notification" | "activityReport"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -845,6 +877,76 @@ export namespace Prisma {
           count: {
             args: Prisma.CaseCountArgs<ExtArgs>
             result: $Utils.Optional<CaseCountAggregateOutputType> | number
+          }
+        }
+      }
+      CaseAssignment: {
+        payload: Prisma.$CaseAssignmentPayload<ExtArgs>
+        fields: Prisma.CaseAssignmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CaseAssignmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseAssignmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CaseAssignmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseAssignmentPayload>
+          }
+          findFirst: {
+            args: Prisma.CaseAssignmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseAssignmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CaseAssignmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseAssignmentPayload>
+          }
+          findMany: {
+            args: Prisma.CaseAssignmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseAssignmentPayload>[]
+          }
+          create: {
+            args: Prisma.CaseAssignmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseAssignmentPayload>
+          }
+          createMany: {
+            args: Prisma.CaseAssignmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CaseAssignmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseAssignmentPayload>[]
+          }
+          delete: {
+            args: Prisma.CaseAssignmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseAssignmentPayload>
+          }
+          update: {
+            args: Prisma.CaseAssignmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseAssignmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.CaseAssignmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CaseAssignmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.CaseAssignmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CaseAssignmentPayload>
+          }
+          aggregate: {
+            args: Prisma.CaseAssignmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCaseAssignment>
+          }
+          groupBy: {
+            args: Prisma.CaseAssignmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CaseAssignmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CaseAssignmentCountArgs<ExtArgs>
+            result: $Utils.Optional<CaseAssignmentCountAggregateOutputType> | number
           }
         }
       }
@@ -1128,6 +1230,76 @@ export namespace Prisma {
           }
         }
       }
+      Notification: {
+        payload: Prisma.$NotificationPayload<ExtArgs>
+        fields: Prisma.NotificationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.NotificationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.NotificationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          findFirst: {
+            args: Prisma.NotificationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.NotificationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          findMany: {
+            args: Prisma.NotificationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>[]
+          }
+          create: {
+            args: Prisma.NotificationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          createMany: {
+            args: Prisma.NotificationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.NotificationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>[]
+          }
+          delete: {
+            args: Prisma.NotificationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          update: {
+            args: Prisma.NotificationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          deleteMany: {
+            args: Prisma.NotificationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.NotificationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.NotificationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          aggregate: {
+            args: Prisma.NotificationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateNotification>
+          }
+          groupBy: {
+            args: Prisma.NotificationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<NotificationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.NotificationCountArgs<ExtArgs>
+            result: $Utils.Optional<NotificationCountAggregateOutputType> | number
+          }
+        }
+      }
       ActivityReport: {
         payload: Prisma.$ActivityReportPayload<ExtArgs>
         fields: Prisma.ActivityReportFieldRefs
@@ -1364,6 +1536,8 @@ export namespace Prisma {
     cdrRequests: number
     internationalRequests: number
     activityReports: number
+    caseAssignments: number
+    notifications: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1372,6 +1546,8 @@ export namespace Prisma {
     cdrRequests?: boolean | UserCountOutputTypeCountCdrRequestsArgs
     internationalRequests?: boolean | UserCountOutputTypeCountInternationalRequestsArgs
     activityReports?: boolean | UserCountOutputTypeCountActivityReportsArgs
+    caseAssignments?: boolean | UserCountOutputTypeCountCaseAssignmentsArgs
+    notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   }
 
   // Custom InputTypes
@@ -1420,6 +1596,20 @@ export namespace Prisma {
     where?: ActivityReportWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCaseAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CaseAssignmentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+  }
+
 
   /**
    * Count Type CaseCountOutputType
@@ -1430,6 +1620,7 @@ export namespace Prisma {
     cdrRequests: number
     internationalRequests: number
     caseActivities: number
+    caseAssignments: number
   }
 
   export type CaseCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1437,6 +1628,7 @@ export namespace Prisma {
     cdrRequests?: boolean | CaseCountOutputTypeCountCdrRequestsArgs
     internationalRequests?: boolean | CaseCountOutputTypeCountInternationalRequestsArgs
     caseActivities?: boolean | CaseCountOutputTypeCountCaseActivitiesArgs
+    caseAssignments?: boolean | CaseCountOutputTypeCountCaseAssignmentsArgs
   }
 
   // Custom InputTypes
@@ -1476,6 +1668,13 @@ export namespace Prisma {
    */
   export type CaseCountOutputTypeCountCaseActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CaseActivityWhereInput
+  }
+
+  /**
+   * CaseCountOutputType without action
+   */
+  export type CaseCountOutputTypeCountCaseAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CaseAssignmentWhereInput
   }
 
 
@@ -1700,6 +1899,8 @@ export namespace Prisma {
     cdrRequests?: boolean | User$cdrRequestsArgs<ExtArgs>
     internationalRequests?: boolean | User$internationalRequestsArgs<ExtArgs>
     activityReports?: boolean | User$activityReportsArgs<ExtArgs>
+    caseAssignments?: boolean | User$caseAssignmentsArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1737,6 +1938,8 @@ export namespace Prisma {
     cdrRequests?: boolean | User$cdrRequestsArgs<ExtArgs>
     internationalRequests?: boolean | User$internationalRequestsArgs<ExtArgs>
     activityReports?: boolean | User$activityReportsArgs<ExtArgs>
+    caseAssignments?: boolean | User$caseAssignmentsArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1749,6 +1952,8 @@ export namespace Prisma {
       cdrRequests: Prisma.$CdrRequestPayload<ExtArgs>[]
       internationalRequests: Prisma.$InternationalRequestPayload<ExtArgs>[]
       activityReports: Prisma.$ActivityReportPayload<ExtArgs>[]
+      caseAssignments: Prisma.$CaseAssignmentPayload<ExtArgs>[]
+      notifications: Prisma.$NotificationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2131,6 +2336,8 @@ export namespace Prisma {
     cdrRequests<T extends User$cdrRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$cdrRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CdrRequestPayload<ExtArgs>, T, "findMany"> | Null>
     internationalRequests<T extends User$internationalRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$internationalRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InternationalRequestPayload<ExtArgs>, T, "findMany"> | Null>
     activityReports<T extends User$activityReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$activityReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityReportPayload<ExtArgs>, T, "findMany"> | Null>
+    caseAssignments<T extends User$caseAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$caseAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "findMany"> | Null>
+    notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2583,6 +2790,46 @@ export namespace Prisma {
   }
 
   /**
+   * User.caseAssignments
+   */
+  export type User$caseAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
+    where?: CaseAssignmentWhereInput
+    orderBy?: CaseAssignmentOrderByWithRelationInput | CaseAssignmentOrderByWithRelationInput[]
+    cursor?: CaseAssignmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CaseAssignmentScalarFieldEnum | CaseAssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * User.notifications
+   */
+  export type User$notificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    cursor?: NotificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2814,6 +3061,7 @@ export namespace Prisma {
     cdrRequests?: boolean | Case$cdrRequestsArgs<ExtArgs>
     internationalRequests?: boolean | Case$internationalRequestsArgs<ExtArgs>
     caseActivities?: boolean | Case$caseActivitiesArgs<ExtArgs>
+    caseAssignments?: boolean | Case$caseAssignmentsArgs<ExtArgs>
     _count?: boolean | CaseCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["case"]>
 
@@ -2852,6 +3100,7 @@ export namespace Prisma {
     cdrRequests?: boolean | Case$cdrRequestsArgs<ExtArgs>
     internationalRequests?: boolean | Case$internationalRequestsArgs<ExtArgs>
     caseActivities?: boolean | Case$caseActivitiesArgs<ExtArgs>
+    caseAssignments?: boolean | Case$caseAssignmentsArgs<ExtArgs>
     _count?: boolean | CaseCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CaseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2866,6 +3115,7 @@ export namespace Prisma {
       cdrRequests: Prisma.$CdrRequestPayload<ExtArgs>[]
       internationalRequests: Prisma.$InternationalRequestPayload<ExtArgs>[]
       caseActivities: Prisma.$CaseActivityPayload<ExtArgs>[]
+      caseAssignments: Prisma.$CaseAssignmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3248,6 +3498,7 @@ export namespace Prisma {
     cdrRequests<T extends Case$cdrRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Case$cdrRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CdrRequestPayload<ExtArgs>, T, "findMany"> | Null>
     internationalRequests<T extends Case$internationalRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Case$internationalRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InternationalRequestPayload<ExtArgs>, T, "findMany"> | Null>
     caseActivities<T extends Case$caseActivitiesArgs<ExtArgs> = {}>(args?: Subset<T, Case$caseActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseActivityPayload<ExtArgs>, T, "findMany"> | Null>
+    caseAssignments<T extends Case$caseAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Case$caseAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3699,6 +3950,26 @@ export namespace Prisma {
   }
 
   /**
+   * Case.caseAssignments
+   */
+  export type Case$caseAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
+    where?: CaseAssignmentWhereInput
+    orderBy?: CaseAssignmentOrderByWithRelationInput | CaseAssignmentOrderByWithRelationInput[]
+    cursor?: CaseAssignmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CaseAssignmentScalarFieldEnum | CaseAssignmentScalarFieldEnum[]
+  }
+
+  /**
    * Case without action
    */
   export type CaseDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3710,6 +3981,955 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: CaseInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CaseAssignment
+   */
+
+  export type AggregateCaseAssignment = {
+    _count: CaseAssignmentCountAggregateOutputType | null
+    _min: CaseAssignmentMinAggregateOutputType | null
+    _max: CaseAssignmentMaxAggregateOutputType | null
+  }
+
+  export type CaseAssignmentMinAggregateOutputType = {
+    id: string | null
+    caseId: string | null
+    userId: string | null
+    assignedBy: string | null
+    assignedAt: Date | null
+    status: string | null
+  }
+
+  export type CaseAssignmentMaxAggregateOutputType = {
+    id: string | null
+    caseId: string | null
+    userId: string | null
+    assignedBy: string | null
+    assignedAt: Date | null
+    status: string | null
+  }
+
+  export type CaseAssignmentCountAggregateOutputType = {
+    id: number
+    caseId: number
+    userId: number
+    assignedBy: number
+    assignedAt: number
+    status: number
+    _all: number
+  }
+
+
+  export type CaseAssignmentMinAggregateInputType = {
+    id?: true
+    caseId?: true
+    userId?: true
+    assignedBy?: true
+    assignedAt?: true
+    status?: true
+  }
+
+  export type CaseAssignmentMaxAggregateInputType = {
+    id?: true
+    caseId?: true
+    userId?: true
+    assignedBy?: true
+    assignedAt?: true
+    status?: true
+  }
+
+  export type CaseAssignmentCountAggregateInputType = {
+    id?: true
+    caseId?: true
+    userId?: true
+    assignedBy?: true
+    assignedAt?: true
+    status?: true
+    _all?: true
+  }
+
+  export type CaseAssignmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CaseAssignment to aggregate.
+     */
+    where?: CaseAssignmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CaseAssignments to fetch.
+     */
+    orderBy?: CaseAssignmentOrderByWithRelationInput | CaseAssignmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CaseAssignmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CaseAssignments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CaseAssignments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CaseAssignments
+    **/
+    _count?: true | CaseAssignmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CaseAssignmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CaseAssignmentMaxAggregateInputType
+  }
+
+  export type GetCaseAssignmentAggregateType<T extends CaseAssignmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateCaseAssignment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCaseAssignment[P]>
+      : GetScalarType<T[P], AggregateCaseAssignment[P]>
+  }
+
+
+
+
+  export type CaseAssignmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CaseAssignmentWhereInput
+    orderBy?: CaseAssignmentOrderByWithAggregationInput | CaseAssignmentOrderByWithAggregationInput[]
+    by: CaseAssignmentScalarFieldEnum[] | CaseAssignmentScalarFieldEnum
+    having?: CaseAssignmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CaseAssignmentCountAggregateInputType | true
+    _min?: CaseAssignmentMinAggregateInputType
+    _max?: CaseAssignmentMaxAggregateInputType
+  }
+
+  export type CaseAssignmentGroupByOutputType = {
+    id: string
+    caseId: string
+    userId: string
+    assignedBy: string
+    assignedAt: Date
+    status: string
+    _count: CaseAssignmentCountAggregateOutputType | null
+    _min: CaseAssignmentMinAggregateOutputType | null
+    _max: CaseAssignmentMaxAggregateOutputType | null
+  }
+
+  type GetCaseAssignmentGroupByPayload<T extends CaseAssignmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CaseAssignmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CaseAssignmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CaseAssignmentGroupByOutputType[P]>
+            : GetScalarType<T[P], CaseAssignmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CaseAssignmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    caseId?: boolean
+    userId?: boolean
+    assignedBy?: boolean
+    assignedAt?: boolean
+    status?: boolean
+    case?: boolean | CaseDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["caseAssignment"]>
+
+  export type CaseAssignmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    caseId?: boolean
+    userId?: boolean
+    assignedBy?: boolean
+    assignedAt?: boolean
+    status?: boolean
+    case?: boolean | CaseDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["caseAssignment"]>
+
+  export type CaseAssignmentSelectScalar = {
+    id?: boolean
+    caseId?: boolean
+    userId?: boolean
+    assignedBy?: boolean
+    assignedAt?: boolean
+    status?: boolean
+  }
+
+  export type CaseAssignmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    case?: boolean | CaseDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CaseAssignmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    case?: boolean | CaseDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $CaseAssignmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CaseAssignment"
+    objects: {
+      case: Prisma.$CasePayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      caseId: string
+      userId: string
+      assignedBy: string
+      assignedAt: Date
+      status: string
+    }, ExtArgs["result"]["caseAssignment"]>
+    composites: {}
+  }
+
+  type CaseAssignmentGetPayload<S extends boolean | null | undefined | CaseAssignmentDefaultArgs> = $Result.GetResult<Prisma.$CaseAssignmentPayload, S>
+
+  type CaseAssignmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<CaseAssignmentFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: CaseAssignmentCountAggregateInputType | true
+    }
+
+  export interface CaseAssignmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CaseAssignment'], meta: { name: 'CaseAssignment' } }
+    /**
+     * Find zero or one CaseAssignment that matches the filter.
+     * @param {CaseAssignmentFindUniqueArgs} args - Arguments to find a CaseAssignment
+     * @example
+     * // Get one CaseAssignment
+     * const caseAssignment = await prisma.caseAssignment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CaseAssignmentFindUniqueArgs>(args: SelectSubset<T, CaseAssignmentFindUniqueArgs<ExtArgs>>): Prisma__CaseAssignmentClient<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one CaseAssignment that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {CaseAssignmentFindUniqueOrThrowArgs} args - Arguments to find a CaseAssignment
+     * @example
+     * // Get one CaseAssignment
+     * const caseAssignment = await prisma.caseAssignment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CaseAssignmentFindUniqueOrThrowArgs>(args: SelectSubset<T, CaseAssignmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CaseAssignmentClient<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first CaseAssignment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseAssignmentFindFirstArgs} args - Arguments to find a CaseAssignment
+     * @example
+     * // Get one CaseAssignment
+     * const caseAssignment = await prisma.caseAssignment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CaseAssignmentFindFirstArgs>(args?: SelectSubset<T, CaseAssignmentFindFirstArgs<ExtArgs>>): Prisma__CaseAssignmentClient<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first CaseAssignment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseAssignmentFindFirstOrThrowArgs} args - Arguments to find a CaseAssignment
+     * @example
+     * // Get one CaseAssignment
+     * const caseAssignment = await prisma.caseAssignment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CaseAssignmentFindFirstOrThrowArgs>(args?: SelectSubset<T, CaseAssignmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__CaseAssignmentClient<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more CaseAssignments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseAssignmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CaseAssignments
+     * const caseAssignments = await prisma.caseAssignment.findMany()
+     * 
+     * // Get first 10 CaseAssignments
+     * const caseAssignments = await prisma.caseAssignment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const caseAssignmentWithIdOnly = await prisma.caseAssignment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CaseAssignmentFindManyArgs>(args?: SelectSubset<T, CaseAssignmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a CaseAssignment.
+     * @param {CaseAssignmentCreateArgs} args - Arguments to create a CaseAssignment.
+     * @example
+     * // Create one CaseAssignment
+     * const CaseAssignment = await prisma.caseAssignment.create({
+     *   data: {
+     *     // ... data to create a CaseAssignment
+     *   }
+     * })
+     * 
+     */
+    create<T extends CaseAssignmentCreateArgs>(args: SelectSubset<T, CaseAssignmentCreateArgs<ExtArgs>>): Prisma__CaseAssignmentClient<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many CaseAssignments.
+     * @param {CaseAssignmentCreateManyArgs} args - Arguments to create many CaseAssignments.
+     * @example
+     * // Create many CaseAssignments
+     * const caseAssignment = await prisma.caseAssignment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CaseAssignmentCreateManyArgs>(args?: SelectSubset<T, CaseAssignmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CaseAssignments and returns the data saved in the database.
+     * @param {CaseAssignmentCreateManyAndReturnArgs} args - Arguments to create many CaseAssignments.
+     * @example
+     * // Create many CaseAssignments
+     * const caseAssignment = await prisma.caseAssignment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CaseAssignments and only return the `id`
+     * const caseAssignmentWithIdOnly = await prisma.caseAssignment.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CaseAssignmentCreateManyAndReturnArgs>(args?: SelectSubset<T, CaseAssignmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a CaseAssignment.
+     * @param {CaseAssignmentDeleteArgs} args - Arguments to delete one CaseAssignment.
+     * @example
+     * // Delete one CaseAssignment
+     * const CaseAssignment = await prisma.caseAssignment.delete({
+     *   where: {
+     *     // ... filter to delete one CaseAssignment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CaseAssignmentDeleteArgs>(args: SelectSubset<T, CaseAssignmentDeleteArgs<ExtArgs>>): Prisma__CaseAssignmentClient<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one CaseAssignment.
+     * @param {CaseAssignmentUpdateArgs} args - Arguments to update one CaseAssignment.
+     * @example
+     * // Update one CaseAssignment
+     * const caseAssignment = await prisma.caseAssignment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CaseAssignmentUpdateArgs>(args: SelectSubset<T, CaseAssignmentUpdateArgs<ExtArgs>>): Prisma__CaseAssignmentClient<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more CaseAssignments.
+     * @param {CaseAssignmentDeleteManyArgs} args - Arguments to filter CaseAssignments to delete.
+     * @example
+     * // Delete a few CaseAssignments
+     * const { count } = await prisma.caseAssignment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CaseAssignmentDeleteManyArgs>(args?: SelectSubset<T, CaseAssignmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CaseAssignments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseAssignmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CaseAssignments
+     * const caseAssignment = await prisma.caseAssignment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CaseAssignmentUpdateManyArgs>(args: SelectSubset<T, CaseAssignmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one CaseAssignment.
+     * @param {CaseAssignmentUpsertArgs} args - Arguments to update or create a CaseAssignment.
+     * @example
+     * // Update or create a CaseAssignment
+     * const caseAssignment = await prisma.caseAssignment.upsert({
+     *   create: {
+     *     // ... data to create a CaseAssignment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CaseAssignment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CaseAssignmentUpsertArgs>(args: SelectSubset<T, CaseAssignmentUpsertArgs<ExtArgs>>): Prisma__CaseAssignmentClient<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of CaseAssignments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseAssignmentCountArgs} args - Arguments to filter CaseAssignments to count.
+     * @example
+     * // Count the number of CaseAssignments
+     * const count = await prisma.caseAssignment.count({
+     *   where: {
+     *     // ... the filter for the CaseAssignments we want to count
+     *   }
+     * })
+    **/
+    count<T extends CaseAssignmentCountArgs>(
+      args?: Subset<T, CaseAssignmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CaseAssignmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CaseAssignment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseAssignmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CaseAssignmentAggregateArgs>(args: Subset<T, CaseAssignmentAggregateArgs>): Prisma.PrismaPromise<GetCaseAssignmentAggregateType<T>>
+
+    /**
+     * Group by CaseAssignment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CaseAssignmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CaseAssignmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CaseAssignmentGroupByArgs['orderBy'] }
+        : { orderBy?: CaseAssignmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CaseAssignmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCaseAssignmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CaseAssignment model
+   */
+  readonly fields: CaseAssignmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CaseAssignment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CaseAssignmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    case<T extends CaseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CaseDefaultArgs<ExtArgs>>): Prisma__CaseClient<$Result.GetResult<Prisma.$CasePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CaseAssignment model
+   */ 
+  interface CaseAssignmentFieldRefs {
+    readonly id: FieldRef<"CaseAssignment", 'String'>
+    readonly caseId: FieldRef<"CaseAssignment", 'String'>
+    readonly userId: FieldRef<"CaseAssignment", 'String'>
+    readonly assignedBy: FieldRef<"CaseAssignment", 'String'>
+    readonly assignedAt: FieldRef<"CaseAssignment", 'DateTime'>
+    readonly status: FieldRef<"CaseAssignment", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CaseAssignment findUnique
+   */
+  export type CaseAssignmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter, which CaseAssignment to fetch.
+     */
+    where: CaseAssignmentWhereUniqueInput
+  }
+
+  /**
+   * CaseAssignment findUniqueOrThrow
+   */
+  export type CaseAssignmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter, which CaseAssignment to fetch.
+     */
+    where: CaseAssignmentWhereUniqueInput
+  }
+
+  /**
+   * CaseAssignment findFirst
+   */
+  export type CaseAssignmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter, which CaseAssignment to fetch.
+     */
+    where?: CaseAssignmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CaseAssignments to fetch.
+     */
+    orderBy?: CaseAssignmentOrderByWithRelationInput | CaseAssignmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CaseAssignments.
+     */
+    cursor?: CaseAssignmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CaseAssignments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CaseAssignments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CaseAssignments.
+     */
+    distinct?: CaseAssignmentScalarFieldEnum | CaseAssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * CaseAssignment findFirstOrThrow
+   */
+  export type CaseAssignmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter, which CaseAssignment to fetch.
+     */
+    where?: CaseAssignmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CaseAssignments to fetch.
+     */
+    orderBy?: CaseAssignmentOrderByWithRelationInput | CaseAssignmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CaseAssignments.
+     */
+    cursor?: CaseAssignmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CaseAssignments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CaseAssignments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CaseAssignments.
+     */
+    distinct?: CaseAssignmentScalarFieldEnum | CaseAssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * CaseAssignment findMany
+   */
+  export type CaseAssignmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter, which CaseAssignments to fetch.
+     */
+    where?: CaseAssignmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CaseAssignments to fetch.
+     */
+    orderBy?: CaseAssignmentOrderByWithRelationInput | CaseAssignmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CaseAssignments.
+     */
+    cursor?: CaseAssignmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CaseAssignments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CaseAssignments.
+     */
+    skip?: number
+    distinct?: CaseAssignmentScalarFieldEnum | CaseAssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * CaseAssignment create
+   */
+  export type CaseAssignmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CaseAssignment.
+     */
+    data: XOR<CaseAssignmentCreateInput, CaseAssignmentUncheckedCreateInput>
+  }
+
+  /**
+   * CaseAssignment createMany
+   */
+  export type CaseAssignmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CaseAssignments.
+     */
+    data: CaseAssignmentCreateManyInput | CaseAssignmentCreateManyInput[]
+  }
+
+  /**
+   * CaseAssignment createManyAndReturn
+   */
+  export type CaseAssignmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many CaseAssignments.
+     */
+    data: CaseAssignmentCreateManyInput | CaseAssignmentCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CaseAssignment update
+   */
+  export type CaseAssignmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CaseAssignment.
+     */
+    data: XOR<CaseAssignmentUpdateInput, CaseAssignmentUncheckedUpdateInput>
+    /**
+     * Choose, which CaseAssignment to update.
+     */
+    where: CaseAssignmentWhereUniqueInput
+  }
+
+  /**
+   * CaseAssignment updateMany
+   */
+  export type CaseAssignmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CaseAssignments.
+     */
+    data: XOR<CaseAssignmentUpdateManyMutationInput, CaseAssignmentUncheckedUpdateManyInput>
+    /**
+     * Filter which CaseAssignments to update
+     */
+    where?: CaseAssignmentWhereInput
+  }
+
+  /**
+   * CaseAssignment upsert
+   */
+  export type CaseAssignmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CaseAssignment to update in case it exists.
+     */
+    where: CaseAssignmentWhereUniqueInput
+    /**
+     * In case the CaseAssignment found by the `where` argument doesn't exist, create a new CaseAssignment with this data.
+     */
+    create: XOR<CaseAssignmentCreateInput, CaseAssignmentUncheckedCreateInput>
+    /**
+     * In case the CaseAssignment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CaseAssignmentUpdateInput, CaseAssignmentUncheckedUpdateInput>
+  }
+
+  /**
+   * CaseAssignment delete
+   */
+  export type CaseAssignmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter which CaseAssignment to delete.
+     */
+    where: CaseAssignmentWhereUniqueInput
+  }
+
+  /**
+   * CaseAssignment deleteMany
+   */
+  export type CaseAssignmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CaseAssignments to delete
+     */
+    where?: CaseAssignmentWhereInput
+  }
+
+  /**
+   * CaseAssignment without action
+   */
+  export type CaseAssignmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CaseAssignment
+     */
+    select?: CaseAssignmentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CaseAssignmentInclude<ExtArgs> | null
   }
 
 
@@ -5691,6 +6911,7 @@ export namespace Prisma {
   export type CdrRequestMinAggregateOutputType = {
     id: string | null
     phoneNumber: string | null
+    identifierType: string | null
     telco: string | null
     periodStart: Date | null
     periodEnd: Date | null
@@ -5707,6 +6928,7 @@ export namespace Prisma {
   export type CdrRequestMaxAggregateOutputType = {
     id: string | null
     phoneNumber: string | null
+    identifierType: string | null
     telco: string | null
     periodStart: Date | null
     periodEnd: Date | null
@@ -5723,6 +6945,7 @@ export namespace Prisma {
   export type CdrRequestCountAggregateOutputType = {
     id: number
     phoneNumber: number
+    identifierType: number
     telco: number
     periodStart: number
     periodEnd: number
@@ -5741,6 +6964,7 @@ export namespace Prisma {
   export type CdrRequestMinAggregateInputType = {
     id?: true
     phoneNumber?: true
+    identifierType?: true
     telco?: true
     periodStart?: true
     periodEnd?: true
@@ -5757,6 +6981,7 @@ export namespace Prisma {
   export type CdrRequestMaxAggregateInputType = {
     id?: true
     phoneNumber?: true
+    identifierType?: true
     telco?: true
     periodStart?: true
     periodEnd?: true
@@ -5773,6 +6998,7 @@ export namespace Prisma {
   export type CdrRequestCountAggregateInputType = {
     id?: true
     phoneNumber?: true
+    identifierType?: true
     telco?: true
     periodStart?: true
     periodEnd?: true
@@ -5862,7 +7088,8 @@ export namespace Prisma {
   export type CdrRequestGroupByOutputType = {
     id: string
     phoneNumber: string
-    telco: string
+    identifierType: string
+    telco: string | null
     periodStart: Date
     periodEnd: Date
     reason: string
@@ -5895,6 +7122,7 @@ export namespace Prisma {
   export type CdrRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     phoneNumber?: boolean
+    identifierType?: boolean
     telco?: boolean
     periodStart?: boolean
     periodEnd?: boolean
@@ -5913,6 +7141,7 @@ export namespace Prisma {
   export type CdrRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     phoneNumber?: boolean
+    identifierType?: boolean
     telco?: boolean
     periodStart?: boolean
     periodEnd?: boolean
@@ -5931,6 +7160,7 @@ export namespace Prisma {
   export type CdrRequestSelectScalar = {
     id?: boolean
     phoneNumber?: boolean
+    identifierType?: boolean
     telco?: boolean
     periodStart?: boolean
     periodEnd?: boolean
@@ -5962,7 +7192,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       phoneNumber: string
-      telco: string
+      identifierType: string
+      telco: string | null
       periodStart: Date
       periodEnd: Date
       reason: string
@@ -6370,6 +7601,7 @@ export namespace Prisma {
   interface CdrRequestFieldRefs {
     readonly id: FieldRef<"CdrRequest", 'String'>
     readonly phoneNumber: FieldRef<"CdrRequest", 'String'>
+    readonly identifierType: FieldRef<"CdrRequest", 'String'>
     readonly telco: FieldRef<"CdrRequest", 'String'>
     readonly periodStart: FieldRef<"CdrRequest", 'DateTime'>
     readonly periodEnd: FieldRef<"CdrRequest", 'DateTime'>
@@ -7829,6 +9061,985 @@ export namespace Prisma {
 
 
   /**
+   * Model Notification
+   */
+
+  export type AggregateNotification = {
+    _count: NotificationCountAggregateOutputType | null
+    _min: NotificationMinAggregateOutputType | null
+    _max: NotificationMaxAggregateOutputType | null
+  }
+
+  export type NotificationMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    type: string | null
+    title: string | null
+    message: string | null
+    link: string | null
+    meta: string | null
+    read: boolean | null
+    createdAt: Date | null
+  }
+
+  export type NotificationMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    type: string | null
+    title: string | null
+    message: string | null
+    link: string | null
+    meta: string | null
+    read: boolean | null
+    createdAt: Date | null
+  }
+
+  export type NotificationCountAggregateOutputType = {
+    id: number
+    userId: number
+    type: number
+    title: number
+    message: number
+    link: number
+    meta: number
+    read: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type NotificationMinAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    title?: true
+    message?: true
+    link?: true
+    meta?: true
+    read?: true
+    createdAt?: true
+  }
+
+  export type NotificationMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    title?: true
+    message?: true
+    link?: true
+    meta?: true
+    read?: true
+    createdAt?: true
+  }
+
+  export type NotificationCountAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    title?: true
+    message?: true
+    link?: true
+    meta?: true
+    read?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type NotificationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Notification to aggregate.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Notifications
+    **/
+    _count?: true | NotificationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: NotificationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: NotificationMaxAggregateInputType
+  }
+
+  export type GetNotificationAggregateType<T extends NotificationAggregateArgs> = {
+        [P in keyof T & keyof AggregateNotification]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateNotification[P]>
+      : GetScalarType<T[P], AggregateNotification[P]>
+  }
+
+
+
+
+  export type NotificationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithAggregationInput | NotificationOrderByWithAggregationInput[]
+    by: NotificationScalarFieldEnum[] | NotificationScalarFieldEnum
+    having?: NotificationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: NotificationCountAggregateInputType | true
+    _min?: NotificationMinAggregateInputType
+    _max?: NotificationMaxAggregateInputType
+  }
+
+  export type NotificationGroupByOutputType = {
+    id: string
+    userId: string
+    type: string
+    title: string
+    message: string
+    link: string | null
+    meta: string | null
+    read: boolean
+    createdAt: Date
+    _count: NotificationCountAggregateOutputType | null
+    _min: NotificationMinAggregateOutputType | null
+    _max: NotificationMaxAggregateOutputType | null
+  }
+
+  type GetNotificationGroupByPayload<T extends NotificationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<NotificationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof NotificationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], NotificationGroupByOutputType[P]>
+            : GetScalarType<T[P], NotificationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type NotificationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    title?: boolean
+    message?: boolean
+    link?: boolean
+    meta?: boolean
+    read?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["notification"]>
+
+  export type NotificationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    title?: boolean
+    message?: boolean
+    link?: boolean
+    meta?: boolean
+    read?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["notification"]>
+
+  export type NotificationSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    title?: boolean
+    message?: boolean
+    link?: boolean
+    meta?: boolean
+    read?: boolean
+    createdAt?: boolean
+  }
+
+  export type NotificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type NotificationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $NotificationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Notification"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      type: string
+      title: string
+      message: string
+      link: string | null
+      meta: string | null
+      read: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["notification"]>
+    composites: {}
+  }
+
+  type NotificationGetPayload<S extends boolean | null | undefined | NotificationDefaultArgs> = $Result.GetResult<Prisma.$NotificationPayload, S>
+
+  type NotificationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<NotificationFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: NotificationCountAggregateInputType | true
+    }
+
+  export interface NotificationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Notification'], meta: { name: 'Notification' } }
+    /**
+     * Find zero or one Notification that matches the filter.
+     * @param {NotificationFindUniqueArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends NotificationFindUniqueArgs>(args: SelectSubset<T, NotificationFindUniqueArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Notification that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {NotificationFindUniqueOrThrowArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends NotificationFindUniqueOrThrowArgs>(args: SelectSubset<T, NotificationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Notification that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationFindFirstArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends NotificationFindFirstArgs>(args?: SelectSubset<T, NotificationFindFirstArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Notification that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationFindFirstOrThrowArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends NotificationFindFirstOrThrowArgs>(args?: SelectSubset<T, NotificationFindFirstOrThrowArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Notifications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Notifications
+     * const notifications = await prisma.notification.findMany()
+     * 
+     * // Get first 10 Notifications
+     * const notifications = await prisma.notification.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const notificationWithIdOnly = await prisma.notification.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends NotificationFindManyArgs>(args?: SelectSubset<T, NotificationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Notification.
+     * @param {NotificationCreateArgs} args - Arguments to create a Notification.
+     * @example
+     * // Create one Notification
+     * const Notification = await prisma.notification.create({
+     *   data: {
+     *     // ... data to create a Notification
+     *   }
+     * })
+     * 
+     */
+    create<T extends NotificationCreateArgs>(args: SelectSubset<T, NotificationCreateArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Notifications.
+     * @param {NotificationCreateManyArgs} args - Arguments to create many Notifications.
+     * @example
+     * // Create many Notifications
+     * const notification = await prisma.notification.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends NotificationCreateManyArgs>(args?: SelectSubset<T, NotificationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Notifications and returns the data saved in the database.
+     * @param {NotificationCreateManyAndReturnArgs} args - Arguments to create many Notifications.
+     * @example
+     * // Create many Notifications
+     * const notification = await prisma.notification.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Notifications and only return the `id`
+     * const notificationWithIdOnly = await prisma.notification.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends NotificationCreateManyAndReturnArgs>(args?: SelectSubset<T, NotificationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Notification.
+     * @param {NotificationDeleteArgs} args - Arguments to delete one Notification.
+     * @example
+     * // Delete one Notification
+     * const Notification = await prisma.notification.delete({
+     *   where: {
+     *     // ... filter to delete one Notification
+     *   }
+     * })
+     * 
+     */
+    delete<T extends NotificationDeleteArgs>(args: SelectSubset<T, NotificationDeleteArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Notification.
+     * @param {NotificationUpdateArgs} args - Arguments to update one Notification.
+     * @example
+     * // Update one Notification
+     * const notification = await prisma.notification.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends NotificationUpdateArgs>(args: SelectSubset<T, NotificationUpdateArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Notifications.
+     * @param {NotificationDeleteManyArgs} args - Arguments to filter Notifications to delete.
+     * @example
+     * // Delete a few Notifications
+     * const { count } = await prisma.notification.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends NotificationDeleteManyArgs>(args?: SelectSubset<T, NotificationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Notifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Notifications
+     * const notification = await prisma.notification.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends NotificationUpdateManyArgs>(args: SelectSubset<T, NotificationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Notification.
+     * @param {NotificationUpsertArgs} args - Arguments to update or create a Notification.
+     * @example
+     * // Update or create a Notification
+     * const notification = await prisma.notification.upsert({
+     *   create: {
+     *     // ... data to create a Notification
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Notification we want to update
+     *   }
+     * })
+     */
+    upsert<T extends NotificationUpsertArgs>(args: SelectSubset<T, NotificationUpsertArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Notifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationCountArgs} args - Arguments to filter Notifications to count.
+     * @example
+     * // Count the number of Notifications
+     * const count = await prisma.notification.count({
+     *   where: {
+     *     // ... the filter for the Notifications we want to count
+     *   }
+     * })
+    **/
+    count<T extends NotificationCountArgs>(
+      args?: Subset<T, NotificationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], NotificationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Notification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends NotificationAggregateArgs>(args: Subset<T, NotificationAggregateArgs>): Prisma.PrismaPromise<GetNotificationAggregateType<T>>
+
+    /**
+     * Group by Notification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends NotificationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: NotificationGroupByArgs['orderBy'] }
+        : { orderBy?: NotificationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, NotificationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetNotificationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Notification model
+   */
+  readonly fields: NotificationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Notification.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Notification model
+   */ 
+  interface NotificationFieldRefs {
+    readonly id: FieldRef<"Notification", 'String'>
+    readonly userId: FieldRef<"Notification", 'String'>
+    readonly type: FieldRef<"Notification", 'String'>
+    readonly title: FieldRef<"Notification", 'String'>
+    readonly message: FieldRef<"Notification", 'String'>
+    readonly link: FieldRef<"Notification", 'String'>
+    readonly meta: FieldRef<"Notification", 'String'>
+    readonly read: FieldRef<"Notification", 'Boolean'>
+    readonly createdAt: FieldRef<"Notification", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Notification findUnique
+   */
+  export type NotificationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification findUniqueOrThrow
+   */
+  export type NotificationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification findFirst
+   */
+  export type NotificationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Notifications.
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Notifications.
+     */
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * Notification findFirstOrThrow
+   */
+  export type NotificationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Notifications.
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Notifications.
+     */
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * Notification findMany
+   */
+  export type NotificationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notifications to fetch.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Notifications.
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * Notification create
+   */
+  export type NotificationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Notification.
+     */
+    data: XOR<NotificationCreateInput, NotificationUncheckedCreateInput>
+  }
+
+  /**
+   * Notification createMany
+   */
+  export type NotificationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Notifications.
+     */
+    data: NotificationCreateManyInput | NotificationCreateManyInput[]
+  }
+
+  /**
+   * Notification createManyAndReturn
+   */
+  export type NotificationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many Notifications.
+     */
+    data: NotificationCreateManyInput | NotificationCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Notification update
+   */
+  export type NotificationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Notification.
+     */
+    data: XOR<NotificationUpdateInput, NotificationUncheckedUpdateInput>
+    /**
+     * Choose, which Notification to update.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification updateMany
+   */
+  export type NotificationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Notifications.
+     */
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyInput>
+    /**
+     * Filter which Notifications to update
+     */
+    where?: NotificationWhereInput
+  }
+
+  /**
+   * Notification upsert
+   */
+  export type NotificationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Notification to update in case it exists.
+     */
+    where: NotificationWhereUniqueInput
+    /**
+     * In case the Notification found by the `where` argument doesn't exist, create a new Notification with this data.
+     */
+    create: XOR<NotificationCreateInput, NotificationUncheckedCreateInput>
+    /**
+     * In case the Notification was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<NotificationUpdateInput, NotificationUncheckedUpdateInput>
+  }
+
+  /**
+   * Notification delete
+   */
+  export type NotificationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter which Notification to delete.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification deleteMany
+   */
+  export type NotificationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Notifications to delete
+     */
+    where?: NotificationWhereInput
+  }
+
+  /**
+   * Notification without action
+   */
+  export type NotificationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model ActivityReport
    */
 
@@ -8879,6 +11090,18 @@ export namespace Prisma {
   export type CaseScalarFieldEnum = (typeof CaseScalarFieldEnum)[keyof typeof CaseScalarFieldEnum]
 
 
+  export const CaseAssignmentScalarFieldEnum: {
+    id: 'id',
+    caseId: 'caseId',
+    userId: 'userId',
+    assignedBy: 'assignedBy',
+    assignedAt: 'assignedAt',
+    status: 'status'
+  };
+
+  export type CaseAssignmentScalarFieldEnum = (typeof CaseAssignmentScalarFieldEnum)[keyof typeof CaseAssignmentScalarFieldEnum]
+
+
   export const JournalEntryScalarFieldEnum: {
     id: 'id',
     dayNumber: 'dayNumber',
@@ -8908,6 +11131,7 @@ export namespace Prisma {
   export const CdrRequestScalarFieldEnum: {
     id: 'id',
     phoneNumber: 'phoneNumber',
+    identifierType: 'identifierType',
     telco: 'telco',
     periodStart: 'periodStart',
     periodEnd: 'periodEnd',
@@ -8943,6 +11167,21 @@ export namespace Prisma {
   };
 
   export type InternationalRequestScalarFieldEnum = (typeof InternationalRequestScalarFieldEnum)[keyof typeof InternationalRequestScalarFieldEnum]
+
+
+  export const NotificationScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    type: 'type',
+    title: 'title',
+    message: 'message',
+    link: 'link',
+    meta: 'meta',
+    read: 'read',
+    createdAt: 'createdAt'
+  };
+
+  export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
   export const ActivityReportScalarFieldEnum: {
@@ -9040,6 +11279,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestListRelationFilter
     internationalRequests?: InternationalRequestListRelationFilter
     activityReports?: ActivityReportListRelationFilter
+    caseAssignments?: CaseAssignmentListRelationFilter
+    notifications?: NotificationListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -9059,6 +11300,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestOrderByRelationAggregateInput
     internationalRequests?: InternationalRequestOrderByRelationAggregateInput
     activityReports?: ActivityReportOrderByRelationAggregateInput
+    caseAssignments?: CaseAssignmentOrderByRelationAggregateInput
+    notifications?: NotificationOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -9081,6 +11324,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestListRelationFilter
     internationalRequests?: InternationalRequestListRelationFilter
     activityReports?: ActivityReportListRelationFilter
+    caseAssignments?: CaseAssignmentListRelationFilter
+    notifications?: NotificationListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -9137,6 +11382,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestListRelationFilter
     internationalRequests?: InternationalRequestListRelationFilter
     caseActivities?: CaseActivityListRelationFilter
+    caseAssignments?: CaseAssignmentListRelationFilter
   }
 
   export type CaseOrderByWithRelationInput = {
@@ -9156,6 +11402,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestOrderByRelationAggregateInput
     internationalRequests?: InternationalRequestOrderByRelationAggregateInput
     caseActivities?: CaseActivityOrderByRelationAggregateInput
+    caseAssignments?: CaseAssignmentOrderByRelationAggregateInput
   }
 
   export type CaseWhereUniqueInput = Prisma.AtLeast<{
@@ -9178,6 +11425,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestListRelationFilter
     internationalRequests?: InternationalRequestListRelationFilter
     caseActivities?: CaseActivityListRelationFilter
+    caseAssignments?: CaseAssignmentListRelationFilter
   }, "id" | "caseNumber">
 
   export type CaseOrderByWithAggregationInput = {
@@ -9212,6 +11460,70 @@ export namespace Prisma {
     closedAt?: DateTimeNullableWithAggregatesFilter<"Case"> | Date | string | null
     closureReason?: StringNullableWithAggregatesFilter<"Case"> | string | null
     officerId?: StringNullableWithAggregatesFilter<"Case"> | string | null
+  }
+
+  export type CaseAssignmentWhereInput = {
+    AND?: CaseAssignmentWhereInput | CaseAssignmentWhereInput[]
+    OR?: CaseAssignmentWhereInput[]
+    NOT?: CaseAssignmentWhereInput | CaseAssignmentWhereInput[]
+    id?: StringFilter<"CaseAssignment"> | string
+    caseId?: StringFilter<"CaseAssignment"> | string
+    userId?: StringFilter<"CaseAssignment"> | string
+    assignedBy?: StringFilter<"CaseAssignment"> | string
+    assignedAt?: DateTimeFilter<"CaseAssignment"> | Date | string
+    status?: StringFilter<"CaseAssignment"> | string
+    case?: XOR<CaseRelationFilter, CaseWhereInput>
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type CaseAssignmentOrderByWithRelationInput = {
+    id?: SortOrder
+    caseId?: SortOrder
+    userId?: SortOrder
+    assignedBy?: SortOrder
+    assignedAt?: SortOrder
+    status?: SortOrder
+    case?: CaseOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type CaseAssignmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    caseId_userId?: CaseAssignmentCaseIdUserIdCompoundUniqueInput
+    AND?: CaseAssignmentWhereInput | CaseAssignmentWhereInput[]
+    OR?: CaseAssignmentWhereInput[]
+    NOT?: CaseAssignmentWhereInput | CaseAssignmentWhereInput[]
+    caseId?: StringFilter<"CaseAssignment"> | string
+    userId?: StringFilter<"CaseAssignment"> | string
+    assignedBy?: StringFilter<"CaseAssignment"> | string
+    assignedAt?: DateTimeFilter<"CaseAssignment"> | Date | string
+    status?: StringFilter<"CaseAssignment"> | string
+    case?: XOR<CaseRelationFilter, CaseWhereInput>
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id" | "caseId_userId">
+
+  export type CaseAssignmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    caseId?: SortOrder
+    userId?: SortOrder
+    assignedBy?: SortOrder
+    assignedAt?: SortOrder
+    status?: SortOrder
+    _count?: CaseAssignmentCountOrderByAggregateInput
+    _max?: CaseAssignmentMaxOrderByAggregateInput
+    _min?: CaseAssignmentMinOrderByAggregateInput
+  }
+
+  export type CaseAssignmentScalarWhereWithAggregatesInput = {
+    AND?: CaseAssignmentScalarWhereWithAggregatesInput | CaseAssignmentScalarWhereWithAggregatesInput[]
+    OR?: CaseAssignmentScalarWhereWithAggregatesInput[]
+    NOT?: CaseAssignmentScalarWhereWithAggregatesInput | CaseAssignmentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CaseAssignment"> | string
+    caseId?: StringWithAggregatesFilter<"CaseAssignment"> | string
+    userId?: StringWithAggregatesFilter<"CaseAssignment"> | string
+    assignedBy?: StringWithAggregatesFilter<"CaseAssignment"> | string
+    assignedAt?: DateTimeWithAggregatesFilter<"CaseAssignment"> | Date | string
+    status?: StringWithAggregatesFilter<"CaseAssignment"> | string
   }
 
   export type JournalEntryWhereInput = {
@@ -9355,7 +11667,8 @@ export namespace Prisma {
     NOT?: CdrRequestWhereInput | CdrRequestWhereInput[]
     id?: StringFilter<"CdrRequest"> | string
     phoneNumber?: StringFilter<"CdrRequest"> | string
-    telco?: StringFilter<"CdrRequest"> | string
+    identifierType?: StringFilter<"CdrRequest"> | string
+    telco?: StringNullableFilter<"CdrRequest"> | string | null
     periodStart?: DateTimeFilter<"CdrRequest"> | Date | string
     periodEnd?: DateTimeFilter<"CdrRequest"> | Date | string
     reason?: StringFilter<"CdrRequest"> | string
@@ -9373,7 +11686,8 @@ export namespace Prisma {
   export type CdrRequestOrderByWithRelationInput = {
     id?: SortOrder
     phoneNumber?: SortOrder
-    telco?: SortOrder
+    identifierType?: SortOrder
+    telco?: SortOrderInput | SortOrder
     periodStart?: SortOrder
     periodEnd?: SortOrder
     reason?: SortOrder
@@ -9394,7 +11708,8 @@ export namespace Prisma {
     OR?: CdrRequestWhereInput[]
     NOT?: CdrRequestWhereInput | CdrRequestWhereInput[]
     phoneNumber?: StringFilter<"CdrRequest"> | string
-    telco?: StringFilter<"CdrRequest"> | string
+    identifierType?: StringFilter<"CdrRequest"> | string
+    telco?: StringNullableFilter<"CdrRequest"> | string | null
     periodStart?: DateTimeFilter<"CdrRequest"> | Date | string
     periodEnd?: DateTimeFilter<"CdrRequest"> | Date | string
     reason?: StringFilter<"CdrRequest"> | string
@@ -9412,7 +11727,8 @@ export namespace Prisma {
   export type CdrRequestOrderByWithAggregationInput = {
     id?: SortOrder
     phoneNumber?: SortOrder
-    telco?: SortOrder
+    identifierType?: SortOrder
+    telco?: SortOrderInput | SortOrder
     periodStart?: SortOrder
     periodEnd?: SortOrder
     reason?: SortOrder
@@ -9434,7 +11750,8 @@ export namespace Prisma {
     NOT?: CdrRequestScalarWhereWithAggregatesInput | CdrRequestScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"CdrRequest"> | string
     phoneNumber?: StringWithAggregatesFilter<"CdrRequest"> | string
-    telco?: StringWithAggregatesFilter<"CdrRequest"> | string
+    identifierType?: StringWithAggregatesFilter<"CdrRequest"> | string
+    telco?: StringNullableWithAggregatesFilter<"CdrRequest"> | string | null
     periodStart?: DateTimeWithAggregatesFilter<"CdrRequest"> | Date | string
     periodEnd?: DateTimeWithAggregatesFilter<"CdrRequest"> | Date | string
     reason?: StringWithAggregatesFilter<"CdrRequest"> | string
@@ -9555,6 +11872,81 @@ export namespace Prisma {
     attachmentName?: StringNullableWithAggregatesFilter<"InternationalRequest"> | string | null
   }
 
+  export type NotificationWhereInput = {
+    AND?: NotificationWhereInput | NotificationWhereInput[]
+    OR?: NotificationWhereInput[]
+    NOT?: NotificationWhereInput | NotificationWhereInput[]
+    id?: StringFilter<"Notification"> | string
+    userId?: StringFilter<"Notification"> | string
+    type?: StringFilter<"Notification"> | string
+    title?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    link?: StringNullableFilter<"Notification"> | string | null
+    meta?: StringNullableFilter<"Notification"> | string | null
+    read?: BoolFilter<"Notification"> | boolean
+    createdAt?: DateTimeFilter<"Notification"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type NotificationOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    message?: SortOrder
+    link?: SortOrderInput | SortOrder
+    meta?: SortOrderInput | SortOrder
+    read?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type NotificationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: NotificationWhereInput | NotificationWhereInput[]
+    OR?: NotificationWhereInput[]
+    NOT?: NotificationWhereInput | NotificationWhereInput[]
+    userId?: StringFilter<"Notification"> | string
+    type?: StringFilter<"Notification"> | string
+    title?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    link?: StringNullableFilter<"Notification"> | string | null
+    meta?: StringNullableFilter<"Notification"> | string | null
+    read?: BoolFilter<"Notification"> | boolean
+    createdAt?: DateTimeFilter<"Notification"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type NotificationOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    message?: SortOrder
+    link?: SortOrderInput | SortOrder
+    meta?: SortOrderInput | SortOrder
+    read?: SortOrder
+    createdAt?: SortOrder
+    _count?: NotificationCountOrderByAggregateInput
+    _max?: NotificationMaxOrderByAggregateInput
+    _min?: NotificationMinOrderByAggregateInput
+  }
+
+  export type NotificationScalarWhereWithAggregatesInput = {
+    AND?: NotificationScalarWhereWithAggregatesInput | NotificationScalarWhereWithAggregatesInput[]
+    OR?: NotificationScalarWhereWithAggregatesInput[]
+    NOT?: NotificationScalarWhereWithAggregatesInput | NotificationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Notification"> | string
+    userId?: StringWithAggregatesFilter<"Notification"> | string
+    type?: StringWithAggregatesFilter<"Notification"> | string
+    title?: StringWithAggregatesFilter<"Notification"> | string
+    message?: StringWithAggregatesFilter<"Notification"> | string
+    link?: StringNullableWithAggregatesFilter<"Notification"> | string | null
+    meta?: StringNullableWithAggregatesFilter<"Notification"> | string | null
+    read?: BoolWithAggregatesFilter<"Notification"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Notification"> | Date | string
+  }
+
   export type ActivityReportWhereInput = {
     AND?: ActivityReportWhereInput | ActivityReportWhereInput[]
     OR?: ActivityReportWhereInput[]
@@ -9652,6 +12044,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestCreateNestedManyWithoutOfficerInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -9671,6 +12065,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutOfficerInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -9690,6 +12086,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUpdateManyWithoutOfficerNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -9709,6 +12107,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutOfficerNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -9769,6 +12169,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
     caseActivities?: CaseActivityCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUncheckedCreateInput = {
@@ -9787,6 +12188,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
     caseActivities?: CaseActivityUncheckedCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUpdateInput = {
@@ -9805,6 +12207,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
     caseActivities?: CaseActivityUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateInput = {
@@ -9823,6 +12226,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
     caseActivities?: CaseActivityUncheckedUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseCreateManyInput = {
@@ -9864,6 +12268,67 @@ export namespace Prisma {
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closureReason?: NullableStringFieldUpdateOperationsInput | string | null
     officerId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CaseAssignmentCreateInput = {
+    id?: string
+    assignedBy: string
+    assignedAt?: Date | string
+    status?: string
+    case: CaseCreateNestedOneWithoutCaseAssignmentsInput
+    user: UserCreateNestedOneWithoutCaseAssignmentsInput
+  }
+
+  export type CaseAssignmentUncheckedCreateInput = {
+    id?: string
+    caseId: string
+    userId: string
+    assignedBy: string
+    assignedAt?: Date | string
+    status?: string
+  }
+
+  export type CaseAssignmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    assignedBy?: StringFieldUpdateOperationsInput | string
+    assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    case?: CaseUpdateOneRequiredWithoutCaseAssignmentsNestedInput
+    user?: UserUpdateOneRequiredWithoutCaseAssignmentsNestedInput
+  }
+
+  export type CaseAssignmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caseId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    assignedBy?: StringFieldUpdateOperationsInput | string
+    assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CaseAssignmentCreateManyInput = {
+    id?: string
+    caseId: string
+    userId: string
+    assignedBy: string
+    assignedAt?: Date | string
+    status?: string
+  }
+
+  export type CaseAssignmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    assignedBy?: StringFieldUpdateOperationsInput | string
+    assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CaseAssignmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caseId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    assignedBy?: StringFieldUpdateOperationsInput | string
+    assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
   }
 
   export type JournalEntryCreateInput = {
@@ -10006,7 +12471,8 @@ export namespace Prisma {
   export type CdrRequestCreateInput = {
     id?: string
     phoneNumber: string
-    telco: string
+    identifierType?: string
+    telco?: string | null
     periodStart: Date | string
     periodEnd: Date | string
     reason: string
@@ -10022,7 +12488,8 @@ export namespace Prisma {
   export type CdrRequestUncheckedCreateInput = {
     id?: string
     phoneNumber: string
-    telco: string
+    identifierType?: string
+    telco?: string | null
     periodStart: Date | string
     periodEnd: Date | string
     reason: string
@@ -10038,7 +12505,8 @@ export namespace Prisma {
   export type CdrRequestUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
-    telco?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
     periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
     periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
@@ -10054,7 +12522,8 @@ export namespace Prisma {
   export type CdrRequestUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
-    telco?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
     periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
     periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
@@ -10070,7 +12539,8 @@ export namespace Prisma {
   export type CdrRequestCreateManyInput = {
     id?: string
     phoneNumber: string
-    telco: string
+    identifierType?: string
+    telco?: string | null
     periodStart: Date | string
     periodEnd: Date | string
     reason: string
@@ -10086,7 +12556,8 @@ export namespace Prisma {
   export type CdrRequestUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
-    telco?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
     periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
     periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
@@ -10100,7 +12571,8 @@ export namespace Prisma {
   export type CdrRequestUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
-    telco?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
     periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
     periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
@@ -10235,6 +12707,89 @@ export namespace Prisma {
     respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type NotificationCreateInput = {
+    id?: string
+    type: string
+    title: string
+    message: string
+    link?: string | null
+    meta?: string | null
+    read?: boolean
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutNotificationsInput
+  }
+
+  export type NotificationUncheckedCreateInput = {
+    id?: string
+    userId: string
+    type: string
+    title: string
+    message: string
+    link?: string | null
+    meta?: string | null
+    read?: boolean
+    createdAt?: Date | string
+  }
+
+  export type NotificationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutNotificationsNestedInput
+  }
+
+  export type NotificationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationCreateManyInput = {
+    id?: string
+    userId: string
+    type: string
+    title: string
+    message: string
+    link?: string | null
+    meta?: string | null
+    read?: boolean
+    createdAt?: Date | string
+  }
+
+  export type NotificationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ActivityReportCreateInput = {
@@ -10398,6 +12953,18 @@ export namespace Prisma {
     none?: ActivityReportWhereInput
   }
 
+  export type CaseAssignmentListRelationFilter = {
+    every?: CaseAssignmentWhereInput
+    some?: CaseAssignmentWhereInput
+    none?: CaseAssignmentWhereInput
+  }
+
+  export type NotificationListRelationFilter = {
+    every?: NotificationWhereInput
+    some?: NotificationWhereInput
+    none?: NotificationWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -10420,6 +12987,14 @@ export namespace Prisma {
   }
 
   export type ActivityReportOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CaseAssignmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type NotificationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10606,6 +13181,48 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type CaseRelationFilter = {
+    is?: CaseWhereInput
+    isNot?: CaseWhereInput
+  }
+
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type CaseAssignmentCaseIdUserIdCompoundUniqueInput = {
+    caseId: string
+    userId: string
+  }
+
+  export type CaseAssignmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    caseId?: SortOrder
+    userId?: SortOrder
+    assignedBy?: SortOrder
+    assignedAt?: SortOrder
+    status?: SortOrder
+  }
+
+  export type CaseAssignmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    caseId?: SortOrder
+    userId?: SortOrder
+    assignedBy?: SortOrder
+    assignedAt?: SortOrder
+    status?: SortOrder
+  }
+
+  export type CaseAssignmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    caseId?: SortOrder
+    userId?: SortOrder
+    assignedBy?: SortOrder
+    assignedAt?: SortOrder
+    status?: SortOrder
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[]
@@ -10615,11 +13232,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
-  }
-
-  export type CaseRelationFilter = {
-    is?: CaseWhereInput
-    isNot?: CaseWhereInput
   }
 
   export type JournalEntryCountOrderByAggregateInput = {
@@ -10714,6 +13326,7 @@ export namespace Prisma {
   export type CdrRequestCountOrderByAggregateInput = {
     id?: SortOrder
     phoneNumber?: SortOrder
+    identifierType?: SortOrder
     telco?: SortOrder
     periodStart?: SortOrder
     periodEnd?: SortOrder
@@ -10730,6 +13343,7 @@ export namespace Prisma {
   export type CdrRequestMaxOrderByAggregateInput = {
     id?: SortOrder
     phoneNumber?: SortOrder
+    identifierType?: SortOrder
     telco?: SortOrder
     periodStart?: SortOrder
     periodEnd?: SortOrder
@@ -10746,6 +13360,7 @@ export namespace Prisma {
   export type CdrRequestMinOrderByAggregateInput = {
     id?: SortOrder
     phoneNumber?: SortOrder
+    identifierType?: SortOrder
     telco?: SortOrder
     periodStart?: SortOrder
     periodEnd?: SortOrder
@@ -10811,6 +13426,42 @@ export namespace Prisma {
     respondedAt?: SortOrder
     attachmentPath?: SortOrder
     attachmentName?: SortOrder
+  }
+
+  export type NotificationCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    message?: SortOrder
+    link?: SortOrder
+    meta?: SortOrder
+    read?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type NotificationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    message?: SortOrder
+    link?: SortOrder
+    meta?: SortOrder
+    read?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type NotificationMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    message?: SortOrder
+    link?: SortOrder
+    meta?: SortOrder
+    read?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type ActivityReportCountOrderByAggregateInput = {
@@ -10887,6 +13538,20 @@ export namespace Prisma {
     connect?: ActivityReportWhereUniqueInput | ActivityReportWhereUniqueInput[]
   }
 
+  export type CaseAssignmentCreateNestedManyWithoutUserInput = {
+    create?: XOR<CaseAssignmentCreateWithoutUserInput, CaseAssignmentUncheckedCreateWithoutUserInput> | CaseAssignmentCreateWithoutUserInput[] | CaseAssignmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CaseAssignmentCreateOrConnectWithoutUserInput | CaseAssignmentCreateOrConnectWithoutUserInput[]
+    createMany?: CaseAssignmentCreateManyUserInputEnvelope
+    connect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+  }
+
+  export type NotificationCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
   export type CaseUncheckedCreateNestedManyWithoutOfficerInput = {
     create?: XOR<CaseCreateWithoutOfficerInput, CaseUncheckedCreateWithoutOfficerInput> | CaseCreateWithoutOfficerInput[] | CaseUncheckedCreateWithoutOfficerInput[]
     connectOrCreate?: CaseCreateOrConnectWithoutOfficerInput | CaseCreateOrConnectWithoutOfficerInput[]
@@ -10920,6 +13585,20 @@ export namespace Prisma {
     connectOrCreate?: ActivityReportCreateOrConnectWithoutOfficerInput | ActivityReportCreateOrConnectWithoutOfficerInput[]
     createMany?: ActivityReportCreateManyOfficerInputEnvelope
     connect?: ActivityReportWhereUniqueInput | ActivityReportWhereUniqueInput[]
+  }
+
+  export type CaseAssignmentUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CaseAssignmentCreateWithoutUserInput, CaseAssignmentUncheckedCreateWithoutUserInput> | CaseAssignmentCreateWithoutUserInput[] | CaseAssignmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CaseAssignmentCreateOrConnectWithoutUserInput | CaseAssignmentCreateOrConnectWithoutUserInput[]
+    createMany?: CaseAssignmentCreateManyUserInputEnvelope
+    connect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+  }
+
+  export type NotificationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -11008,6 +13687,34 @@ export namespace Prisma {
     deleteMany?: ActivityReportScalarWhereInput | ActivityReportScalarWhereInput[]
   }
 
+  export type CaseAssignmentUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CaseAssignmentCreateWithoutUserInput, CaseAssignmentUncheckedCreateWithoutUserInput> | CaseAssignmentCreateWithoutUserInput[] | CaseAssignmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CaseAssignmentCreateOrConnectWithoutUserInput | CaseAssignmentCreateOrConnectWithoutUserInput[]
+    upsert?: CaseAssignmentUpsertWithWhereUniqueWithoutUserInput | CaseAssignmentUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CaseAssignmentCreateManyUserInputEnvelope
+    set?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    disconnect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    delete?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    connect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    update?: CaseAssignmentUpdateWithWhereUniqueWithoutUserInput | CaseAssignmentUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CaseAssignmentUpdateManyWithWhereWithoutUserInput | CaseAssignmentUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CaseAssignmentScalarWhereInput | CaseAssignmentScalarWhereInput[]
+  }
+
+  export type NotificationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
   export type CaseUncheckedUpdateManyWithoutOfficerNestedInput = {
     create?: XOR<CaseCreateWithoutOfficerInput, CaseUncheckedCreateWithoutOfficerInput> | CaseCreateWithoutOfficerInput[] | CaseUncheckedCreateWithoutOfficerInput[]
     connectOrCreate?: CaseCreateOrConnectWithoutOfficerInput | CaseCreateOrConnectWithoutOfficerInput[]
@@ -11078,6 +13785,34 @@ export namespace Prisma {
     deleteMany?: ActivityReportScalarWhereInput | ActivityReportScalarWhereInput[]
   }
 
+  export type CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CaseAssignmentCreateWithoutUserInput, CaseAssignmentUncheckedCreateWithoutUserInput> | CaseAssignmentCreateWithoutUserInput[] | CaseAssignmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CaseAssignmentCreateOrConnectWithoutUserInput | CaseAssignmentCreateOrConnectWithoutUserInput[]
+    upsert?: CaseAssignmentUpsertWithWhereUniqueWithoutUserInput | CaseAssignmentUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CaseAssignmentCreateManyUserInputEnvelope
+    set?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    disconnect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    delete?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    connect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    update?: CaseAssignmentUpdateWithWhereUniqueWithoutUserInput | CaseAssignmentUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CaseAssignmentUpdateManyWithWhereWithoutUserInput | CaseAssignmentUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CaseAssignmentScalarWhereInput | CaseAssignmentScalarWhereInput[]
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutCasesInput = {
     create?: XOR<UserCreateWithoutCasesInput, UserUncheckedCreateWithoutCasesInput>
     connectOrCreate?: UserCreateOrConnectWithoutCasesInput
@@ -11112,6 +13847,13 @@ export namespace Prisma {
     connect?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
   }
 
+  export type CaseAssignmentCreateNestedManyWithoutCaseInput = {
+    create?: XOR<CaseAssignmentCreateWithoutCaseInput, CaseAssignmentUncheckedCreateWithoutCaseInput> | CaseAssignmentCreateWithoutCaseInput[] | CaseAssignmentUncheckedCreateWithoutCaseInput[]
+    connectOrCreate?: CaseAssignmentCreateOrConnectWithoutCaseInput | CaseAssignmentCreateOrConnectWithoutCaseInput[]
+    createMany?: CaseAssignmentCreateManyCaseInputEnvelope
+    connect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+  }
+
   export type JournalEntryUncheckedCreateNestedManyWithoutCaseInput = {
     create?: XOR<JournalEntryCreateWithoutCaseInput, JournalEntryUncheckedCreateWithoutCaseInput> | JournalEntryCreateWithoutCaseInput[] | JournalEntryUncheckedCreateWithoutCaseInput[]
     connectOrCreate?: JournalEntryCreateOrConnectWithoutCaseInput | JournalEntryCreateOrConnectWithoutCaseInput[]
@@ -11138,6 +13880,13 @@ export namespace Prisma {
     connectOrCreate?: CaseActivityCreateOrConnectWithoutCaseInput | CaseActivityCreateOrConnectWithoutCaseInput[]
     createMany?: CaseActivityCreateManyCaseInputEnvelope
     connect?: CaseActivityWhereUniqueInput | CaseActivityWhereUniqueInput[]
+  }
+
+  export type CaseAssignmentUncheckedCreateNestedManyWithoutCaseInput = {
+    create?: XOR<CaseAssignmentCreateWithoutCaseInput, CaseAssignmentUncheckedCreateWithoutCaseInput> | CaseAssignmentCreateWithoutCaseInput[] | CaseAssignmentUncheckedCreateWithoutCaseInput[]
+    connectOrCreate?: CaseAssignmentCreateOrConnectWithoutCaseInput | CaseAssignmentCreateOrConnectWithoutCaseInput[]
+    createMany?: CaseAssignmentCreateManyCaseInputEnvelope
+    connect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -11210,6 +13959,20 @@ export namespace Prisma {
     deleteMany?: CaseActivityScalarWhereInput | CaseActivityScalarWhereInput[]
   }
 
+  export type CaseAssignmentUpdateManyWithoutCaseNestedInput = {
+    create?: XOR<CaseAssignmentCreateWithoutCaseInput, CaseAssignmentUncheckedCreateWithoutCaseInput> | CaseAssignmentCreateWithoutCaseInput[] | CaseAssignmentUncheckedCreateWithoutCaseInput[]
+    connectOrCreate?: CaseAssignmentCreateOrConnectWithoutCaseInput | CaseAssignmentCreateOrConnectWithoutCaseInput[]
+    upsert?: CaseAssignmentUpsertWithWhereUniqueWithoutCaseInput | CaseAssignmentUpsertWithWhereUniqueWithoutCaseInput[]
+    createMany?: CaseAssignmentCreateManyCaseInputEnvelope
+    set?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    disconnect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    delete?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    connect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    update?: CaseAssignmentUpdateWithWhereUniqueWithoutCaseInput | CaseAssignmentUpdateWithWhereUniqueWithoutCaseInput[]
+    updateMany?: CaseAssignmentUpdateManyWithWhereWithoutCaseInput | CaseAssignmentUpdateManyWithWhereWithoutCaseInput[]
+    deleteMany?: CaseAssignmentScalarWhereInput | CaseAssignmentScalarWhereInput[]
+  }
+
   export type JournalEntryUncheckedUpdateManyWithoutCaseNestedInput = {
     create?: XOR<JournalEntryCreateWithoutCaseInput, JournalEntryUncheckedCreateWithoutCaseInput> | JournalEntryCreateWithoutCaseInput[] | JournalEntryUncheckedCreateWithoutCaseInput[]
     connectOrCreate?: JournalEntryCreateOrConnectWithoutCaseInput | JournalEntryCreateOrConnectWithoutCaseInput[]
@@ -11264,6 +14027,48 @@ export namespace Prisma {
     update?: CaseActivityUpdateWithWhereUniqueWithoutCaseInput | CaseActivityUpdateWithWhereUniqueWithoutCaseInput[]
     updateMany?: CaseActivityUpdateManyWithWhereWithoutCaseInput | CaseActivityUpdateManyWithWhereWithoutCaseInput[]
     deleteMany?: CaseActivityScalarWhereInput | CaseActivityScalarWhereInput[]
+  }
+
+  export type CaseAssignmentUncheckedUpdateManyWithoutCaseNestedInput = {
+    create?: XOR<CaseAssignmentCreateWithoutCaseInput, CaseAssignmentUncheckedCreateWithoutCaseInput> | CaseAssignmentCreateWithoutCaseInput[] | CaseAssignmentUncheckedCreateWithoutCaseInput[]
+    connectOrCreate?: CaseAssignmentCreateOrConnectWithoutCaseInput | CaseAssignmentCreateOrConnectWithoutCaseInput[]
+    upsert?: CaseAssignmentUpsertWithWhereUniqueWithoutCaseInput | CaseAssignmentUpsertWithWhereUniqueWithoutCaseInput[]
+    createMany?: CaseAssignmentCreateManyCaseInputEnvelope
+    set?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    disconnect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    delete?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    connect?: CaseAssignmentWhereUniqueInput | CaseAssignmentWhereUniqueInput[]
+    update?: CaseAssignmentUpdateWithWhereUniqueWithoutCaseInput | CaseAssignmentUpdateWithWhereUniqueWithoutCaseInput[]
+    updateMany?: CaseAssignmentUpdateManyWithWhereWithoutCaseInput | CaseAssignmentUpdateManyWithWhereWithoutCaseInput[]
+    deleteMany?: CaseAssignmentScalarWhereInput | CaseAssignmentScalarWhereInput[]
+  }
+
+  export type CaseCreateNestedOneWithoutCaseAssignmentsInput = {
+    create?: XOR<CaseCreateWithoutCaseAssignmentsInput, CaseUncheckedCreateWithoutCaseAssignmentsInput>
+    connectOrCreate?: CaseCreateOrConnectWithoutCaseAssignmentsInput
+    connect?: CaseWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCaseAssignmentsInput = {
+    create?: XOR<UserCreateWithoutCaseAssignmentsInput, UserUncheckedCreateWithoutCaseAssignmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCaseAssignmentsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type CaseUpdateOneRequiredWithoutCaseAssignmentsNestedInput = {
+    create?: XOR<CaseCreateWithoutCaseAssignmentsInput, CaseUncheckedCreateWithoutCaseAssignmentsInput>
+    connectOrCreate?: CaseCreateOrConnectWithoutCaseAssignmentsInput
+    upsert?: CaseUpsertWithoutCaseAssignmentsInput
+    connect?: CaseWhereUniqueInput
+    update?: XOR<XOR<CaseUpdateToOneWithWhereWithoutCaseAssignmentsInput, CaseUpdateWithoutCaseAssignmentsInput>, CaseUncheckedUpdateWithoutCaseAssignmentsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCaseAssignmentsNestedInput = {
+    create?: XOR<UserCreateWithoutCaseAssignmentsInput, UserUncheckedCreateWithoutCaseAssignmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCaseAssignmentsInput
+    upsert?: UserUpsertWithoutCaseAssignmentsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCaseAssignmentsInput, UserUpdateWithoutCaseAssignmentsInput>, UserUncheckedUpdateWithoutCaseAssignmentsInput>
   }
 
   export type CaseCreateNestedOneWithoutEntriesInput = {
@@ -11380,6 +14185,20 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutInternationalRequestsInput, UserUpdateWithoutInternationalRequestsInput>, UserUncheckedUpdateWithoutInternationalRequestsInput>
+  }
+
+  export type UserCreateNestedOneWithoutNotificationsInput = {
+    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
+    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
+    upsert?: UserUpsertWithoutNotificationsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsInput, UserUpdateWithoutNotificationsInput>, UserUncheckedUpdateWithoutNotificationsInput>
   }
 
   export type UserCreateNestedOneWithoutActivityReportsInput = {
@@ -11587,6 +14406,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
     caseActivities?: CaseActivityCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUncheckedCreateWithoutOfficerInput = {
@@ -11604,6 +14424,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
     caseActivities?: CaseActivityUncheckedCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutCaseInput
   }
 
   export type CaseCreateOrConnectWithoutOfficerInput = {
@@ -11645,7 +14466,8 @@ export namespace Prisma {
   export type CdrRequestCreateWithoutOfficerInput = {
     id?: string
     phoneNumber: string
-    telco: string
+    identifierType?: string
+    telco?: string | null
     periodStart: Date | string
     periodEnd: Date | string
     reason: string
@@ -11660,7 +14482,8 @@ export namespace Prisma {
   export type CdrRequestUncheckedCreateWithoutOfficerInput = {
     id?: string
     phoneNumber: string
-    telco: string
+    identifierType?: string
+    telco?: string | null
     periodStart: Date | string
     periodEnd: Date | string
     reason: string
@@ -11757,6 +14580,62 @@ export namespace Prisma {
     data: ActivityReportCreateManyOfficerInput | ActivityReportCreateManyOfficerInput[]
   }
 
+  export type CaseAssignmentCreateWithoutUserInput = {
+    id?: string
+    assignedBy: string
+    assignedAt?: Date | string
+    status?: string
+    case: CaseCreateNestedOneWithoutCaseAssignmentsInput
+  }
+
+  export type CaseAssignmentUncheckedCreateWithoutUserInput = {
+    id?: string
+    caseId: string
+    assignedBy: string
+    assignedAt?: Date | string
+    status?: string
+  }
+
+  export type CaseAssignmentCreateOrConnectWithoutUserInput = {
+    where: CaseAssignmentWhereUniqueInput
+    create: XOR<CaseAssignmentCreateWithoutUserInput, CaseAssignmentUncheckedCreateWithoutUserInput>
+  }
+
+  export type CaseAssignmentCreateManyUserInputEnvelope = {
+    data: CaseAssignmentCreateManyUserInput | CaseAssignmentCreateManyUserInput[]
+  }
+
+  export type NotificationCreateWithoutUserInput = {
+    id?: string
+    type: string
+    title: string
+    message: string
+    link?: string | null
+    meta?: string | null
+    read?: boolean
+    createdAt?: Date | string
+  }
+
+  export type NotificationUncheckedCreateWithoutUserInput = {
+    id?: string
+    type: string
+    title: string
+    message: string
+    link?: string | null
+    meta?: string | null
+    read?: boolean
+    createdAt?: Date | string
+  }
+
+  export type NotificationCreateOrConnectWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    create: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationCreateManyUserInputEnvelope = {
+    data: NotificationCreateManyUserInput | NotificationCreateManyUserInput[]
+  }
+
   export type CaseUpsertWithWhereUniqueWithoutOfficerInput = {
     where: CaseWhereUniqueInput
     update: XOR<CaseUpdateWithoutOfficerInput, CaseUncheckedUpdateWithoutOfficerInput>
@@ -11841,7 +14720,8 @@ export namespace Prisma {
     NOT?: CdrRequestScalarWhereInput | CdrRequestScalarWhereInput[]
     id?: StringFilter<"CdrRequest"> | string
     phoneNumber?: StringFilter<"CdrRequest"> | string
-    telco?: StringFilter<"CdrRequest"> | string
+    identifierType?: StringFilter<"CdrRequest"> | string
+    telco?: StringNullableFilter<"CdrRequest"> | string | null
     periodStart?: DateTimeFilter<"CdrRequest"> | Date | string
     periodEnd?: DateTimeFilter<"CdrRequest"> | Date | string
     reason?: StringFilter<"CdrRequest"> | string
@@ -11923,6 +14803,65 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"ActivityReport"> | Date | string
   }
 
+  export type CaseAssignmentUpsertWithWhereUniqueWithoutUserInput = {
+    where: CaseAssignmentWhereUniqueInput
+    update: XOR<CaseAssignmentUpdateWithoutUserInput, CaseAssignmentUncheckedUpdateWithoutUserInput>
+    create: XOR<CaseAssignmentCreateWithoutUserInput, CaseAssignmentUncheckedCreateWithoutUserInput>
+  }
+
+  export type CaseAssignmentUpdateWithWhereUniqueWithoutUserInput = {
+    where: CaseAssignmentWhereUniqueInput
+    data: XOR<CaseAssignmentUpdateWithoutUserInput, CaseAssignmentUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CaseAssignmentUpdateManyWithWhereWithoutUserInput = {
+    where: CaseAssignmentScalarWhereInput
+    data: XOR<CaseAssignmentUpdateManyMutationInput, CaseAssignmentUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type CaseAssignmentScalarWhereInput = {
+    AND?: CaseAssignmentScalarWhereInput | CaseAssignmentScalarWhereInput[]
+    OR?: CaseAssignmentScalarWhereInput[]
+    NOT?: CaseAssignmentScalarWhereInput | CaseAssignmentScalarWhereInput[]
+    id?: StringFilter<"CaseAssignment"> | string
+    caseId?: StringFilter<"CaseAssignment"> | string
+    userId?: StringFilter<"CaseAssignment"> | string
+    assignedBy?: StringFilter<"CaseAssignment"> | string
+    assignedAt?: DateTimeFilter<"CaseAssignment"> | Date | string
+    status?: StringFilter<"CaseAssignment"> | string
+  }
+
+  export type NotificationUpsertWithWhereUniqueWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
+    create: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationUpdateWithWhereUniqueWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type NotificationUpdateManyWithWhereWithoutUserInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type NotificationScalarWhereInput = {
+    AND?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    OR?: NotificationScalarWhereInput[]
+    NOT?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    id?: StringFilter<"Notification"> | string
+    userId?: StringFilter<"Notification"> | string
+    type?: StringFilter<"Notification"> | string
+    title?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    link?: StringNullableFilter<"Notification"> | string | null
+    meta?: StringNullableFilter<"Notification"> | string | null
+    read?: BoolFilter<"Notification"> | boolean
+    createdAt?: DateTimeFilter<"Notification"> | Date | string
+  }
+
   export type UserCreateWithoutCasesInput = {
     id?: string
     name: string
@@ -11939,6 +14878,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestCreateNestedManyWithoutOfficerInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCasesInput = {
@@ -11957,6 +14898,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutOfficerInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCasesInput = {
@@ -11994,7 +14937,8 @@ export namespace Prisma {
   export type CdrRequestCreateWithoutCaseInput = {
     id?: string
     phoneNumber: string
-    telco: string
+    identifierType?: string
+    telco?: string | null
     periodStart: Date | string
     periodEnd: Date | string
     reason: string
@@ -12009,7 +14953,8 @@ export namespace Prisma {
   export type CdrRequestUncheckedCreateWithoutCaseInput = {
     id?: string
     phoneNumber: string
-    telco: string
+    identifierType?: string
+    telco?: string | null
     periodStart: Date | string
     periodEnd: Date | string
     reason: string
@@ -12100,6 +15045,31 @@ export namespace Prisma {
     data: CaseActivityCreateManyCaseInput | CaseActivityCreateManyCaseInput[]
   }
 
+  export type CaseAssignmentCreateWithoutCaseInput = {
+    id?: string
+    assignedBy: string
+    assignedAt?: Date | string
+    status?: string
+    user: UserCreateNestedOneWithoutCaseAssignmentsInput
+  }
+
+  export type CaseAssignmentUncheckedCreateWithoutCaseInput = {
+    id?: string
+    userId: string
+    assignedBy: string
+    assignedAt?: Date | string
+    status?: string
+  }
+
+  export type CaseAssignmentCreateOrConnectWithoutCaseInput = {
+    where: CaseAssignmentWhereUniqueInput
+    create: XOR<CaseAssignmentCreateWithoutCaseInput, CaseAssignmentUncheckedCreateWithoutCaseInput>
+  }
+
+  export type CaseAssignmentCreateManyCaseInputEnvelope = {
+    data: CaseAssignmentCreateManyCaseInput | CaseAssignmentCreateManyCaseInput[]
+  }
+
   export type UserUpsertWithoutCasesInput = {
     update: XOR<UserUpdateWithoutCasesInput, UserUncheckedUpdateWithoutCasesInput>
     create: XOR<UserCreateWithoutCasesInput, UserUncheckedCreateWithoutCasesInput>
@@ -12127,6 +15097,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUpdateManyWithoutOfficerNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCasesInput = {
@@ -12145,6 +15117,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutOfficerNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type JournalEntryUpsertWithWhereUniqueWithoutCaseInput = {
@@ -12224,6 +15198,206 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"CaseActivity"> | Date | string
   }
 
+  export type CaseAssignmentUpsertWithWhereUniqueWithoutCaseInput = {
+    where: CaseAssignmentWhereUniqueInput
+    update: XOR<CaseAssignmentUpdateWithoutCaseInput, CaseAssignmentUncheckedUpdateWithoutCaseInput>
+    create: XOR<CaseAssignmentCreateWithoutCaseInput, CaseAssignmentUncheckedCreateWithoutCaseInput>
+  }
+
+  export type CaseAssignmentUpdateWithWhereUniqueWithoutCaseInput = {
+    where: CaseAssignmentWhereUniqueInput
+    data: XOR<CaseAssignmentUpdateWithoutCaseInput, CaseAssignmentUncheckedUpdateWithoutCaseInput>
+  }
+
+  export type CaseAssignmentUpdateManyWithWhereWithoutCaseInput = {
+    where: CaseAssignmentScalarWhereInput
+    data: XOR<CaseAssignmentUpdateManyMutationInput, CaseAssignmentUncheckedUpdateManyWithoutCaseInput>
+  }
+
+  export type CaseCreateWithoutCaseAssignmentsInput = {
+    id?: string
+    caseNumber: string
+    title: string
+    category: string
+    status?: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    closedAt?: Date | string | null
+    closureReason?: string | null
+    officer?: UserCreateNestedOneWithoutCasesInput
+    entries?: JournalEntryCreateNestedManyWithoutCaseInput
+    cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
+    internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityCreateNestedManyWithoutCaseInput
+  }
+
+  export type CaseUncheckedCreateWithoutCaseAssignmentsInput = {
+    id?: string
+    caseNumber: string
+    title: string
+    category: string
+    status?: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    closedAt?: Date | string | null
+    closureReason?: string | null
+    officerId?: string | null
+    entries?: JournalEntryUncheckedCreateNestedManyWithoutCaseInput
+    cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
+    internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
+    caseActivities?: CaseActivityUncheckedCreateNestedManyWithoutCaseInput
+  }
+
+  export type CaseCreateOrConnectWithoutCaseAssignmentsInput = {
+    where: CaseWhereUniqueInput
+    create: XOR<CaseCreateWithoutCaseAssignmentsInput, CaseUncheckedCreateWithoutCaseAssignmentsInput>
+  }
+
+  export type UserCreateWithoutCaseAssignmentsInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: string
+    approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    cases?: CaseCreateNestedManyWithoutOfficerInput
+    entries?: JournalEntryCreateNestedManyWithoutAuthorInput
+    cdrRequests?: CdrRequestCreateNestedManyWithoutOfficerInput
+    internationalRequests?: InternationalRequestCreateNestedManyWithoutOfficerInput
+    activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCaseAssignmentsInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: string
+    approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    cases?: CaseUncheckedCreateNestedManyWithoutOfficerInput
+    entries?: JournalEntryUncheckedCreateNestedManyWithoutAuthorInput
+    cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutOfficerInput
+    internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutOfficerInput
+    activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCaseAssignmentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCaseAssignmentsInput, UserUncheckedCreateWithoutCaseAssignmentsInput>
+  }
+
+  export type CaseUpsertWithoutCaseAssignmentsInput = {
+    update: XOR<CaseUpdateWithoutCaseAssignmentsInput, CaseUncheckedUpdateWithoutCaseAssignmentsInput>
+    create: XOR<CaseCreateWithoutCaseAssignmentsInput, CaseUncheckedCreateWithoutCaseAssignmentsInput>
+    where?: CaseWhereInput
+  }
+
+  export type CaseUpdateToOneWithWhereWithoutCaseAssignmentsInput = {
+    where?: CaseWhereInput
+    data: XOR<CaseUpdateWithoutCaseAssignmentsInput, CaseUncheckedUpdateWithoutCaseAssignmentsInput>
+  }
+
+  export type CaseUpdateWithoutCaseAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caseNumber?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    officer?: UserUpdateOneWithoutCasesNestedInput
+    entries?: JournalEntryUpdateManyWithoutCaseNestedInput
+    cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
+    internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUpdateManyWithoutCaseNestedInput
+  }
+
+  export type CaseUncheckedUpdateWithoutCaseAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caseNumber?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
+    entries?: JournalEntryUncheckedUpdateManyWithoutCaseNestedInput
+    cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
+    internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
+    caseActivities?: CaseActivityUncheckedUpdateManyWithoutCaseNestedInput
+  }
+
+  export type UserUpsertWithoutCaseAssignmentsInput = {
+    update: XOR<UserUpdateWithoutCaseAssignmentsInput, UserUncheckedUpdateWithoutCaseAssignmentsInput>
+    create: XOR<UserCreateWithoutCaseAssignmentsInput, UserUncheckedCreateWithoutCaseAssignmentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCaseAssignmentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCaseAssignmentsInput, UserUncheckedUpdateWithoutCaseAssignmentsInput>
+  }
+
+  export type UserUpdateWithoutCaseAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    cases?: CaseUpdateManyWithoutOfficerNestedInput
+    entries?: JournalEntryUpdateManyWithoutAuthorNestedInput
+    cdrRequests?: CdrRequestUpdateManyWithoutOfficerNestedInput
+    internationalRequests?: InternationalRequestUpdateManyWithoutOfficerNestedInput
+    activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCaseAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    cases?: CaseUncheckedUpdateManyWithoutOfficerNestedInput
+    entries?: JournalEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    cdrRequests?: CdrRequestUncheckedUpdateManyWithoutOfficerNestedInput
+    internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
+    activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type CaseCreateWithoutEntriesInput = {
     id?: string
     caseNumber: string
@@ -12239,6 +15413,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
     caseActivities?: CaseActivityCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUncheckedCreateWithoutEntriesInput = {
@@ -12256,6 +15431,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
     caseActivities?: CaseActivityUncheckedCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutCaseInput
   }
 
   export type CaseCreateOrConnectWithoutEntriesInput = {
@@ -12279,6 +15455,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestCreateNestedManyWithoutOfficerInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutEntriesInput = {
@@ -12297,6 +15475,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutOfficerInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutEntriesInput = {
@@ -12330,6 +15510,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
     caseActivities?: CaseActivityUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateWithoutEntriesInput = {
@@ -12347,6 +15528,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
     caseActivities?: CaseActivityUncheckedUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutCaseNestedInput
   }
 
   export type UserUpsertWithoutEntriesInput = {
@@ -12376,6 +15558,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUpdateManyWithoutOfficerNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEntriesInput = {
@@ -12394,6 +15578,8 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutOfficerNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CaseCreateWithoutCaseActivitiesInput = {
@@ -12411,6 +15597,7 @@ export namespace Prisma {
     entries?: JournalEntryCreateNestedManyWithoutCaseInput
     cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUncheckedCreateWithoutCaseActivitiesInput = {
@@ -12428,6 +15615,7 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedCreateNestedManyWithoutCaseInput
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutCaseInput
   }
 
   export type CaseCreateOrConnectWithoutCaseActivitiesInput = {
@@ -12461,6 +15649,7 @@ export namespace Prisma {
     entries?: JournalEntryUpdateManyWithoutCaseNestedInput
     cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateWithoutCaseActivitiesInput = {
@@ -12478,6 +15667,7 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedUpdateManyWithoutCaseNestedInput
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseCreateWithoutCdrRequestsInput = {
@@ -12495,6 +15685,7 @@ export namespace Prisma {
     entries?: JournalEntryCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutCaseInput
     caseActivities?: CaseActivityCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUncheckedCreateWithoutCdrRequestsInput = {
@@ -12512,6 +15703,7 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedCreateNestedManyWithoutCaseInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutCaseInput
     caseActivities?: CaseActivityUncheckedCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutCaseInput
   }
 
   export type CaseCreateOrConnectWithoutCdrRequestsInput = {
@@ -12535,6 +15727,8 @@ export namespace Prisma {
     entries?: JournalEntryCreateNestedManyWithoutAuthorInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCdrRequestsInput = {
@@ -12553,6 +15747,8 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedCreateNestedManyWithoutAuthorInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCdrRequestsInput = {
@@ -12586,6 +15782,7 @@ export namespace Prisma {
     entries?: JournalEntryUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
     caseActivities?: CaseActivityUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateWithoutCdrRequestsInput = {
@@ -12603,6 +15800,7 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
     caseActivities?: CaseActivityUncheckedUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutCaseNestedInput
   }
 
   export type UserUpsertWithoutCdrRequestsInput = {
@@ -12632,6 +15830,8 @@ export namespace Prisma {
     entries?: JournalEntryUpdateManyWithoutAuthorNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCdrRequestsInput = {
@@ -12650,6 +15850,8 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedUpdateManyWithoutAuthorNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CaseCreateWithoutInternationalRequestsInput = {
@@ -12667,6 +15869,7 @@ export namespace Prisma {
     entries?: JournalEntryCreateNestedManyWithoutCaseInput
     cdrRequests?: CdrRequestCreateNestedManyWithoutCaseInput
     caseActivities?: CaseActivityCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutCaseInput
   }
 
   export type CaseUncheckedCreateWithoutInternationalRequestsInput = {
@@ -12684,6 +15887,7 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedCreateNestedManyWithoutCaseInput
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutCaseInput
     caseActivities?: CaseActivityUncheckedCreateNestedManyWithoutCaseInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutCaseInput
   }
 
   export type CaseCreateOrConnectWithoutInternationalRequestsInput = {
@@ -12707,6 +15911,8 @@ export namespace Prisma {
     entries?: JournalEntryCreateNestedManyWithoutAuthorInput
     cdrRequests?: CdrRequestCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutInternationalRequestsInput = {
@@ -12725,6 +15931,8 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedCreateNestedManyWithoutAuthorInput
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutInternationalRequestsInput = {
@@ -12758,6 +15966,7 @@ export namespace Prisma {
     entries?: JournalEntryUpdateManyWithoutCaseNestedInput
     cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
     caseActivities?: CaseActivityUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateWithoutInternationalRequestsInput = {
@@ -12775,6 +15984,7 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedUpdateManyWithoutCaseNestedInput
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
     caseActivities?: CaseActivityUncheckedUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutCaseNestedInput
   }
 
   export type UserUpsertWithoutInternationalRequestsInput = {
@@ -12804,6 +16014,8 @@ export namespace Prisma {
     entries?: JournalEntryUpdateManyWithoutAuthorNestedInput
     cdrRequests?: CdrRequestUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInternationalRequestsInput = {
@@ -12822,6 +16034,104 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedUpdateManyWithoutAuthorNestedInput
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutNotificationsInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: string
+    approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    cases?: CaseCreateNestedManyWithoutOfficerInput
+    entries?: JournalEntryCreateNestedManyWithoutAuthorInput
+    cdrRequests?: CdrRequestCreateNestedManyWithoutOfficerInput
+    internationalRequests?: InternationalRequestCreateNestedManyWithoutOfficerInput
+    activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutNotificationsInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: string
+    approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    cases?: CaseUncheckedCreateNestedManyWithoutOfficerInput
+    entries?: JournalEntryUncheckedCreateNestedManyWithoutAuthorInput
+    cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutOfficerInput
+    internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutOfficerInput
+    activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutNotificationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+  }
+
+  export type UserUpsertWithoutNotificationsInput = {
+    update: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutNotificationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type UserUpdateWithoutNotificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    cases?: CaseUpdateManyWithoutOfficerNestedInput
+    entries?: JournalEntryUpdateManyWithoutAuthorNestedInput
+    cdrRequests?: CdrRequestUpdateManyWithoutOfficerNestedInput
+    internationalRequests?: InternationalRequestUpdateManyWithoutOfficerNestedInput
+    activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNotificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    cases?: CaseUncheckedUpdateManyWithoutOfficerNestedInput
+    entries?: JournalEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    cdrRequests?: CdrRequestUncheckedUpdateManyWithoutOfficerNestedInput
+    internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
+    activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutActivityReportsInput = {
@@ -12840,6 +16150,8 @@ export namespace Prisma {
     entries?: JournalEntryCreateNestedManyWithoutAuthorInput
     cdrRequests?: CdrRequestCreateNestedManyWithoutOfficerInput
     internationalRequests?: InternationalRequestCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutActivityReportsInput = {
@@ -12858,6 +16170,8 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedCreateNestedManyWithoutAuthorInput
     cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutOfficerInput
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutActivityReportsInput = {
@@ -12892,6 +16206,8 @@ export namespace Prisma {
     entries?: JournalEntryUpdateManyWithoutAuthorNestedInput
     cdrRequests?: CdrRequestUpdateManyWithoutOfficerNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivityReportsInput = {
@@ -12910,6 +16226,8 @@ export namespace Prisma {
     entries?: JournalEntryUncheckedUpdateManyWithoutAuthorNestedInput
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutOfficerNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CaseCreateManyOfficerInput = {
@@ -12937,7 +16255,8 @@ export namespace Prisma {
   export type CdrRequestCreateManyOfficerInput = {
     id?: string
     phoneNumber: string
-    telco: string
+    identifierType?: string
+    telco?: string | null
     periodStart: Date | string
     periodEnd: Date | string
     reason: string
@@ -12978,6 +16297,25 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type CaseAssignmentCreateManyUserInput = {
+    id?: string
+    caseId: string
+    assignedBy: string
+    assignedAt?: Date | string
+    status?: string
+  }
+
+  export type NotificationCreateManyUserInput = {
+    id?: string
+    type: string
+    title: string
+    message: string
+    link?: string | null
+    meta?: string | null
+    read?: boolean
+    createdAt?: Date | string
+  }
+
   export type CaseUpdateWithoutOfficerInput = {
     id?: StringFieldUpdateOperationsInput | string
     caseNumber?: StringFieldUpdateOperationsInput | string
@@ -12993,6 +16331,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUpdateManyWithoutCaseNestedInput
     caseActivities?: CaseActivityUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateWithoutOfficerInput = {
@@ -13010,6 +16349,7 @@ export namespace Prisma {
     cdrRequests?: CdrRequestUncheckedUpdateManyWithoutCaseNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutCaseNestedInput
     caseActivities?: CaseActivityUncheckedUpdateManyWithoutCaseNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutCaseNestedInput
   }
 
   export type CaseUncheckedUpdateManyWithoutOfficerInput = {
@@ -13055,7 +16395,8 @@ export namespace Prisma {
   export type CdrRequestUpdateWithoutOfficerInput = {
     id?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
-    telco?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
     periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
     periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
@@ -13070,7 +16411,8 @@ export namespace Prisma {
   export type CdrRequestUncheckedUpdateWithoutOfficerInput = {
     id?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
-    telco?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
     periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
     periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
@@ -13085,7 +16427,8 @@ export namespace Prisma {
   export type CdrRequestUncheckedUpdateManyWithoutOfficerInput = {
     id?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
-    telco?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
     periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
     periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
@@ -13184,6 +16527,63 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CaseAssignmentUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    assignedBy?: StringFieldUpdateOperationsInput | string
+    assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    case?: CaseUpdateOneRequiredWithoutCaseAssignmentsNestedInput
+  }
+
+  export type CaseAssignmentUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caseId?: StringFieldUpdateOperationsInput | string
+    assignedBy?: StringFieldUpdateOperationsInput | string
+    assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CaseAssignmentUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caseId?: StringFieldUpdateOperationsInput | string
+    assignedBy?: StringFieldUpdateOperationsInput | string
+    assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type NotificationUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type JournalEntryCreateManyCaseInput = {
     id?: string
     dayNumber: number
@@ -13196,7 +16596,8 @@ export namespace Prisma {
   export type CdrRequestCreateManyCaseInput = {
     id?: string
     phoneNumber: string
-    telco: string
+    identifierType?: string
+    telco?: string | null
     periodStart: Date | string
     periodEnd: Date | string
     reason: string
@@ -13234,6 +16635,14 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type CaseAssignmentCreateManyCaseInput = {
+    id?: string
+    userId: string
+    assignedBy: string
+    assignedAt?: Date | string
+    status?: string
+  }
+
   export type JournalEntryUpdateWithoutCaseInput = {
     id?: StringFieldUpdateOperationsInput | string
     dayNumber?: IntFieldUpdateOperationsInput | number
@@ -13264,7 +16673,8 @@ export namespace Prisma {
   export type CdrRequestUpdateWithoutCaseInput = {
     id?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
-    telco?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
     periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
     periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
@@ -13279,7 +16689,8 @@ export namespace Prisma {
   export type CdrRequestUncheckedUpdateWithoutCaseInput = {
     id?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
-    telco?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
     periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
     periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
@@ -13294,7 +16705,8 @@ export namespace Prisma {
   export type CdrRequestUncheckedUpdateManyWithoutCaseInput = {
     id?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
-    telco?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
     periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
     periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
     reason?: StringFieldUpdateOperationsInput | string
@@ -13384,6 +16796,30 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CaseAssignmentUpdateWithoutCaseInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    assignedBy?: StringFieldUpdateOperationsInput | string
+    assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    user?: UserUpdateOneRequiredWithoutCaseAssignmentsNestedInput
+  }
+
+  export type CaseAssignmentUncheckedUpdateWithoutCaseInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    assignedBy?: StringFieldUpdateOperationsInput | string
+    assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CaseAssignmentUncheckedUpdateManyWithoutCaseInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    assignedBy?: StringFieldUpdateOperationsInput | string
+    assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+  }
+
 
 
   /**
@@ -13406,6 +16842,10 @@ export namespace Prisma {
      */
     export type CaseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CaseDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use CaseAssignmentDefaultArgs instead
+     */
+    export type CaseAssignmentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CaseAssignmentDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use JournalEntryDefaultArgs instead
      */
     export type JournalEntryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = JournalEntryDefaultArgs<ExtArgs>
@@ -13421,6 +16861,10 @@ export namespace Prisma {
      * @deprecated Use InternationalRequestDefaultArgs instead
      */
     export type InternationalRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = InternationalRequestDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use NotificationDefaultArgs instead
+     */
+    export type NotificationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = NotificationDefaultArgs<ExtArgs>
     /**
      * @deprecated Use ActivityReportDefaultArgs instead
      */

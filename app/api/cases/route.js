@@ -17,8 +17,11 @@ export async function GET(request) {
     // Build where clause
     let where = {};
     if (!isAdmin) {
-      // Officers only see their own cases
-      where.officerId = session.user.id;
+      // Officers see their own cases OR cases they've been assigned to
+      where.OR = [
+        { officerId: session.user.id },
+        { caseAssignments: { some: { userId: session.user.id, status: "Accepted" } } },
+      ];
     } else if (officerIdFilter) {
       // Admin filtering by a specific officer
       where.officerId = officerIdFilter;
@@ -28,7 +31,18 @@ export async function GET(request) {
       where,
       include: {
         officer: { select: { id: true, name: true } },
-        entries: true,
+        // Only the most-recent entry — used for staleness checks on the frontend.
+        // Array will be length 0 or 1; entries[0].createdAt is the latest entry date.
+        entries: {
+          select: { id: true, createdAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
+        caseAssignments: {
+          include: { user: { select: { id: true, name: true } } },
+          orderBy: { assignedAt: "asc" },
+        },
+        _count: { select: { entries: true } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -47,18 +61,19 @@ export async function POST(request) {
     const body = await request.json();
     const { title, category, description } = body;
 
-    const count = await db.case.count();
-    const caseNumber = `LELU-${new Date().getFullYear()}-${String(count + 1).padStart(3, "0")}`;
-
-    const newCase = await db.case.create({
-      data: {
-        caseNumber,
-        title,
-        category,
-        description,
-        officerId: session.user.id,
-      },
-      include: { officer: { select: { id: true, name: true } } },
+    const newCase = await db.$transaction(async (tx) => {
+      const count = await tx.case.count();
+      const caseNumber = `LELU-${new Date().getFullYear()}-${String(count + 1).padStart(3, "0")}`;
+      return tx.case.create({
+        data: {
+          caseNumber,
+          title,
+          category,
+          description,
+          officerId: session.user.id,
+        },
+        include: { officer: { select: { id: true, name: true } } },
+      });
     });
 
     await db.caseActivity.create({

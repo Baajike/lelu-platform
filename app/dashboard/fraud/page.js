@@ -347,7 +347,8 @@ export default function FraudPage() {
             <SearchSection title="CDR Requests" icon={PhoneCall} color="#D4730A" count={searchResults.cdrs.length}>
               {searchResults.cdrs.map((c, i) => (
                 <tr key={c.id} className="fraud-row"
-                  style={{ borderBottom: i < searchResults.cdrs.length - 1 ? "1px solid #F7F9FC" : "none" }}>
+                  onClick={() => router.push("/dashboard/cdr")}
+                  style={{ borderBottom: i < searchResults.cdrs.length - 1 ? "1px solid #F7F9FC" : "none", cursor: "pointer" }}>
                   <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700, color: "#0B1F3A" }}>{c.phoneNumber}</td>
                   <td style={{ padding: "12px 16px", fontSize: 12, color: "#4E6478" }}>{c.telco}</td>
                   <td style={{ padding: "12px 16px", fontSize: 11, color: "#8FA3BB", whiteSpace: "nowrap" }}>

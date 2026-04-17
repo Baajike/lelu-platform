@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, Plus, Edit2, Trash2, X, ChevronDown, Phone } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, X, ChevronDown, Phone, GitBranch, Users, Crown, UserPlus } from "lucide-react";
 
 const CLOSURE_REASONS = [
   "Case Resolved",
@@ -15,6 +15,7 @@ const CLOSURE_REASONS = [
 ];
 
 const TELCOS = ["MTN", "Vodafone", "AirtelTigo", "Other"];
+const IDENTIFIER_TYPES = ["Phone Number", "IMEI", "ID Document", "Email Address", "Physical Address", "Bank Account", "Device Serial Number", "Other"];
 
 const StatusBadge = ({ status }) => {
   const map = { Active: { bg: "#E6F5EE", color: "#1A7A4A" }, Closed: { bg: "#EEF2F7", color: "#4E6478" }, Declined: { bg: "#FDECEA", color: "#C0392B" } };
@@ -47,17 +48,19 @@ export default function CaseDetailPage() {
   const [showCloseModal, setShowCloseModal] = useState(false);
   const [entryContent, setEntryContent] = useState("");
   const [entryActions, setEntryActions] = useState("");
-  const [editingEntry, setEditingEntry] = useState(null);
-  const [editContent, setEditContent] = useState("");
   const [closureReason, setClosureReason] = useState("Case Resolved");
   const [otherClosureReason, setOtherClosureReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [declineReason, setDeclineReason] = useState("");
   const [showCdrModal, setShowCdrModal] = useState(false);
-  const [cdrForm, setCdrForm] = useState({ phoneNumber: "", telco: "MTN", otherTelco: "", periodStart: "", periodEnd: "", reason: "" });
+  const [cdrForm, setCdrForm] = useState({ phoneNumber: "", identifierType: "Phone Number", otherIdentifierType: "", telco: "MTN", otherTelco: "", periodStart: "", periodEnd: "", reason: "" });
   const [cdrDupeWarning, setCdrDupeWarning] = useState(null);
   const [coViewers, setCoViewers] = useState([]);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [allStaff, setAllStaff] = useState([]);
+  const [staffSearch, setStaffSearch] = useState("");
+  const [assignWorking, setAssignWorking] = useState(false);
 
   const fetchCase = async () => {
     try {
@@ -69,6 +72,13 @@ export default function CaseDetailPage() {
   };
 
   useEffect(() => { fetchCase(); }, [id]);
+
+  useEffect(() => {
+    fetch("/api/users")
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setAllStaff(data); })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -111,7 +121,10 @@ export default function CaseDetailPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phoneNumber: cdrForm.phoneNumber,
-          telco: cdrForm.telco === "Other" ? cdrForm.otherTelco : cdrForm.telco,
+          identifierType: cdrForm.identifierType === "Other" ? cdrForm.otherIdentifierType : cdrForm.identifierType,
+          telco: cdrForm.identifierType === "Phone Number"
+            ? (cdrForm.telco === "Other" ? cdrForm.otherTelco : cdrForm.telco)
+            : null,
           periodStart: cdrForm.periodStart,
           periodEnd: cdrForm.periodEnd,
           reason: cdrForm.reason,
@@ -121,7 +134,7 @@ export default function CaseDetailPage() {
       if (res.ok) {
         setShowCdrModal(false);
         setCdrDupeWarning(null);
-        setCdrForm({ phoneNumber: "", telco: "MTN", otherTelco: "", periodStart: "", periodEnd: "", reason: "" });
+        setCdrForm({ phoneNumber: "", identifierType: "Phone Number", otherIdentifierType: "", telco: "MTN", otherTelco: "", periodStart: "", periodEnd: "", reason: "" });
         fetchCase();
       }
     } finally { setSubmitting(false); }
@@ -132,28 +145,19 @@ export default function CaseDetailPage() {
       alert("Please fill all required fields."); return;
     }
     const normalised = cdrForm.phoneNumber.trim().replace(/\s+/g, "");
+    const resolvedType = cdrForm.identifierType === "Other" ? cdrForm.otherIdentifierType : cdrForm.identifierType;
     try {
       const res = await fetch("/api/cdr");
       const all = await res.json();
       if (Array.isArray(all)) {
-        const match = all.find(c => c.phoneNumber.replace(/\s+/g, "") === normalised);
+        const match = all.find(c =>
+          c.phoneNumber.replace(/\s+/g, "") === normalised &&
+          (c.identifierType || "Phone Number") === resolvedType
+        );
         if (match) { setCdrDupeWarning(match); return; }
       }
     } catch {}
     doCdrSubmit();
-  };
-
-  const handleEditEntry = async (entryId) => {
-    setSubmitting(true);
-    try {
-      await fetch(`/api/entries/${entryId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: editContent }),
-      });
-      setEditingEntry(null); setEditContent("");
-      fetchCase();
-    } finally { setSubmitting(false); }
   };
 
   const handleDeleteEntry = async (entryId) => {
@@ -182,6 +186,50 @@ export default function CaseDetailPage() {
     } finally { setSubmitting(false); }
   };
 
+  const handleAddAssignment = async (userId) => {
+    setAssignWorking(true);
+    try {
+      await fetch(`/api/cases/${id}/assignments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      setShowInviteModal(false);
+      setStaffSearch("");
+      fetchCase();
+    } finally { setAssignWorking(false); }
+  };
+
+  const handleInviteAll = async () => {
+    if (allInvitableStaff.length === 0) return;
+    if (!confirm(`Send invitations to all ${allInvitableStaff.length} eligible officer${allInvitableStaff.length !== 1 ? "s" : ""}?`)) return;
+    setAssignWorking(true);
+    try {
+      await Promise.all(
+        allInvitableStaff.map(u =>
+          fetch(`/api/cases/${id}/assignments`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: u.id }),
+          })
+        )
+      );
+      setShowInviteModal(false);
+      setStaffSearch("");
+      fetchCase();
+    } finally { setAssignWorking(false); }
+  };
+
+  const handleRemoveAssignment = async (userId) => {
+    if (!confirm("Remove this officer from the case team?")) return;
+    await fetch(`/api/cases/${id}/assignments`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId }),
+    });
+    fetchCase();
+  };
+
   if (loading) return (
     <div style={{ padding: 32, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading case...</div>
   );
@@ -190,6 +238,24 @@ export default function CaseDetailPage() {
   );
 
   const entries = caseData.entries || [];
+  const assignments = caseData.caseAssignments || [];
+  const acceptedAssignments = assignments.filter(a => a.status === "Accepted");
+  const pendingAssignments  = assignments.filter(a => a.status === "Pending");
+  const HEAD_ROLES = ["HEAD_OF_UNIT", "ADMIN"];
+  const canManageTeam = session && (
+    caseData.officerId === session.user?.id ||
+    HEAD_ROLES.includes(session.user?.role)
+  );
+  // Exclude owner, accepted, and pending (don't show already-invited people)
+  const assignedUserIds = new Set(
+    assignments.filter(a => a.status !== "Declined").map(a => a.userId)
+  );
+  const allInvitableStaff = allStaff.filter(u =>
+    u.id !== caseData.officerId && !assignedUserIds.has(u.id)
+  );
+  const invitableStaff = allInvitableStaff.filter(u =>
+    staffSearch === "" || u.name.toLowerCase().includes(staffSearch.toLowerCase())
+  );
 
   return (
     <div style={{ padding: 32 }}>
@@ -325,6 +391,127 @@ export default function CaseDetailPage() {
         </div>
       )}
 
+      {/* Case Team */}
+      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 4px rgba(11,31,58,0.05)", marginBottom: 24 }}>
+        <div style={{ padding: "16px 24px", borderBottom: "1px solid #EEF2F7", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Users size={14} color="#1A5FA8" />
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A" }}>Case Team</div>
+            <span style={{ fontSize: 11, color: "#8FA3BB", marginLeft: 2 }}>
+              {1 + acceptedAssignments.length} member{acceptedAssignments.length !== 0 ? "s" : ""}
+              {pendingAssignments.length > 0 && (
+                <span style={{ color: "#D4730A", marginLeft: 4 }}>· {pendingAssignments.length} pending</span>
+              )}
+            </span>
+          </div>
+          {canManageTeam && caseData.status === "Active" && (
+            <button onClick={() => { setShowInviteModal(true); setStaffSearch(""); }} style={{
+              background: "#F0F6FF", color: "#1A5FA8", border: "1px solid #C8DFF5",
+              padding: "7px 14px", borderRadius: 4, fontSize: 12,
+              fontWeight: 600, cursor: "pointer", display: "flex",
+              alignItems: "center", gap: 6, fontFamily: "'Segoe UI', sans-serif",
+            }}>
+              <UserPlus size={13} /> Invite
+            </button>
+          )}
+        </div>
+        <div style={{ padding: "14px 24px", display: "flex", flexWrap: "wrap", gap: 10 }}>
+          {/* Case owner */}
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 8,
+            background: "#F0F6FF", border: "1px solid #C8DFF5", borderRadius: 20,
+            padding: "7px 14px 7px 8px",
+          }}>
+            <div style={{
+              width: 28, height: 28, borderRadius: "50%", background: "#1A5FA8",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 11, fontWeight: 800, color: "white", flexShrink: 0, letterSpacing: "0.02em",
+            }}>
+              {(caseData.officer?.name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()}
+            </div>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: "#0B1F3A" }}>{caseData.officer?.name || "—"}</span>
+                <Crown size={10} color="#D4730A" />
+              </div>
+              <div style={{ fontSize: 10, color: "#8FA3BB" }}>Case Owner</div>
+            </div>
+          </div>
+
+          {/* Accepted team members */}
+          {acceptedAssignments.map(a => (
+            <div key={a.id} style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: "#F7F9FC", border: "1px solid #E2E8F0", borderRadius: 20,
+              padding: "7px 8px 7px 8px",
+            }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: "50%", background: "#4E6478",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 11, fontWeight: 800, color: "white", flexShrink: 0,
+              }}>
+                {(a.user?.name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()}
+              </div>
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#0B1F3A" }}>{a.user?.name || "—"}</div>
+                <div style={{ fontSize: 10, color: "#8FA3BB", textTransform: "capitalize" }}>{(a.user?.role || "").replace(/_/g, " ").toLowerCase()}</div>
+              </div>
+              {canManageTeam && caseData.status === "Active" && (
+                <button onClick={() => handleRemoveAssignment(a.userId)} style={{
+                  background: "none", border: "none", cursor: "pointer",
+                  color: "#A8BFCF", padding: "2px 2px 2px 4px", display: "flex", alignItems: "center",
+                  borderRadius: "50%",
+                }} title="Remove from team">
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+          ))}
+
+          {acceptedAssignments.length === 0 && pendingAssignments.length === 0 && (
+            <div style={{ fontSize: 12, color: "#A8BFCF", alignSelf: "center", marginLeft: 4 }}>No other officers assigned yet.</div>
+          )}
+
+          {/* Pending invitations — greyed out */}
+          {pendingAssignments.length > 0 && (
+            <div style={{ width: "100%", marginTop: acceptedAssignments.length > 0 ? 10 : 0, paddingTop: acceptedAssignments.length > 0 ? 10 : 0, borderTop: acceptedAssignments.length > 0 ? "1px dashed #EEF2F7" : "none" }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: "#A8BFCF", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>
+                Awaiting Response
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {pendingAssignments.map(a => (
+                  <div key={a.id} style={{
+                    display: "inline-flex", alignItems: "center", gap: 8,
+                    background: "#F7F9FC", border: "1px dashed #D1D9E0", borderRadius: 20,
+                    padding: "7px 8px 7px 8px", opacity: 0.7,
+                  }}>
+                    <div style={{
+                      width: 28, height: 28, borderRadius: "50%", background: "#C4D0DC",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 11, fontWeight: 800, color: "white", flexShrink: 0,
+                    }}>
+                      {(a.user?.name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: "#8FA3BB" }}>{a.user?.name || "—"}</div>
+                      <div style={{ fontSize: 10, color: "#D4730A", fontWeight: 600 }}>Invitation Sent</div>
+                    </div>
+                    {canManageTeam && caseData.status === "Active" && (
+                      <button onClick={() => handleRemoveAssignment(a.userId)} style={{
+                        background: "none", border: "none", cursor: "pointer",
+                        color: "#C4D0DC", padding: "2px 2px 2px 4px", display: "flex", alignItems: "center",
+                      }} title="Cancel invitation">
+                        <X size={12} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Journal */}
       <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 4px rgba(11,31,58,0.05)" }}>
         <div style={{ padding: "18px 24px", borderBottom: "1px solid #EEF2F7", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -408,23 +595,7 @@ export default function CaseDetailPage() {
               )}
             </div>
 
-            {editingEntry === entry.id ? (
-              <div>
-                <textarea className="input-field" value={editContent} onChange={e => setEditContent(e.target.value)}
-                  style={{ height: 100, resize: "none", marginBottom: 10 }} />
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={() => { setEditingEntry(null); setEditContent(""); }}
-                    style={{ background: "white", border: "1px solid #E2E8F0", padding: "8px 16px", borderRadius: 4, fontSize: 12, cursor: "pointer", color: "#4E6478", fontFamily: "'Segoe UI', sans-serif" }}>
-                    Cancel
-                  </button>
-                  <button onClick={() => handleEditEntry(entry.id)} disabled={submitting}
-                    style={{ background: "#1A5FA8", color: "white", border: "none", padding: "8px 20px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif" }}>
-                    {submitting ? "Saving..." : "Save"}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div>
+            <div>
                 <div style={{ fontSize: 13, color: "#1F3347", lineHeight: 1.7, marginBottom: entry.actions ? 12 : 0 }}>{entry.content}</div>
                 {entry.actions && (
                   <div style={{ background: "#F7F9FC", border: "1px solid #EEF2F7", borderRadius: 4, padding: "10px 14px", marginTop: 10 }}>
@@ -433,7 +604,6 @@ export default function CaseDetailPage() {
                   </div>
                 )}
               </div>
-            )}
           </div>
         ))}
       </div>
@@ -471,9 +641,14 @@ export default function CaseDetailPage() {
           return (
             <div key={cdr.id} style={{ padding: "16px 24px", borderBottom: i < (caseData.cdrRequests || []).length - 1 ? "1px solid #F7F9FC" : "none", display: "flex", alignItems: "center", gap: 20 }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A", marginBottom: 4 }}>{cdr.phoneNumber}</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, background: "#EEF2F7", color: "#4E6478", padding: "2px 7px", borderRadius: 3, letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
+                    {cdr.identifierType || "Phone Number"}
+                  </span>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A" }}>{cdr.phoneNumber}</div>
+                </div>
                 <div style={{ fontSize: 11, color: "#8FA3BB" }}>
-                  {cdr.telco} · {new Date(cdr.periodStart).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })} — {new Date(cdr.periodEnd).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                  {cdr.telco ? `${cdr.telco} · ` : ""}{new Date(cdr.periodStart).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })} — {new Date(cdr.periodEnd).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                 </div>
               </div>
               <div style={{ fontSize: 12, color: "#4E6478", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{cdr.reason}</div>
@@ -521,6 +696,134 @@ export default function CaseDetailPage() {
         </div>
       )}
 
+      {/* Related Cases */}
+      {(caseData.relatedCases || []).length > 0 && (
+        <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 4px rgba(11,31,58,0.05)", marginTop: 24 }}>
+          <div style={{ padding: "18px 24px", borderBottom: "1px solid #EEF2F7", background: "#0B1F3A", display: "flex", alignItems: "center", gap: 10 }}>
+            <GitBranch size={14} color="#4E6478" strokeWidth={1.8} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "white" }}>Related Cases</div>
+              <div style={{ fontSize: 11, color: "#4E6478", marginTop: 1 }}>Automatically detected via shared identifiers in journal entries and CDR requests</div>
+            </div>
+            <span style={{ fontSize: 11, fontWeight: 700, background: "#1A5FA8", color: "white", padding: "3px 10px", borderRadius: 3, letterSpacing: "0.04em" }}>
+              {caseData.relatedCases.length} {caseData.relatedCases.length === 1 ? "MATCH" : "MATCHES"}
+            </span>
+          </div>
+          <div>
+            {caseData.relatedCases.map((rc, i) => (
+              <div key={rc.caseId}
+                onClick={() => router.push(`/dashboard/cases/${rc.caseId}`)}
+                style={{
+                  padding: "14px 24px",
+                  borderBottom: i < caseData.relatedCases.length - 1 ? "1px solid #F7F9FC" : "none",
+                  display: "flex", alignItems: "center", gap: 16,
+                  cursor: "pointer", transition: "background 0.15s",
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = "#F7F9FC"}
+                onMouseLeave={e => e.currentTarget.style.background = "white"}
+              >
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#1A5FA8", letterSpacing: "0.05em" }}>{rc.caseNumber}</span>
+                    <span style={{
+                      fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 2,
+                      textTransform: "uppercase", letterSpacing: "0.05em",
+                      background: rc.status === "Active" ? "#E6F5EE" : "#EEF2F7",
+                      color: rc.status === "Active" ? "#1A7A4A" : "#4E6478",
+                    }}>{rc.status}</span>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#0B1F3A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{rc.title}</div>
+                  <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 2 }}>Officer: {rc.officerName}</div>
+                </div>
+                <div style={{ flexShrink: 0, maxWidth: 280 }}>
+                  <div style={{ fontSize: 11, background: "#EBF3FB", color: "#1A5FA8", padding: "5px 10px", borderRadius: 3, border: "1px solid #C8DFF5", lineHeight: 1.5 }}>
+                    🔗 {rc.matchReason}
+                    {rc.matchCount > 1 && <span style={{ marginLeft: 5, fontSize: 10, opacity: 0.7 }}>+{rc.matchCount - 1} more</span>}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Invite Officer Modal */}
+      {showInviteModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(11,31,58,0.6)", backdropFilter: "blur(4px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ background: "white", borderRadius: 6, padding: "32px 36px", width: 440, maxHeight: "80vh", display: "flex", flexDirection: "column", boxShadow: "0 24px 64px rgba(11,31,58,0.25)" }}>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20 }}>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#0B1F3A" }}>Add Officer to Team</div>
+                <div style={{ fontSize: 12, color: "#8FA3BB", marginTop: 3 }}>{caseData.caseNumber}</div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {allInvitableStaff.length > 0 && (
+                  <button
+                    onClick={handleInviteAll}
+                    disabled={assignWorking}
+                    style={{
+                      background: "#0B1F3A", color: "white", border: "none",
+                      padding: "7px 14px", borderRadius: 4, fontSize: 11, fontWeight: 700,
+                      cursor: assignWorking ? "default" : "pointer", letterSpacing: "0.04em",
+                    }}
+                  >
+                    Invite All ({allInvitableStaff.length})
+                  </button>
+                )}
+                <button onClick={() => { setShowInviteModal(false); setStaffSearch(""); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB", padding: 2 }}><X size={18} /></button>
+              </div>
+            </div>
+
+            <input
+              className="input-field"
+              value={staffSearch}
+              onChange={e => setStaffSearch(e.target.value)}
+              placeholder="Search officers..."
+              style={{ marginBottom: 14 }}
+            />
+
+            <div style={{ overflowY: "auto", flex: 1, marginBottom: 16 }}>
+              {invitableStaff.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "32px 0", color: "#8FA3BB", fontSize: 13 }}>
+                  {staffSearch ? "No officers match your search." : "All officers are already on this team."}
+                </div>
+              ) : invitableStaff.map(u => (
+                <div key={u.id}
+                  onClick={() => !assignWorking && handleAddAssignment(u.id)}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 12,
+                    padding: "12px 14px", borderRadius: 5, cursor: assignWorking ? "default" : "pointer",
+                    transition: "background 0.15s", marginBottom: 4,
+                  }}
+                  onMouseEnter={e => { if (!assignWorking) e.currentTarget.style.background = "#F0F6FF"; }}
+                  onMouseLeave={e => e.currentTarget.style.background = "white"}
+                >
+                  <div style={{
+                    width: 34, height: 34, borderRadius: "50%", background: "#4E6478",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 12, fontWeight: 800, color: "white", flexShrink: 0,
+                  }}>
+                    {u.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#0B1F3A" }}>{u.name}</div>
+                    <div style={{ fontSize: 11, color: "#8FA3BB", textTransform: "capitalize" }}>{u.role.replace(/_/g, " ").toLowerCase()}</div>
+                  </div>
+                  <span style={{ fontSize: 12, color: "#1A5FA8", fontWeight: 600 }}>+ Add</span>
+                </div>
+              ))}
+            </div>
+
+            <button onClick={() => { setShowInviteModal(false); setStaffSearch(""); }} style={{
+              background: "white", border: "1px solid #E2E8F0", padding: "10px", borderRadius: 4,
+              fontSize: 13, cursor: "pointer", color: "#4E6478", fontFamily: "'Segoe UI', sans-serif", width: "100%",
+            }}>
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* CDR Modal */}
       {showCdrModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(11,31,58,0.6)", backdropFilter: "blur(4px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -533,20 +836,33 @@ export default function CaseDetailPage() {
               <button onClick={() => { setShowCdrModal(false); setCdrDupeWarning(null); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB" }}><X size={18} /></button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Type *</label>
+              <select className="input-field" value={cdrForm.identifierType} onChange={e => setCdrForm({ ...cdrForm, identifierType: e.target.value, otherIdentifierType: "" })}>
+                {IDENTIFIER_TYPES.map(t => <option key={t}>{t}</option>)}
+              </select>
+              {cdrForm.identifierType === "Other" && (
+                <input className="input-field" value={cdrForm.otherIdentifierType} onChange={e => setCdrForm({ ...cdrForm, otherIdentifierType: e.target.value })} placeholder="Specify type..." style={{ marginTop: 8 }} />
+              )}
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: cdrForm.identifierType === "Phone Number" ? "1fr 1fr" : "1fr", gap: 14, marginBottom: 14 }}>
               <div>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Phone Number *</label>
-                <input className="input-field" value={cdrForm.phoneNumber} onChange={e => setCdrForm({ ...cdrForm, phoneNumber: e.target.value })} placeholder="+233244000000" />
+                <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Identifier *</label>
+                <input className="input-field" value={cdrForm.phoneNumber} onChange={e => setCdrForm({ ...cdrForm, phoneNumber: e.target.value })}
+                  placeholder={cdrForm.identifierType === "Phone Number" ? "+233244000000" : `Enter ${cdrForm.identifierType === "Other" ? "identifier" : cdrForm.identifierType.toLowerCase()}...`} />
               </div>
-              <div>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Telco *</label>
-                <select className="input-field" value={cdrForm.telco} onChange={e => setCdrForm({ ...cdrForm, telco: e.target.value, otherTelco: "" })}>
-                  {TELCOS.map(t => <option key={t}>{t}</option>)}
-                </select>
-                {cdrForm.telco === "Other" && (
-                  <input className="input-field" value={cdrForm.otherTelco} onChange={e => setCdrForm({ ...cdrForm, otherTelco: e.target.value })} placeholder="Specify telco..." style={{ marginTop: 8 }} />
-                )}
-              </div>
+              {cdrForm.identifierType === "Phone Number" && (
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Telco *</label>
+                  <select className="input-field" value={cdrForm.telco} onChange={e => setCdrForm({ ...cdrForm, telco: e.target.value, otherTelco: "" })}>
+                    {TELCOS.map(t => <option key={t}>{t}</option>)}
+                  </select>
+                  {cdrForm.telco === "Other" && (
+                    <input className="input-field" value={cdrForm.otherTelco} onChange={e => setCdrForm({ ...cdrForm, otherTelco: e.target.value })} placeholder="Specify telco..." style={{ marginTop: 8 }} />
+                  )}
+                </div>
+              )}
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>

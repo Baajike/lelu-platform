@@ -178,7 +178,7 @@ export default function InternationalPage() {
   const pending = requests.filter(r => r.status === "Pending").length;
 
   return (
-    <div style={{ padding: 32 }}>
+    <div style={{ padding: 32, overflowX: "hidden" }}>
       <style>{`
         .modal-input {
           width: 100%; border: 1.5px solid #E2E8F0; border-radius: 4px;
@@ -301,12 +301,24 @@ export default function InternationalPage() {
       </div>
 
       {/* Table */}
-      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflowX: "auto", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed", minWidth: 860 }}>
+          <colgroup>
+            <col style={{ width: 120 }} />
+            <col style={{ width: 95 }} />
+            <col style={{ width: 145 }} />
+            <col style={{ width: 115 }} />
+            <col style={{ width: "auto" }} />
+            <col style={{ width: 100 }} />
+            <col style={{ width: 75 }} />
+            <col style={{ width: 75 }} />
+            <col style={{ width: 90 }} />
+            <col style={{ width: 28 }} />
+          </colgroup>
           <thead>
             <tr style={{ background: "#F7F9FC", borderBottom: "1px solid #E2E8F0" }}>
-              {["Ref No.", "Direction", "Country / Agency", "Officer", "Subject", "Linked Case", "Days Open", "Priority", "Status", ""].map(h => (
-                <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase" }}>{h}</th>
+              {["Ref No.", "Direction", "Country / Agency", "Officer", "Subject", "Linked Case", "Days", "Priority", "Status", ""].map(h => (
+                <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase", overflow: "hidden" }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -338,8 +350,8 @@ export default function InternationalPage() {
                   </span>
                 </td>
                 <td style={{ padding: "14px 16px" }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "#0B1F3A" }}>{r.country}</div>
-                  <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 2 }}>{r.agency}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#0B1F3A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.country}</div>
+                  <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.agency}</div>
                 </td>
                 <td style={{ padding: "14px 16px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -349,14 +361,14 @@ export default function InternationalPage() {
                     <span style={{ fontSize: 12, color: "#4E6478" }}>{r.officer?.name}</span>
                   </div>
                 </td>
-                <td style={{ padding: "14px 16px", fontSize: 13, color: "#0B1F3A", maxWidth: 180 }}>
+                <td style={{ padding: "14px 16px", fontSize: 13, color: "#0B1F3A" }}>
                   <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.subject}</div>
                 </td>
                 <td style={{ padding: "14px 16px" }}>
                   {r.case ? (
                     <div>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: "#1A5FA8" }}>{r.case.caseNumber}</div>
-                      <div style={{ fontSize: 11, color: "#8FA3BB", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.case.title}</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#1A5FA8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.case.caseNumber}</div>
+                      <div style={{ fontSize: 11, color: "#8FA3BB", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.case.title}</div>
                     </div>
                   ) : <span style={{ fontSize: 11, color: "#C4D0DC" }}>—</span>}
                 </td>

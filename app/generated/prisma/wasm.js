@@ -147,6 +147,15 @@ exports.Prisma.CaseScalarFieldEnum = {
   officerId: 'officerId'
 };
 
+exports.Prisma.CaseAssignmentScalarFieldEnum = {
+  id: 'id',
+  caseId: 'caseId',
+  userId: 'userId',
+  assignedBy: 'assignedBy',
+  assignedAt: 'assignedAt',
+  status: 'status'
+};
+
 exports.Prisma.JournalEntryScalarFieldEnum = {
   id: 'id',
   dayNumber: 'dayNumber',
@@ -170,6 +179,7 @@ exports.Prisma.CaseActivityScalarFieldEnum = {
 exports.Prisma.CdrRequestScalarFieldEnum = {
   id: 'id',
   phoneNumber: 'phoneNumber',
+  identifierType: 'identifierType',
   telco: 'telco',
   periodStart: 'periodStart',
   periodEnd: 'periodEnd',
@@ -201,6 +211,18 @@ exports.Prisma.InternationalRequestScalarFieldEnum = {
   attachmentName: 'attachmentName'
 };
 
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  title: 'title',
+  message: 'message',
+  link: 'link',
+  meta: 'meta',
+  read: 'read',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.ActivityReportScalarFieldEnum = {
   id: 'id',
   weekStart: 'weekStart',
@@ -228,10 +250,12 @@ exports.Prisma.NullsOrder = {
 exports.Prisma.ModelName = {
   User: 'User',
   Case: 'Case',
+  CaseAssignment: 'CaseAssignment',
   JournalEntry: 'JournalEntry',
   CaseActivity: 'CaseActivity',
   CdrRequest: 'CdrRequest',
   InternationalRequest: 'InternationalRequest',
+  Notification: 'Notification',
   ActivityReport: 'ActivityReport'
 };
 

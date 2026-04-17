@@ -32,6 +32,11 @@ export async function GET(request) {
     }
 
     if (withStats === "true") {
+      // Week start = Monday 00:00 local time (server-side approximation)
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - (weekStart.getDay() === 0 ? 6 : weekStart.getDay() - 1));
+      weekStart.setHours(0, 0, 0, 0);
+
       const users = await db.user.findMany({
         where: { approved: true, deactivated: false },
         select: {
@@ -44,6 +49,11 @@ export async function GET(request) {
           },
           cases: {
             where: { status: "Active" },
+            select: { id: true },
+          },
+          // Journal entries written this week — used for activity score
+          entries: {
+            where: { createdAt: { gte: weekStart } },
             select: { id: true },
           },
         },

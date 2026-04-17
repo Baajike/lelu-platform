@@ -11,7 +11,12 @@ export async function GET(request) {
 
     const isAdmin = ADMIN_ROLES.includes(session.user.role);
 
-    const where = isAdmin ? {} : { case: { officerId: session.user.id } };
+    const where = isAdmin ? {} : {
+      OR: [
+        { case: { officerId: session.user.id } },
+        { case: { caseAssignments: { some: { userId: session.user.id, status: "Accepted" } } } },
+      ],
+    };
 
     const entries = await db.journalEntry.findMany({
       where,
