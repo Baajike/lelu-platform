@@ -201,6 +201,8 @@ export default function FraudPage() {
   return (
     <div style={{ padding: 32 }}>
       <style>{`
+        @keyframes lelu-spin { to { transform: rotate(360deg); } }
+        .lelu-spinner { width: 28px; height: 28px; border: 3px solid #EEF2F7; border-top-color: #1A5FA8; border-radius: 50%; animation: lelu-spin 0.7s linear infinite; margin: 0 auto; }
         .intel-item { transition: background 0.12s; cursor: pointer; }
         .intel-item:hover { background: #F7F9FC !important; }
         .filter-pill { transition: all 0.15s; cursor: pointer; }
@@ -240,12 +242,18 @@ export default function FraudPage() {
             />
           </div>
           <button onClick={handleSearch}
-            style={{ background: "#0B1F3A", color: "white", border: "none", padding: "10px 22px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
+            style={{ background: "#0B1F3A", color: "white", border: "none", padding: "10px 22px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", letterSpacing: "0.05em", whiteSpace: "nowrap", transition: "background 0.15s" }}
+            onMouseEnter={e => e.currentTarget.style.background = "#1A5FA8"}
+            onMouseLeave={e => e.currentTarget.style.background = "#0B1F3A"}
+          >
             Search
           </button>
           {search && (
             <button onClick={handleClear}
-              style={{ background: "#F7F9FC", color: "#4E6478", border: "1px solid #E2E8F0", padding: "10px 14px", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", display: "flex", alignItems: "center", gap: 6 }}>
+              style={{ background: "#F7F9FC", color: "#4E6478", border: "1px solid #E2E8F0", padding: "10px 14px", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", display: "flex", alignItems: "center", gap: 6, transition: "all 0.15s" }}
+              onMouseEnter={e => { e.currentTarget.style.background = "#EEF2F7"; e.currentTarget.style.borderColor = "#C4D0DC"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "#F7F9FC"; e.currentTarget.style.borderColor = "#E2E8F0"; }}
+            >
               <X size={12} /> Clear
             </button>
           )}
@@ -405,7 +413,7 @@ export default function FraudPage() {
         /* Live Intelligence Feed */
         <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
           {loading ? (
-            <div style={{ padding: 64, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading intelligence feed...</div>
+            <div style={{ padding: 64, textAlign: "center" }}><div className="lelu-spinner" /></div>
           ) : filteredFeed.length === 0 ? (
             <div style={{ padding: 72, textAlign: "center" }}>
               <Activity size={40} color="#D8E2EE" strokeWidth={1} style={{ margin: "0 auto 14px", display: "block" }} />

@@ -104,7 +104,10 @@ function UserRow({ user, isDeactivated, toggling, acting, onCdrToggle, onOpenDea
       <td style={{ padding: "14px 20px" }}>
         {!isHead && !isDeactivated && (
           <button onClick={() => onResetPassword(user)}
-            style={{ fontSize: 11, color: "#1A5FA8", background: "#EBF3FB", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif" }}>
+            style={{ fontSize: 11, color: "#1A5FA8", background: "#EBF3FB", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif", transition: "background 0.15s" }}
+            onMouseEnter={e => e.currentTarget.style.background = "#C8DFF5"}
+            onMouseLeave={e => e.currentTarget.style.background = "#EBF3FB"}
+          >
             Reset Password
           </button>
         )}
@@ -117,14 +120,20 @@ function UserRow({ user, isDeactivated, toggling, acting, onCdrToggle, onOpenDea
             <button
               disabled={isActing === "reactivating"}
               onClick={() => onReactivate(user.id)}
-              style={{ fontSize: 11, color: "#1A7A4A", background: "#E6F5EE", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif", opacity: isActing ? 0.6 : 1 }}>
+              style={{ fontSize: 11, color: "#1A7A4A", background: "#E6F5EE", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif", opacity: isActing ? 0.6 : 1, transition: "background 0.15s" }}
+              onMouseEnter={e => { if (!isActing) e.currentTarget.style.background = "#B3E0C8"; }}
+              onMouseLeave={e => e.currentTarget.style.background = "#E6F5EE"}
+            >
               {isActing === "reactivating" ? "..." : "Reactivate"}
             </button>
           ) : (
             <button
               disabled={isActing === "deactivating"}
               onClick={() => onOpenDeactivateModal(user)}
-              style={{ fontSize: 11, color: "#C0392B", background: "#FDECEA", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif", opacity: isActing ? 0.6 : 1 }}>
+              style={{ fontSize: 11, color: "#C0392B", background: "#FDECEA", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif", opacity: isActing ? 0.6 : 1, transition: "background 0.15s" }}
+              onMouseEnter={e => { if (!isActing) e.currentTarget.style.background = "#F5C6C2"; }}
+              onMouseLeave={e => e.currentTarget.style.background = "#FDECEA"}
+            >
               {isActing === "deactivating" ? "..." : "Deactivate"}
             </button>
           )
@@ -135,7 +144,10 @@ function UserRow({ user, isDeactivated, toggling, acting, onCdrToggle, onOpenDea
       <td style={{ padding: "14px 20px" }}>
         {!isHead && (
           <button onClick={() => onOpenDeleteModal(user)}
-            style={{ fontSize: 11, color: "#8FA3BB", background: "none", border: "1px solid #E2E8F0", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif" }}>
+            style={{ fontSize: 11, color: "#8FA3BB", background: "none", border: "1px solid #E2E8F0", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif", transition: "all 0.15s" }}
+            onMouseEnter={e => { e.currentTarget.style.color = "#C0392B"; e.currentTarget.style.borderColor = "#F5C6C2"; e.currentTarget.style.background = "#FDECEA"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "#8FA3BB"; e.currentTarget.style.borderColor = "#E2E8F0"; e.currentTarget.style.background = "none"; }}
+          >
             Delete
           </button>
         )}
@@ -152,10 +164,13 @@ export default function AdminPage() {
 
   const [users, setUsers] = useState([]);
   const [deactivated, setDeactivated] = useState([]);
+  const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deactLoading, setDeactLoading] = useState(true);
+  const [pendingLoading, setPendingLoading] = useState(true);
   const [toggling, setToggling] = useState({});
   const [acting, setActing] = useState({});
+  const [approving, setApproving] = useState({});
   const [showDeactivated, setShowDeactivated] = useState(false);
 
   const [resetModal, setResetModal] = useState(null);
@@ -186,7 +201,6 @@ export default function AdminPage() {
       const data = await res.json();
       setUsers(Array.isArray(data) ? data : []);
     } catch (e) {
-      console.error("Failed to load active users:", e);
       setFetchError(e.message);
       setUsers([]);
     } finally {
@@ -201,21 +215,49 @@ export default function AdminPage() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setDeactivated(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error("Failed to load deactivated users:", e);
+    } catch {
       setDeactivated([]);
     } finally {
       setDeactLoading(false);
     }
   };
 
-  const fetchAll = () => { fetchActiveUsers(); fetchDeactivatedUsers(); };
+  const fetchPendingUsers = async () => {
+    setPendingLoading(true);
+    try {
+      const res = await fetch("/api/users?pending=true");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setPending(Array.isArray(data) ? data : []);
+    } catch {
+      setPending([]);
+    } finally {
+      setPendingLoading(false);
+    }
+  };
+
+  const fetchAll = () => { fetchActiveUsers(); fetchDeactivatedUsers(); fetchPendingUsers(); };
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.role === "HEAD_OF_UNIT") {
       fetchAll();
     }
   }, [status]);
+
+  const handlePendingAction = async (userId, action) => {
+    setApproving(a => ({ ...a, [userId]: action }));
+    try {
+      await fetch(`/api/users/${userId}/approve`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      });
+      setPending(prev => prev.filter(u => u.id !== userId));
+      if (action === "approve") fetchActiveUsers();
+    } finally {
+      setApproving(a => ({ ...a, [userId]: null }));
+    }
+  };
 
   const handleCdrToggle = async (userId, currentValue) => {
     setToggling(t => ({ ...t, [userId]: true }));
@@ -313,6 +355,8 @@ export default function AdminPage() {
           border-radius: 50%; background: white;
           transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
+        @keyframes lelu-spin { to { transform: rotate(360deg); } }
+        .lelu-spinner { width: 28px; height: 28px; border: 3px solid #EEF2F7; border-top-color: #1A5FA8; border-radius: 50%; animation: lelu-spin 0.7s linear infinite; margin: 0 auto; }
         .modal-input {
           width: 100%; border: 1.5px solid #E2E8F0; border-radius: 4px;
           padding: 10px 14px; font-size: 13px; color: #0B1F3A;
@@ -342,6 +386,71 @@ export default function AdminPage() {
         </div>
       )}
 
+      {/* Pending Approvals */}
+      {!pendingLoading && pending.length > 0 && (
+        <div style={{ background: "white", borderRadius: 6, border: "1.5px solid #F5C6C2", overflow: "hidden", boxShadow: "0 1px 6px rgba(192,57,43,0.08)", marginBottom: 24 }}>
+          <div style={{ padding: "14px 20px", borderBottom: "1px solid #FDECEA", background: "#FDECEA", display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#C0392B", flexShrink: 0 }} />
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#C0392B", textTransform: "uppercase", letterSpacing: "0.08em", flex: 1 }}>
+              Pending Approvals
+            </span>
+            <span style={{ background: "#C0392B", color: "white", fontSize: 10, fontWeight: 700, padding: "2px 9px", borderRadius: 3 }}>
+              {pending.length}
+            </span>
+          </div>
+          <div>
+            {pending.map((u, i) => {
+              const rc = roleColor(u.role);
+              const isWorking = approving[u.id];
+              return (
+                <div key={u.id} style={{
+                  display: "flex", alignItems: "center", gap: 16, padding: "14px 20px",
+                  borderBottom: i < pending.length - 1 ? "1px solid #F7F9FC" : "none",
+                }}>
+                  <div style={{
+                    width: 36, height: 36, borderRadius: "50%", background: "#C0392B",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 14, fontWeight: 700, color: "white", flexShrink: 0,
+                  }}>
+                    {u.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#0B1F3A" }}>{u.name}</div>
+                    <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 1 }}>{u.email}</div>
+                  </div>
+                  <span style={{ background: rc.bg, color: rc.color, fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 3, letterSpacing: "0.05em", textTransform: "uppercase", flexShrink: 0 }}>
+                    {roleLabel(u.role)}
+                  </span>
+                  <div style={{ fontSize: 11, color: "#A8BFCF", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    {fmtDate(u.createdAt)}
+                  </div>
+                  <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                    <button
+                      disabled={!!isWorking}
+                      onClick={() => handlePendingAction(u.id, "approve")}
+                      style={{ background: "#1A7A4A", color: "white", border: "none", padding: "7px 16px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: isWorking ? "default" : "pointer", fontFamily: "'Segoe UI', sans-serif", opacity: isWorking ? 0.6 : 1, transition: "background 0.15s" }}
+                      onMouseEnter={e => { if (!isWorking) e.currentTarget.style.background = "#155f38"; }}
+                      onMouseLeave={e => e.currentTarget.style.background = "#1A7A4A"}
+                    >
+                      {isWorking === "approve" ? "..." : "Approve"}
+                    </button>
+                    <button
+                      disabled={!!isWorking}
+                      onClick={() => handlePendingAction(u.id, "reject")}
+                      style={{ background: "#FDECEA", color: "#C0392B", border: "1px solid #F5C6C2", padding: "7px 16px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: isWorking ? "default" : "pointer", fontFamily: "'Segoe UI', sans-serif", opacity: isWorking ? 0.6 : 1, transition: "background 0.15s" }}
+                      onMouseEnter={e => { if (!isWorking) e.currentTarget.style.background = "#F5C6C2"; }}
+                      onMouseLeave={e => e.currentTarget.style.background = "#FDECEA"}
+                    >
+                      {isWorking === "reject" ? "..." : "Reject"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Active Users Table */}
       <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.05)", marginBottom: 24 }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -354,9 +463,12 @@ export default function AdminPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6} style={{ padding: 48, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading...</td></tr>
+              <tr><td colSpan={6} style={{ padding: 48, textAlign: "center" }}><div className="lelu-spinner" /></td></tr>
             ) : users.length === 0 ? (
-              <tr><td colSpan={6} style={{ padding: 48, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>No active users found.</td></tr>
+              <tr><td colSpan={6} style={{ padding: 60, textAlign: "center" }}>
+                <Users size={36} color="#D8E2EE" strokeWidth={1.2} style={{ margin: "0 auto 12px", display: "block" }} />
+                <div style={{ fontSize: 13, color: "#8FA3BB" }}>No active users found.</div>
+              </td></tr>
             ) : users.map(user => (
               <UserRow key={user.id} user={user} isDeactivated={false} {...rowProps} />
             ))}
@@ -394,9 +506,12 @@ export default function AdminPage() {
               </thead>
               <tbody>
                 {deactLoading ? (
-                  <tr><td colSpan={6} style={{ padding: 32, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading...</td></tr>
+                  <tr><td colSpan={6} style={{ padding: 32, textAlign: "center" }}><div className="lelu-spinner" /></td></tr>
                 ) : deactivated.length === 0 ? (
-                  <tr><td colSpan={6} style={{ padding: 32, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>No deactivated users.</td></tr>
+                  <tr><td colSpan={6} style={{ padding: 40, textAlign: "center" }}>
+                    <Users size={28} color="#D8E2EE" strokeWidth={1.2} style={{ margin: "0 auto 10px", display: "block" }} />
+                    <div style={{ fontSize: 12, color: "#8FA3BB" }}>No deactivated users.</div>
+                  </td></tr>
                 ) : deactivated.map(user => (
                   <UserRow key={user.id} user={user} isDeactivated={true} {...rowProps} />
                 ))}
@@ -423,7 +538,10 @@ export default function AdminPage() {
                 Cancel
               </button>
               <button onClick={() => handleDeactivate(deactivateModal.userId)}
-                style={{ background: "#C0392B", color: "white", border: "none", padding: "10px 24px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif" }}>
+                style={{ background: "#C0392B", color: "white", border: "none", padding: "10px 24px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", transition: "background 0.15s" }}
+                onMouseEnter={e => e.currentTarget.style.background = "#9e2d22"}
+                onMouseLeave={e => e.currentTarget.style.background = "#C0392B"}
+              >
                 Deactivate
               </button>
             </div>
@@ -451,7 +569,10 @@ export default function AdminPage() {
                 Cancel
               </button>
               <button onClick={handleDelete} disabled={deleting}
-                style={{ background: "#0B1F3A", color: "white", border: "none", padding: "10px 24px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", opacity: deleting ? 0.7 : 1 }}>
+                style={{ background: "#0B1F3A", color: "white", border: "none", padding: "10px 24px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", opacity: deleting ? 0.7 : 1, transition: "background 0.15s" }}
+                onMouseEnter={e => { if (!deleting) e.currentTarget.style.background = "#C0392B"; }}
+                onMouseLeave={e => e.currentTarget.style.background = "#0B1F3A"}
+              >
                 {deleting ? "Deleting..." : "Delete User"}
               </button>
             </div>
@@ -494,7 +615,10 @@ export default function AdminPage() {
                 Cancel
               </button>
               <button onClick={handleResetPassword} disabled={resetting}
-                style={{ background: "#1A5FA8", color: "white", border: "none", padding: "10px 24px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", opacity: resetting ? 0.7 : 1 }}>
+                style={{ background: "#1A5FA8", color: "white", border: "none", padding: "10px 24px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", opacity: resetting ? 0.7 : 1, transition: "background 0.15s" }}
+                onMouseEnter={e => { if (!resetting) e.currentTarget.style.background = "#154d8a"; }}
+                onMouseLeave={e => e.currentTarget.style.background = "#1A5FA8"}
+              >
                 {resetting ? "Saving..." : "Set Password"}
               </button>
             </div>

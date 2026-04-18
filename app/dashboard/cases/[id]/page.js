@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, Plus, Trash2, X, ChevronDown, Phone, GitBranch, Users, Crown, UserPlus } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, X, ChevronDown, Phone, GitBranch, Users, Crown, UserPlus, BookOpen } from "lucide-react";
 
 const CLOSURE_REASONS = [
   "Case Resolved",
@@ -67,7 +67,7 @@ export default function CaseDetailPage() {
       const res = await fetch(`/api/cases/${id}`);
       const data = await res.json();
       setCaseData(data);
-    } catch (e) { console.error(e); }
+    } catch { }
     finally { setLoading(false); }
   };
 
@@ -231,7 +231,10 @@ export default function CaseDetailPage() {
   };
 
   if (loading) return (
-    <div style={{ padding: 32, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading case...</div>
+    <div style={{ padding: 64, textAlign: "center" }}>
+      <style>{`@keyframes lelu-spin { to { transform: rotate(360deg); } }`}</style>
+      <div style={{ width: 28, height: 28, border: "3px solid #EEF2F7", borderTopColor: "#1A5FA8", borderRadius: "50%", animation: "lelu-spin 0.7s linear infinite", margin: "0 auto" }} />
+    </div>
   );
   if (!caseData) return (
     <div style={{ padding: 32, textAlign: "center", color: "#C0392B", fontSize: 13 }}>Case not found.</div>
@@ -309,7 +312,7 @@ export default function CaseDetailPage() {
           </div>
           {caseData.status === "Active" && (
             <div style={{ display: "flex", gap: 10 }}>
-              <button onClick={() => setShowDeclineModal(true)} style={{
+              <button className="action-btn" onClick={() => setShowDeclineModal(true)} style={{
                 background: "#C0392B", color: "white", border: "none",
                 padding: "10px 22px", borderRadius: 4, fontSize: 12,
                 fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif",
@@ -317,7 +320,7 @@ export default function CaseDetailPage() {
               }}>
                 Decline
               </button>
-              <button onClick={() => setShowCloseModal(true)} style={{
+              <button className="action-btn" onClick={() => setShowCloseModal(true)} style={{
                 background: "#0B1F3A", color: "white", border: "none",
                 padding: "10px 22px", borderRadius: 4, fontSize: 12,
                 fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif",
@@ -549,7 +552,7 @@ export default function CaseDetailPage() {
                 style={{ background: "white", border: "1px solid #E2E8F0", padding: "9px 20px", borderRadius: 4, fontSize: 13, cursor: "pointer", color: "#4E6478", fontFamily: "'Segoe UI', sans-serif" }}>
                 Cancel
               </button>
-              <button onClick={handleAddEntry} disabled={submitting || !entryContent.trim()} style={{
+              <button className="action-btn" onClick={handleAddEntry} disabled={submitting || !entryContent.trim()} style={{
                 background: submitting ? "#8FA3BB" : "#1A5FA8", color: "white", border: "none",
                 padding: "9px 24px", borderRadius: 4, fontSize: 13, fontWeight: 600,
                 cursor: "pointer", fontFamily: "'Segoe UI', sans-serif",
@@ -563,6 +566,7 @@ export default function CaseDetailPage() {
         {/* Entries List */}
         {entries.length === 0 ? (
           <div style={{ padding: 60, textAlign: "center" }}>
+            <BookOpen size={36} color="#D8E2EE" strokeWidth={1.2} style={{ margin: "0 auto 12px", display: "block" }} />
             <div style={{ fontSize: 13, color: "#8FA3BB" }}>No journal entries yet.</div>
             <div style={{ fontSize: 11, color: "#C4D0DC", marginTop: 4 }}>Add the first entry to begin documenting this investigation.</div>
           </div>
@@ -625,7 +629,10 @@ export default function CaseDetailPage() {
               padding: "9px 18px", borderRadius: 4, fontSize: 12,
               fontWeight: 600, cursor: "pointer", display: "flex",
               alignItems: "center", gap: 7, fontFamily: "'Segoe UI', sans-serif",
-            }}>
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "#154d8a"}
+            onMouseLeave={e => e.currentTarget.style.background = "#1A5FA8"}
+            >
               <Plus size={13} /> Log CDR Request
             </button>
           )}
@@ -633,7 +640,9 @@ export default function CaseDetailPage() {
 
         {(caseData.cdrRequests || []).length === 0 ? (
           <div style={{ padding: 48, textAlign: "center" }}>
+            <Phone size={32} color="#D8E2EE" strokeWidth={1.2} style={{ margin: "0 auto 10px", display: "block" }} />
             <div style={{ fontSize: 13, color: "#8FA3BB" }}>No CDR requests linked to this case.</div>
+            <div style={{ fontSize: 11, color: "#C4D0DC", marginTop: 4 }}>Use the button above to log a CDR request for this case.</div>
           </div>
         ) : (caseData.cdrRequests || []).map((cdr, i) => {
           const statusColors = { Pending: { bg: "#FEF3E2", color: "#D4730A" }, Received: { bg: "#E6F5EE", color: "#1A7A4A" }, Rejected: { bg: "#FDECEA", color: "#C0392B" } };

@@ -105,7 +105,7 @@ export default function DashboardPage() {
         setAllCdrs(cdrList);
         setAllIntl(intlList);
         setAllEntries(entryList);
-      } catch (e) { console.error(e); }
+      } catch { }
       finally { setLoading(false); }
     };
     fetchData();
@@ -218,6 +218,10 @@ export default function DashboardPage() {
 
   return (
     <div style={{ padding: 32 }}>
+      <style>{`
+        @keyframes lelu-spin { to { transform: rotate(360deg); } }
+        .lelu-spinner { width: 28px; height: 28px; border: 3px solid #EEF2F7; border-top-color: #1A5FA8; border-radius: 50%; animation: lelu-spin 0.7s linear infinite; margin: 0 auto; }
+      `}</style>
 
       {/* Welcome Banner */}
       <div style={{
@@ -236,8 +240,11 @@ export default function DashboardPage() {
         <button onClick={() => router.push("/dashboard/cases")} style={{
           background: "#1A5FA8", color: "white", border: "none",
           padding: "11px 24px", borderRadius: 4, fontSize: 12, fontWeight: 600,
-          cursor: "pointer", letterSpacing: "0.08em", textTransform: "uppercase",
-        }}>+ New Case</button>
+          cursor: "pointer", letterSpacing: "0.08em", textTransform: "uppercase", transition: "background 0.15s",
+        }}
+          onMouseEnter={e => e.currentTarget.style.background = "#154d8a"}
+          onMouseLeave={e => e.currentTarget.style.background = "#1A5FA8"}
+        >+ New Case</button>
       </div>
 
       {/* Pending Approvals */}
@@ -400,7 +407,10 @@ export default function DashboardPage() {
           }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A" }}>Team Overview</div>
             <button onClick={() => router.push("/dashboard/cases")}
-              style={{ fontSize: 11, color: "#1A5FA8", background: "none", border: "none", cursor: "pointer", fontWeight: 600, letterSpacing: "0.05em" }}>
+              style={{ fontSize: 11, color: "#1A5FA8", background: "none", border: "none", cursor: "pointer", fontWeight: 600, letterSpacing: "0.05em", transition: "opacity 0.15s" }}
+              onMouseEnter={e => e.currentTarget.style.opacity = "0.65"}
+              onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+            >
               VIEW ALL CASES
             </button>
           </div>
@@ -630,12 +640,15 @@ export default function DashboardPage() {
         <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.06)" }}>
           <div style={{ padding: "18px 24px", borderBottom: "1px solid #EEF2F7", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A" }}>Recent Cases</div>
-            <button onClick={() => router.push("/dashboard/cases")} style={{ fontSize: 11, color: "#1A5FA8", background: "none", border: "none", cursor: "pointer", fontWeight: 600, letterSpacing: "0.05em" }}>
+            <button onClick={() => router.push("/dashboard/cases")} style={{ fontSize: 11, color: "#1A5FA8", background: "none", border: "none", cursor: "pointer", fontWeight: 600, letterSpacing: "0.05em", transition: "opacity 0.15s" }}
+              onMouseEnter={e => e.currentTarget.style.opacity = "0.65"}
+              onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+            >
               VIEW ALL
             </button>
           </div>
           {loading ? (
-            <div style={{ padding: 40, textAlign: "center", color: "#8FA3BB", fontSize: 12 }}>Loading...</div>
+            <div style={{ padding: 40, textAlign: "center" }}><div className="lelu-spinner" /></div>
           ) : recentCases.length === 0 ? (
             <div style={{ padding: 60, textAlign: "center" }}>
               <FolderOpen size={36} color="#D8E2EE" strokeWidth={1.2} style={{ margin: "0 auto 12px", display: "block" }} />

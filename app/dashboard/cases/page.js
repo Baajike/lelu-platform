@@ -126,6 +126,8 @@ export default function CasesPage() {
         }
         .modal-input:focus { border-color: #1A5FA8; }
         .modal-input::placeholder { color: #A8BFCF; }
+        @keyframes lelu-spin { to { transform: rotate(360deg); } }
+        .lelu-spinner { width: 28px; height: 28px; border: 3px solid #EEF2F7; border-top-color: #1A5FA8; border-radius: 50%; animation: lelu-spin 0.7s linear infinite; margin: 0 auto; }
         .case-row:hover { background: #F7F9FC !important; cursor: pointer; }
         .primary-btn:hover { background: #154d8a !important; }
         .filter-btn:hover { background: #F0F4F8 !important; }
@@ -252,7 +254,7 @@ export default function CasesPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={8} style={{ padding: 48, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading...</td></tr>
+              <tr><td colSpan={8} style={{ padding: 48, textAlign: "center" }}><div className="lelu-spinner" /></td></tr>
             ) : filtered.length === 0 ? (
               <tr>
                 <td colSpan={8} style={{ padding: 72, textAlign: "center" }}>

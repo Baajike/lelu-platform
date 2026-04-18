@@ -181,7 +181,10 @@ export default function CdrPage() {
   };
 
   if (accessLoading) return (
-    <div style={{ padding: 32, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading...</div>
+    <div style={{ padding: 48, textAlign: "center" }}>
+      <style>{`@keyframes lelu-spin { to { transform: rotate(360deg); } }`}</style>
+      <div style={{ width: 28, height: 28, border: "3px solid #EEF2F7", borderTopColor: "#1A5FA8", borderRadius: "50%", animation: "lelu-spin 0.7s linear infinite", margin: "0 auto" }} />
+    </div>
   );
 
   const hasAccess = session?.user?.role === "HEAD_OF_UNIT" || currentUser?.cdrAccess === true;
@@ -211,6 +214,8 @@ export default function CdrPage() {
         }
         .modal-input:focus { border-color: #1A5FA8; }
         .modal-input::placeholder { color: #A8BFCF; }
+        @keyframes lelu-spin { to { transform: rotate(360deg); } }
+        .lelu-spinner { width: 28px; height: 28px; border: 3px solid #EEF2F7; border-top-color: #1A5FA8; border-radius: 50%; animation: lelu-spin 0.7s linear infinite; margin: 0 auto; }
         .cdr-row:hover td { background: #F7F9FC; }
         .upload-btn:hover { border-color: #1A5FA8 !important; color: #1A5FA8 !important; }
         .officer-chip:hover { border-color: #1A5FA8 !important; }
@@ -280,22 +285,31 @@ export default function CdrPage() {
 
       {/* Toolbar */}
       <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", padding: "14px 20px", marginBottom: 16, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", boxShadow: "0 1px 4px rgba(11,31,58,0.05)" }}>
-        {["All", ...STATUSES].map(s => (
-          <button key={s} onClick={() => setStatusFilter(s === "All" ? "" : s)} style={{
-            fontSize: 12, padding: "7px 16px", borderRadius: 4, cursor: "pointer",
-            fontFamily: "'Segoe UI', sans-serif", border: "1px solid #E2E8F0",
-            fontWeight: (s === "All" ? !statusFilter : statusFilter === s) ? 700 : 400,
-            background: (s === "All" ? !statusFilter : statusFilter === s) ? "#0B1F3A" : "white",
-            color: (s === "All" ? !statusFilter : statusFilter === s) ? "white" : "#4E6478",
-            transition: "all 0.15s",
-          }}>{s}</button>
-        ))}
+        {["All", ...STATUSES].map(s => {
+          const isActive = s === "All" ? !statusFilter : statusFilter === s;
+          return (
+            <button key={s} onClick={() => setStatusFilter(s === "All" ? "" : s)} style={{
+              fontSize: 12, padding: "7px 16px", borderRadius: 4, cursor: "pointer",
+              fontFamily: "'Segoe UI', sans-serif", border: "1px solid #E2E8F0",
+              fontWeight: isActive ? 700 : 400,
+              background: isActive ? "#0B1F3A" : "white",
+              color: isActive ? "white" : "#4E6478",
+              transition: "all 0.15s",
+            }}
+              onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = "#F0F4F8"; }}
+              onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = "white"; }}
+            >{s}</button>
+          );
+        })}
         <button onClick={() => setShowModal(true)} style={{
           marginLeft: "auto", background: "#1A5FA8", color: "white", border: "none",
           padding: "9px 20px", borderRadius: 4, fontSize: 12, fontWeight: 600,
           cursor: "pointer", display: "flex", alignItems: "center", gap: 7,
-          fontFamily: "'Segoe UI', sans-serif", letterSpacing: "0.05em",
-        }}>
+          fontFamily: "'Segoe UI', sans-serif", letterSpacing: "0.05em", transition: "background 0.15s",
+        }}
+          onMouseEnter={e => e.currentTarget.style.background = "#154d8a"}
+          onMouseLeave={e => e.currentTarget.style.background = "#1A5FA8"}
+        >
           <Plus size={14} /> New CDR Request
         </button>
       </div>
@@ -323,7 +337,7 @@ export default function CdrPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={9} style={{ padding: 48, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading...</td></tr>
+              <tr><td colSpan={9} style={{ padding: 48, textAlign: "center" }}><div className="lelu-spinner" /></td></tr>
             ) : filtered.length === 0 ? (
               <tr>
                 <td colSpan={9} style={{ padding: 72, textAlign: "center" }}>
@@ -395,7 +409,10 @@ export default function CdrPage() {
                   </td>
                   <td style={{ padding: "14px 16px" }}>
                     <button onClick={() => handleDelete(c.id)}
-                      style={{ fontSize: 11, color: "#C0392B", background: "#FDECEA", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif" }}>
+                      style={{ fontSize: 11, color: "#C0392B", background: "#FDECEA", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif", transition: "background 0.15s" }}
+                      onMouseEnter={e => e.currentTarget.style.background = "#F5C6C2"}
+                      onMouseLeave={e => e.currentTarget.style.background = "#FDECEA"}
+                    >
                       Delete
                     </button>
                   </td>

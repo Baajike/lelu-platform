@@ -188,6 +188,8 @@ export default function InternationalPage() {
         }
         .modal-input:focus { border-color: #1A5FA8; }
         .modal-input::placeholder { color: #A8BFCF; }
+        @keyframes lelu-spin { to { transform: rotate(360deg); } }
+        .lelu-spinner { width: 28px; height: 28px; border: 3px solid #EEF2F7; border-top-color: #1A5FA8; border-radius: 50%; animation: lelu-spin 0.7s linear infinite; margin: 0 auto; }
         .req-row:hover { background: #F7F9FC !important; cursor: pointer; }
         .primary-btn:hover { background: #154d8a !important; }
         .filter-btn:hover { background: #F0F4F8 !important; }
@@ -324,7 +326,7 @@ export default function InternationalPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={10} style={{ padding: 48, textAlign: "center", color: "#8FA3BB", fontSize: 13 }}>Loading...</td></tr>
+              <tr><td colSpan={10} style={{ padding: 48, textAlign: "center" }}><div className="lelu-spinner" /></td></tr>
             ) : filtered.length === 0 ? (
               <tr>
                 <td colSpan={10} style={{ padding: 72, textAlign: "center" }}>
@@ -541,22 +543,34 @@ export default function InternationalPage() {
               </div>
 
               <div style={{ display: "flex", gap: 10, justifyContent: "space-between", alignItems: "center" }}>
-                <button onClick={() => handleDelete(selectedReq.id)} style={{ fontSize: 12, color: "#C0392B", background: "#FDECEA", border: "none", padding: "9px 16px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif" }}>
+                <button onClick={() => handleDelete(selectedReq.id)} style={{ fontSize: 12, color: "#C0392B", background: "#FDECEA", border: "none", padding: "9px 16px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif", transition: "background 0.15s" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "#F5C6C2"}
+                  onMouseLeave={e => e.currentTarget.style.background = "#FDECEA"}
+                >
                   Delete
                 </button>
                 <div style={{ display: "flex", gap: 8 }}>
                   {selectedReq.status === "Pending" && (
-                    <button onClick={() => handleUpdateStatus(selectedReq.id, "Responded")} style={{ background: "#1A7A4A", color: "white", border: "none", padding: "9px 20px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif" }}>
+                    <button onClick={() => handleUpdateStatus(selectedReq.id, "Responded")} style={{ background: "#1A7A4A", color: "white", border: "none", padding: "9px 20px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", transition: "background 0.15s" }}
+                      onMouseEnter={e => e.currentTarget.style.background = "#155f38"}
+                      onMouseLeave={e => e.currentTarget.style.background = "#1A7A4A"}
+                    >
                       Mark Responded
                     </button>
                   )}
                   {selectedReq.status !== "Closed" && (
-                    <button onClick={() => handleUpdateStatus(selectedReq.id, "Closed")} style={{ background: "#4E6478", color: "white", border: "none", padding: "9px 20px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif" }}>
+                    <button onClick={() => handleUpdateStatus(selectedReq.id, "Closed")} style={{ background: "#4E6478", color: "white", border: "none", padding: "9px 20px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", transition: "background 0.15s" }}
+                      onMouseEnter={e => e.currentTarget.style.background = "#3d4f5f"}
+                      onMouseLeave={e => e.currentTarget.style.background = "#4E6478"}
+                    >
                       Close Request
                     </button>
                   )}
                   {selectedReq.status === "Closed" && (
-                    <button onClick={() => handleUpdateStatus(selectedReq.id, "Pending")} style={{ background: "#1A5FA8", color: "white", border: "none", padding: "9px 20px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif" }}>
+                    <button onClick={() => handleUpdateStatus(selectedReq.id, "Pending")} style={{ background: "#1A5FA8", color: "white", border: "none", padding: "9px 20px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif", transition: "background 0.15s" }}
+                      onMouseEnter={e => e.currentTarget.style.background = "#154d8a"}
+                      onMouseLeave={e => e.currentTarget.style.background = "#1A5FA8"}
+                    >
                       Reopen
                     </button>
                   )}
