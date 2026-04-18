@@ -129,13 +129,10 @@ export async function GET(request, { params }) {
           matchCount: reasons.size,
         }));
       }
-    } catch (e) {
-      console.error("Correlation error:", e);
-    }
+    } catch { }
 
     return Response.json({ ...caseData, relatedCases });
   } catch (error) {
-    console.error("GET case error:", error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
@@ -191,7 +188,6 @@ export async function PATCH(request, { params }) {
 
     return Response.json(updated);
   } catch (error) {
-    console.error("PATCH case error:", error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

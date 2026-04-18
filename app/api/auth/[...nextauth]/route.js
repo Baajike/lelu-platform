@@ -31,7 +31,7 @@ export const authOptions = {
         await db.user.update({
           where: { id: user.id },
           data: { lastActive: new Date() },
-        }).catch((err) => console.error("[auth] Failed to update lastActive:", err));
+        }).catch(() => {});
       }
       return token;
     },

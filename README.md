@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# LELU Platform
 
-## Getting Started
+Law Enforcement Liaison Unit (LELU) — internal case management system for the Ghana Police Service. Officers log cases, submit CDR requests, track international requests, and generate activity reports. Role-based access controls restrict what each user can see and do.
 
-First, run the development server:
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Database ORM | Prisma |
+| Database | SQLite (development) / PostgreSQL (production-ready) |
+| Auth | NextAuth.js (JWT sessions) |
+| UI | React, Lucide icons |
+| Password hashing | bcryptjs |
+
+---
+
+## Setup Instructions (IT Team)
+
+### Prerequisites
+
+- Node.js 18 or higher
+- Git
+
+### 1. Clone and install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd lelu-platform
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment setup
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+cp .env.example .env
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open `.env` and fill in the values (see [Environment Variables](#environment-variables) below).
 
-## Learn More
+### 3. Database setup
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx prisma migrate deploy
+node prisma/seed.js
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This creates the database schema and seeds the initial user accounts.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. Build and run
 
-## Deploy on Vercel
+```bash
+npm run build
+npm start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The application will be available at `http://localhost:3000` (or the port configured in `NEXTAUTH_URL`).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Environment Variables
+
+| Variable | Description | Example |
+|---|---|---|
+| `DATABASE_URL` | Path to the SQLite database file | `file:./prisma/lelu.db` |
+| `NEXTAUTH_SECRET` | Secret key used to sign JWT tokens — must be long, random, and kept private | `change-this-to-a-long-random-string` |
+| `NEXTAUTH_URL` | Full URL of the application (no trailing slash) | `http://localhost:3000` |
+
+> **Important:** Change `NEXTAUTH_SECRET` to a strong random value before deploying. You can generate one with: `openssl rand -base64 32`
+
+---
+
+## Default Login Credentials
+
+All accounts use password: **`lelu2026`**
+
+| Email | Role |
+|---|---|
+| `head@lelu.gov.gh` | Head of Unit |
+| `admin@lelu.gov.gh` | Office Administrator |
+| `supervisor@lelu.gov.gh` | Supervisor |
+| `asante@lelu.gov.gh` | Officer |
+| `boateng@lelu.gov.gh` | Officer |
+| `darko@lelu.gov.gh` | Officer |
+
+> Change all passwords after first login in production.
+
+---
+
+## Switching from SQLite to PostgreSQL
+
+When ready to move to a production database:
+
+1. Provision a PostgreSQL instance (e.g., Supabase, Railway, or a self-hosted server).
+
+2. In `prisma/schema.prisma`, change the datasource block:
+
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+```
+
+3. Update `DATABASE_URL` in `.env` to your PostgreSQL connection string:
+
+```
+DATABASE_URL="postgresql://user:password@host:5432/lelu"
+```
+
+4. Run migrations against the new database:
+
+```bash
+npx prisma migrate deploy
+node prisma/seed.js
+```
+
+No application code changes are required — Prisma handles the rest.
+
+---
+
+## Folder Structure
+
+```
+lelu-platform/
+├── app/
+│   ├── api/                  # API route handlers
+│   │   ├── auth/             # NextAuth authentication
+│   │   ├── cases/            # Case CRUD + assignments
+│   │   ├── cdr/              # CDR request management
+│   │   ├── notifications/    # In-app notifications
+│   │   ├── reports/          # Activity report generation
+│   │   └── users/            # User management
+│   ├── dashboard/            # Protected dashboard pages
+│   │   ├── cases/            # Case list + case detail
+│   │   ├── cdr/              # CDR requests
+│   │   ├── fraud/            # Intel DB search
+│   │   ├── international/    # International requests
+│   │   ├── reports/          # Reports
+│   │   └── admin/            # User administration
+│   ├── generated/prisma/     # Auto-generated Prisma client (do not edit)
+│   ├── lib/                  # Shared utilities (db client, helpers)
+│   └── login/                # Login page
+├── prisma/
+│   ├── schema.prisma         # Database schema
+│   ├── seed.js               # Initial user seed
+│   └── lelu.db               # SQLite database file
+├── .env                      # Local environment variables (not committed)
+├── .env.example              # Template for environment variables
+└── README.md
+```
