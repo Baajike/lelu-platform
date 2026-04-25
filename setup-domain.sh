@@ -2,12 +2,6 @@
 # =============================================================================
 # LELU Platform — Deployment Script (Domain + SSL)
 # Ubuntu 24.04 LTS
-#
-# Run this from inside the lelu-platform-master folder:
-#   cd lelu-platform-master
-#   chmod +x setup-domain.sh
-#   sudo bash setup-domain.sh
-#
 # Before running this:
 #   - Phases 0–8 done (server hardened)
 #   - Domain DNS A record pointing to this server's public IP
