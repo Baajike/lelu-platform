@@ -2,30 +2,22 @@
 # =============================================================================
 # LELU Platform — Deployment Script
 # Ubuntu 24.04 LTS
-#
-# Run this from inside the lelu-platform-master folder:
-#   cd lelu-platform-master
-#   chmod +x setup.sh
-#   sudo bash setup.sh
-#
 # Prerequisites (must be done before running this):
 #   - Ubuntu 24.04 installed and booted
 #   - Admin users created
 #   - Static IP configured
 #   - UFW firewall up (ports 22/2222, 80, 443 open)
 #   - SSH hardened
+#   - prisma/schema.prisma must have provider = "postgresql"
 # =============================================================================
 
-set -e  # Exit immediately on any error
+set -e
 
-# -----------------------------------------------------------------------
-# Colors for output
-# -----------------------------------------------------------------------
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 log()    { echo -e "${GREEN}[✔]${NC} $1"; }
 info()   { echo -e "${BLUE}[→]${NC} $1"; }
@@ -35,16 +27,10 @@ section(){ echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━
            echo -e "${BLUE}  $1${NC}"; \
            echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"; }
 
-# -----------------------------------------------------------------------
-# Must be run as root
-# -----------------------------------------------------------------------
 if [ "$EUID" -ne 0 ]; then
     error "Please run with sudo: sudo bash setup.sh"
 fi
 
-# -----------------------------------------------------------------------
-# Must be run from inside the app folder (where package.json lives)
-# -----------------------------------------------------------------------
 if [ ! -f "package.json" ]; then
     error "Run this script from inside the lelu-platform-master folder."
 fi
@@ -52,12 +38,19 @@ fi
 APP_SOURCE_DIR="$(pwd)"
 
 # -----------------------------------------------------------------------
+# Check Prisma schema is set to PostgreSQL before doing anything else
+# -----------------------------------------------------------------------
+if ! grep -q 'provider *= *"postgresql"' prisma/schema.prisma; then
+    error "prisma/schema.prisma is not set to PostgreSQL. Tell the dev to update the provider before running this script."
+fi
+
+# -----------------------------------------------------------------------
 # Collect info upfront — ask everything before touching the system
 # -----------------------------------------------------------------------
 section "LELU Platform Setup"
 echo ""
 echo "This script will:"
-echo "  • Install Node.js 20, PM2, and nginx"
+echo "  • Install Node.js 20, PM2, nginx, and PostgreSQL"
 echo "  • Deploy LELU to /var/www/lelu/app"
 echo "  • Configure nginx as a reverse proxy"
 echo "  • Set up PM2 to keep the app running"
@@ -70,7 +63,19 @@ if [ -z "$SERVER_IP" ]; then
 fi
 
 echo ""
-echo "Generating a secure NEXTAUTH_SECRET for you..."
+read -s -p "Enter a password for the LELU database user: " DB_PASSWORD
+echo ""
+if [ -z "$DB_PASSWORD" ]; then
+    error "Database password cannot be empty."
+fi
+read -s -p "Confirm database password: " DB_PASSWORD_CONFIRM
+echo ""
+if [ "$DB_PASSWORD" != "$DB_PASSWORD_CONFIRM" ]; then
+    error "Passwords do not match."
+fi
+
+echo ""
+echo "Generating a secure NEXTAUTH_SECRET..."
 NEXTAUTH_SECRET=$(openssl rand -base64 32)
 log "Secret generated."
 
@@ -102,6 +107,25 @@ apt-get install -y nginx > /dev/null 2>&1
 systemctl enable nginx > /dev/null 2>&1
 systemctl start nginx > /dev/null 2>&1
 log "nginx installed and running."
+
+info "Installing PostgreSQL..."
+apt-get install -y postgresql postgresql-contrib > /dev/null 2>&1
+systemctl enable postgresql > /dev/null 2>&1
+systemctl start postgresql > /dev/null 2>&1
+log "PostgreSQL installed and running."
+
+# -----------------------------------------------------------------------
+# PostgreSQL — create database and user
+# -----------------------------------------------------------------------
+section "Setting Up PostgreSQL"
+
+info "Creating database user and database..."
+sudo -u postgres psql -c "DROP DATABASE IF EXISTS lelu_db;" > /dev/null 2>&1 || true
+sudo -u postgres psql -c "DROP USER IF EXISTS lelu_user;" > /dev/null 2>&1 || true
+sudo -u postgres psql -c "CREATE USER lelu_user WITH ENCRYPTED PASSWORD '${DB_PASSWORD}';"
+sudo -u postgres psql -c "CREATE DATABASE lelu_db OWNER lelu_user;"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE lelu_db TO lelu_user;"
+log "Database lelu_db and user lelu_user created."
 
 # -----------------------------------------------------------------------
 # PHASE 10 — nginx Config
@@ -190,7 +214,6 @@ mkdir -p /var/www/lelu
 chown leluapp:leluapp /var/www/lelu
 
 info "Copying app files to /var/www/lelu/app..."
-# If a previous deployment exists, back it up first
 if [ -d "/var/www/lelu/app" ]; then
     warn "Existing deployment found — backing up to /var/www/lelu/app.bak"
     rm -rf /var/www/lelu/app.bak
@@ -202,7 +225,7 @@ chown -R leluapp:leluapp /var/www/lelu/app
 
 info "Writing .env file..."
 cat > /var/www/lelu/app/.env << ENVFILE
-DATABASE_URL="file:./prisma/lelu.db"
+DATABASE_URL="postgresql://lelu_user:${DB_PASSWORD}@localhost:5432/lelu_db"
 NEXTAUTH_SECRET="${NEXTAUTH_SECRET}"
 NEXTAUTH_URL="http://${SERVER_IP}"
 NODE_ENV="production"
@@ -221,9 +244,6 @@ info "Regenerating Prisma client for Linux..."
 sudo -u leluapp npx prisma generate || error "prisma generate failed."
 log "Prisma client generated."
 
-info "Removing dev database (starting clean)..."
-sudo -u leluapp rm -f prisma/lelu.db
-
 info "Running database migrations..."
 sudo -u leluapp npx prisma migrate deploy || error "prisma migrate failed."
 log "Database schema created."
@@ -237,12 +257,11 @@ sudo -u leluapp npm run build || error "npm run build failed — check the error
 log "App built."
 
 # -----------------------------------------------------------------------
-# PHASE 11.6 — PM2
+# PM2
 # -----------------------------------------------------------------------
-section "Phase 11.6 — Setting Up PM2"
+section "Setting Up PM2"
 
 info "Starting app under PM2..."
-# Stop existing instance if running
 sudo -u leluapp pm2 delete lelu-platform 2>/dev/null || true
 cd /var/www/lelu/app
 sudo -u leluapp pm2 start "npm start" --name lelu-platform
@@ -261,18 +280,20 @@ log "PM2 configured."
 section "Phase 12 — Database Backups"
 
 info "Writing backup script..."
-cat > /usr/local/bin/backup-lelu-db.sh << 'BACKUPSCRIPT'
+cat > /usr/local/bin/backup-lelu-db.sh << BACKUPSCRIPT
 #!/bin/bash
 BACKUP_DIR="/var/backups/lelu"
-DB_PATH="/var/www/lelu/app/prisma/lelu.db"
-DATE=$(date +%Y-%m-%d)
+DATE=\$(date +%Y-%m-%d)
 KEEP_DAYS=30
 
-mkdir -p "$BACKUP_DIR"
-cp "$DB_PATH" "$BACKUP_DIR/lelu-$DATE.db"
-gzip -f "$BACKUP_DIR/lelu-$DATE.db"
-find "$BACKUP_DIR" -name "*.db.gz" -mtime +$KEEP_DAYS -delete
-echo "Backup complete: $BACKUP_DIR/lelu-$DATE.db.gz"
+mkdir -p "\$BACKUP_DIR"
+
+PGPASSWORD="${DB_PASSWORD}" pg_dump -U lelu_user -h localhost lelu_db > "\$BACKUP_DIR/lelu-\$DATE.sql"
+gzip -f "\$BACKUP_DIR/lelu-\$DATE.sql"
+
+find "\$BACKUP_DIR" -name "*.sql.gz" -mtime +\$KEEP_DAYS -delete
+
+echo "Backup complete: \$BACKUP_DIR/lelu-\$DATE.sql.gz"
 BACKUPSCRIPT
 
 chmod +x /usr/local/bin/backup-lelu-db.sh
@@ -282,7 +303,6 @@ info "Running first backup..."
 log "First backup created."
 
 info "Scheduling daily backup at 2 AM..."
-# Remove existing entry if any, then add fresh
 (crontab -l 2>/dev/null | grep -v "backup-lelu-db"; echo "0 2 * * * /usr/local/bin/backup-lelu-db.sh >> /var/log/lelu-backup.log 2>&1") | crontab -
 log "Cron job set."
 
