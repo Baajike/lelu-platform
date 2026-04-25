@@ -10,21 +10,58 @@ Law Enforcement Liaison Unit (LELU) — internal case management system for the 
 |---|---|
 | Framework | Next.js 15 (App Router) |
 | Database ORM | Prisma |
-| Database | SQLite (development) / PostgreSQL (production-ready) |
+| Database | PostgreSQL |
 | Auth | NextAuth.js (JWT sessions) |
 | UI | React, Lucide icons |
 | Password hashing | bcryptjs |
 
 ---
 
-## Setup Instructions (IT Team)
+## Production Setup (Ubuntu Server)
 
 ### Prerequisites
 
+- Ubuntu 20.04 or 22.04
 - Node.js 18 or higher
 - Git
+- PM2 (`npm install -g pm2`)
 
-### 1. Clone and install
+---
+
+### 1. Install PostgreSQL
+
+```bash
+sudo apt update
+sudo apt install -y postgresql postgresql-contrib
+sudo systemctl enable postgresql
+sudo systemctl start postgresql
+```
+
+---
+
+### 2. Create the database and user
+
+```bash
+sudo -u postgres psql
+```
+
+Inside the PostgreSQL shell:
+
+```sql
+CREATE DATABASE lelu_db;
+CREATE USER lelu_user WITH PASSWORD 'your_strong_password';
+GRANT ALL PRIVILEGES ON DATABASE lelu_db TO lelu_user;
+-- PostgreSQL 15+ also requires this:
+\c lelu_db
+GRANT ALL ON SCHEMA public TO lelu_user;
+\q
+```
+
+Replace `your_strong_password` with a strong password. Keep it — you will need it in the next step.
+
+---
+
+### 3. Clone and install dependencies
 
 ```bash
 git clone <repository-url>
@@ -32,31 +69,81 @@ cd lelu-platform
 npm install
 ```
 
-### 2. Environment setup
+`npm install` automatically runs `prisma generate` via the `postinstall` script.
+
+---
+
+### 4. Set up the environment file
 
 ```bash
 cp .env.example .env
+nano .env
 ```
 
-Open `.env` and fill in the values (see [Environment Variables](#environment-variables) below).
+Fill in the three values:
 
-### 3. Database setup
+```env
+DATABASE_URL="postgresql://lelu_user:your_strong_password@localhost:5432/lelu_db"
+NEXTAUTH_SECRET="<output of: openssl rand -base64 32>"
+NEXTAUTH_URL="http://YOUR_SERVER_IP:3000"
+```
+
+Generate the secret with:
+
+```bash
+openssl rand -base64 32
+```
+
+> **Important:** Never commit `.env` to version control. It is already listed in `.gitignore`.
+
+---
+
+### 5. Run database migrations
 
 ```bash
 npx prisma migrate deploy
+```
+
+This applies all schema migrations to the PostgreSQL database.
+
+---
+
+### 6. Seed initial user accounts
+
+```bash
 node prisma/seed.js
 ```
 
-This creates the database schema and seeds the initial user accounts.
+This creates the default officer accounts (see [Default Login Credentials](#default-login-credentials) below).
 
-### 4. Build and run
+---
+
+### 7. Build the application
 
 ```bash
 npm run build
-npm start
 ```
 
-The application will be available at `http://localhost:3000` (or the port configured in `NEXTAUTH_URL`).
+---
+
+### 8. Start with PM2
+
+```bash
+pm2 start npm --name "lelu-platform" -- start
+pm2 save
+pm2 startup
+```
+
+Run the command printed by `pm2 startup` to configure PM2 to restart automatically on server reboot.
+
+To check status:
+
+```bash
+pm2 status
+pm2 logs lelu-platform
+```
+
+The application will be available at `http://YOUR_SERVER_IP:3000`.
 
 ---
 
@@ -64,11 +151,9 @@ The application will be available at `http://localhost:3000` (or the port config
 
 | Variable | Description | Example |
 |---|---|---|
-| `DATABASE_URL` | Path to the SQLite database file | `file:./prisma/lelu.db` |
-| `NEXTAUTH_SECRET` | Secret key used to sign JWT tokens — must be long, random, and kept private | `change-this-to-a-long-random-string` |
-| `NEXTAUTH_URL` | Full URL of the application (no trailing slash) | `http://localhost:3000` |
-
-> **Important:** Change `NEXTAUTH_SECRET` to a strong random value before deploying. You can generate one with: `openssl rand -base64 32`
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql://lelu_user:password@localhost:5432/lelu_db` |
+| `NEXTAUTH_SECRET` | Secret key used to sign JWT tokens — must be long, random, and kept private | `openssl rand -base64 32` |
+| `NEXTAUTH_URL` | Full URL of the application (no trailing slash) | `http://192.168.1.10:3000` |
 
 ---
 
@@ -86,38 +171,6 @@ All accounts use password: **`lelu2026`**
 | `darko@lelu.gov.gh` | Officer |
 
 > Change all passwords after first login in production.
-
----
-
-## Switching from SQLite to PostgreSQL
-
-When ready to move to a production database:
-
-1. Provision a PostgreSQL instance (e.g., Supabase, Railway, or a self-hosted server).
-
-2. In `prisma/schema.prisma`, change the datasource block:
-
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-```
-
-3. Update `DATABASE_URL` in `.env` to your PostgreSQL connection string:
-
-```
-DATABASE_URL="postgresql://user:password@host:5432/lelu"
-```
-
-4. Run migrations against the new database:
-
-```bash
-npx prisma migrate deploy
-node prisma/seed.js
-```
-
-No application code changes are required — Prisma handles the rest.
 
 ---
 
@@ -145,8 +198,7 @@ lelu-platform/
 │   └── login/                # Login page
 ├── prisma/
 │   ├── schema.prisma         # Database schema
-│   ├── seed.js               # Initial user seed
-│   └── lelu.db               # SQLite database file
+│   └── seed.js               # Initial user seed
 ├── .env                      # Local environment variables (not committed)
 ├── .env.example              # Template for environment variables
 └── README.md
