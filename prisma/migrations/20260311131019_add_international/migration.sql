@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "InternationalRequest" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "refNumber" TEXT NOT NULL,
     "direction" TEXT NOT NULL,
     "country" TEXT NOT NULL,
@@ -11,8 +11,9 @@ CREATE TABLE "InternationalRequest" (
     "priority" TEXT NOT NULL DEFAULT 'Medium',
     "caseId" TEXT,
     "officerId" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "respondedAt" DATETIME,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "respondedAt" TIMESTAMP,
+    CONSTRAINT "InternationalRequest_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "InternationalRequest_caseId_fkey" FOREIGN KEY ("caseId") REFERENCES "Case" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "InternationalRequest_officerId_fkey" FOREIGN KEY ("officerId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
