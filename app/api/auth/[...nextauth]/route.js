@@ -17,7 +17,10 @@ export const authOptions = {
   if (!user) return null;
   const valid = await bcrypt.compare(credentials.password, user.password);
   if (!valid) return null;
-  if (!user.approved) throw new Error("PENDING_APPROVAL");
+  if (!user.approved) {
+    if (user.deactivated === true) throw new Error("DEACTIVATED");
+    throw new Error("PENDING_APPROVAL");
+  }
   return { id: user.id, name: user.name, email: user.email, role: user.role };
 },
     }),

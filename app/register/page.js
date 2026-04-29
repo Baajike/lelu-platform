@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, CheckCircle } from "lucide-react";
 
-const ROLES = [
+const ALL_ROLES = [
   { value: "HEAD_OF_UNIT", label: "Head of Unit", desc: "Unit commander with full platform access" },
   { value: "OFFICER", label: "Staff", desc: "Investigates cases and logs intelligence" },
 ];
@@ -15,9 +15,26 @@ export default function RegisterPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [visible, setVisible] = useState(false);
+  const [headExists, setHeadExists] = useState(false);
+  const [autoApproved, setAutoApproved] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "", role: "" });
 
   useEffect(() => { setTimeout(() => setVisible(true), 100); }, []);
+
+  useEffect(() => {
+    fetch("/api/users/check-head")
+      .then(r => r.json())
+      .then(d => {
+        if (d.headExists) {
+          setHeadExists(true);
+          // If HEAD_OF_UNIT was already selected, clear the role selection
+          setForm(f => f.role === "HEAD_OF_UNIT" ? { ...f, role: "" } : f);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const visibleRoles = headExists ? ALL_ROLES.filter(r => r.value !== "HEAD_OF_UNIT") : ALL_ROLES;
 
   const handleSubmit = async () => {
     setError("");
@@ -39,6 +56,7 @@ export default function RegisterPage() {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Registration failed."); return; }
+      setAutoApproved(!!data.autoApproved);
       setStep(2);
     } catch { setError("Something went wrong. Please try again."); }
     finally { setSubmitting(false); }
@@ -182,8 +200,8 @@ export default function RegisterPage() {
             {/* Role */}
             <div style={{ marginBottom: 22 }}>
               <div style={{ fontSize: 10, color: "#4a6a8a", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 10 }}>Your Role *</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                {ROLES.map(r => (
+              <div style={{ display: "grid", gridTemplateColumns: visibleRoles.length === 1 ? "1fr" : "1fr 1fr", gap: 8 }}>
+                {visibleRoles.map(r => (
                   <div key={r.value} className={`role-card ${form.role === r.value ? "selected" : ""}`}
                     onClick={() => setForm({ ...form, role: r.value })}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
@@ -242,13 +260,17 @@ export default function RegisterPage() {
               <CheckCircle size={28} color="#1A7A4A" strokeWidth={1.5} />
             </div>
             <div style={{ fontSize: 15, fontWeight: 700, color: "white", marginBottom: 10, letterSpacing: "0.05em" }}>
-              Registration Submitted
+              {autoApproved ? "Account Created" : "Registration Submitted"}
             </div>
             <div style={{ fontSize: 13, color: "#7a9bbf", lineHeight: 1.8, marginBottom: 16 }}>
-              Your account request has been sent to the Head of Unit for approval.
+              {autoApproved
+                ? "Your Head of Unit account is ready. You can log in immediately."
+                : "Your account request has been sent to the Head of Unit for approval."}
             </div>
             <div style={{ fontSize: 12, color: "#3a5a7a", lineHeight: 1.7, marginBottom: 32, padding: "14px 16px", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 4 }}>
-              Once approved, return to the login page and sign in with your registered email and password.
+              {autoApproved
+                ? "Return to the login page and sign in with your registered email and password."
+                : "Once approved, return to the login page and sign in with your registered email and password."}
             </div>
             <button onClick={() => router.push("/login")} style={{
               background: "#1A5FA8", color: "white", border: "none",

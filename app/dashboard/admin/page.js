@@ -199,7 +199,7 @@ export default function AdminPage() {
         throw new Error(body.error || `HTTP ${res.status}`);
       }
       const data = await res.json();
-      setUsers(Array.isArray(data) ? data : []);
+      setUsers(Array.isArray(data) ? data.filter(u => u.role !== "ADMIN") : []);
     } catch (e) {
       setFetchError(e.message);
       setUsers([]);
@@ -214,7 +214,7 @@ export default function AdminPage() {
       const res = await fetch("/api/users?deactivated=true");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      setDeactivated(Array.isArray(data) ? data : []);
+      setDeactivated(Array.isArray(data) ? data.filter(u => u.role !== "ADMIN") : []);
     } catch {
       setDeactivated([]);
     } finally {
@@ -228,7 +228,7 @@ export default function AdminPage() {
       const res = await fetch("/api/users?pending=true");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      setPending(Array.isArray(data) ? data : []);
+      setPending(Array.isArray(data) ? data.filter(u => u.role !== "ADMIN") : []);
     } catch {
       setPending([]);
     } finally {

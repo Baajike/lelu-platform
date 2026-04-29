@@ -115,12 +115,12 @@ export default function DashboardPage() {
     if (isAdmin) {
       fetch("/api/users?pending=true")
         .then(r => r.json())
-        .then(d => setPendingUsers(Array.isArray(d) ? d : []))
+        .then(d => setPendingUsers(Array.isArray(d) ? d.filter(u => u.role !== "ADMIN") : []))
         .catch(() => setPendingUsers([]));
 
       fetch("/api/users?withStats=true")
         .then(r => r.json())
-        .then(d => setTeamStats(Array.isArray(d) ? d : []))
+        .then(d => setTeamStats(Array.isArray(d) ? d.filter(u => u.role !== "ADMIN") : []))
         .catch(() => setTeamStats([]));
     }
   }, [isAdmin]);

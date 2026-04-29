@@ -15,7 +15,7 @@ export async function GET(request) {
     if (pending === "true") {
       // Pending registrations: never approved and not deactivated accounts
       const users = await db.user.findMany({
-        where: { approved: false, deactivated: false },
+        where: { approved: false, deactivated: false, role: { not: "ADMIN" } },
         select: { id: true, name: true, email: true, role: true, createdAt: true },
         orderBy: { createdAt: "desc" },
       });
@@ -24,7 +24,7 @@ export async function GET(request) {
 
     if (deactivated === "true") {
       const users = await db.user.findMany({
-        where: { deactivated: true },
+        where: { deactivated: true, role: { not: "ADMIN" } },
         select: { id: true, name: true, email: true, role: true, cdrAccess: true, lastActive: true },
         orderBy: { name: "asc" },
       });
@@ -38,7 +38,7 @@ export async function GET(request) {
       weekStart.setHours(0, 0, 0, 0);
 
       const users = await db.user.findMany({
-        where: { approved: true, deactivated: false },
+        where: { approved: true, deactivated: false, role: { not: "ADMIN" } },
         select: {
           id: true, name: true, email: true, role: true,
           _count: {
@@ -63,7 +63,7 @@ export async function GET(request) {
     }
 
     const users = await db.user.findMany({
-      where: { approved: true, deactivated: false },
+      where: { approved: true, deactivated: false, role: { not: "ADMIN" } },
       select: { id: true, name: true, email: true, role: true, cdrAccess: true, lastActive: true },
       orderBy: { name: "asc" },
     });

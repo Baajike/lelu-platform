@@ -19,8 +19,8 @@ export async function PATCH(request, { params }) {
 
     // Update CDR access toggle
     if (cdrAccess !== undefined && action === undefined) {
-      if (role !== "HEAD_OF_UNIT") {
-        return Response.json({ error: "Only HEAD_OF_UNIT can manage CDR access." }, { status: 403 });
+      if (!["HEAD_OF_UNIT", "ADMIN"].includes(role)) {
+        return Response.json({ error: "Only HEAD_OF_UNIT or ADMIN can manage CDR access." }, { status: 403 });
       }
       const user = await db.user.update({
         where: { id: userId },
@@ -43,8 +43,8 @@ export async function PATCH(request, { params }) {
     }
 
     if (action === "deactivate") {
-      if (role !== "HEAD_OF_UNIT") {
-        return Response.json({ error: "Only HEAD_OF_UNIT can deactivate users." }, { status: 403 });
+      if (!["HEAD_OF_UNIT", "ADMIN"].includes(role)) {
+        return Response.json({ error: "Only HEAD_OF_UNIT or ADMIN can deactivate users." }, { status: 403 });
       }
       const user = await db.user.update({
         where: { id: userId },
@@ -54,8 +54,8 @@ export async function PATCH(request, { params }) {
     }
 
     if (action === "reactivate") {
-      if (role !== "HEAD_OF_UNIT") {
-        return Response.json({ error: "Only HEAD_OF_UNIT can reactivate users." }, { status: 403 });
+      if (!["HEAD_OF_UNIT", "ADMIN"].includes(role)) {
+        return Response.json({ error: "Only HEAD_OF_UNIT or ADMIN can reactivate users." }, { status: 403 });
       }
       const user = await db.user.update({
         where: { id: userId },
@@ -65,8 +65,8 @@ export async function PATCH(request, { params }) {
     }
 
     if (action === "reset_password") {
-      if (role !== "HEAD_OF_UNIT") {
-        return Response.json({ error: "Only HEAD_OF_UNIT can reset passwords." }, { status: 403 });
+      if (!["HEAD_OF_UNIT", "ADMIN"].includes(role)) {
+        return Response.json({ error: "Only HEAD_OF_UNIT or ADMIN can reset passwords." }, { status: 403 });
       }
       const { newPassword } = body;
       if (!newPassword || newPassword.length < 8) {

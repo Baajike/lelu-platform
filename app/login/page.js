@@ -25,6 +25,8 @@ export default function LoginPage() {
     } else {
       if (res?.error === "PENDING_APPROVAL") {
         setError("Your account is pending approval by the Head of Unit. Please check back later.");
+      } else if (res?.error === "DEACTIVATED") {
+        setError("Your account has been deactivated. Please contact the Head of Unit.");
       } else {
         setError("Invalid credentials. Please try again.");
       }
