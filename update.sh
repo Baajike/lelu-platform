@@ -1,235 +1,197 @@
 #!/bin/bash
 # =============================================================================
-# LELU Platform — Auto Update Script
+# LELU Platform — Update Script
 # Pulls latest code from master, rebuilds, and restarts the app.
 #
-# Runs daily via cron — set up by running:
-#   sudo bash update.sh --install
-#
-# To run a manual update:
-#   sudo bash update.sh
-#
-# Deploy key setup (one time only — do this before scheduling):
-#   1. Run: sudo bash update.sh --setup-key
-#   2. Copy the public key it prints
-#   3. Go to https://github.com/Baajike/lelu-platform/settings/keys
-#   4. Click "Add deploy key", paste the key, title it "csa-server", read-only is fine
-#   5. Save and you're done
+# Usage:
+#   sudo bash update.sh              # Run a manual update
+#   sudo bash update.sh --install    # Schedule daily auto-updates via cron
+#   sudo bash update.sh --status     # Show current version and app health
 # =============================================================================
 
-set -e
+set -euo pipefail
 
+# ── Colours ──────────────────────────────────────────────────────────────────
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 NC='\033[0m'
 
-log()    { echo -e "${GREEN}[✔]${NC} $1"; }
-info()   { echo -e "${BLUE}[→]${NC} $1"; }
-warn()   { echo -e "${YELLOW}[!]${NC} $1"; }
-error()  { echo -e "${RED}[✘]${NC} $1"; exit 1; }
-section(){ echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"; \
-           echo -e "${BLUE}  $1${NC}"; \
-           echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"; }
+log()     { echo -e "${GREEN}[✔]${NC} $1"; }
+info()    { echo -e "${BLUE}[→]${NC} $1"; }
+warn()    { echo -e "${YELLOW}[!]${NC} $1"; }
+error()   { echo -e "${RED}[✘]${NC} $1"; exit 1; }
+section() {
+  echo ""
+  echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+  echo -e "${CYAN}  $1${NC}"
+  echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+}
 
-APP_DIR="/var/www/lelu/app"
-REPO="git@github.com:Baajike/lelu-platform.git"
+# ── Config ───────────────────────────────────────────────────────────────────
+REPO="https://github.com/Baajike/lelu-platform.git"
 BRANCH="master"
+PM2_APP="lelu-platform"
 LOG_FILE="/var/log/lelu-update.log"
-DEPLOY_KEY="/home/leluapp/.ssh/lelu_deploy_key"
 
-# -----------------------------------------------------------------------
-# Setup deploy key — run once before scheduling
-# -----------------------------------------------------------------------
-if [ "$1" = "--setup-key" ]; then
-    section "Setting Up GitHub Deploy Key"
+# ── Resolve APP_DIR ──────────────────────────────────────────────────────────
+# Try PM2 first, then common locations, then ask.
+resolve_app_dir() {
+  local dir=""
 
-    if [ ! -d "/home/leluapp/.ssh" ]; then
-        mkdir -p /home/leluapp/.ssh
-        chown leluapp:leluapp /home/leluapp/.ssh
-        chmod 700 /home/leluapp/.ssh
-    fi
+  if command -v pm2 &>/dev/null && pm2 describe "$PM2_APP" &>/dev/null; then
+    dir=$(pm2 describe "$PM2_APP" 2>/dev/null \
+      | grep -i "exec cwd" | awk '{print $NF}' | head -1 || true)
+  fi
 
-    if [ -f "$DEPLOY_KEY" ]; then
-        warn "Deploy key already exists at $DEPLOY_KEY"
-        read -p "Generate a new one anyway? This will replace the old key. (y/N): " OVERWRITE
-        if [[ "$OVERWRITE" != "y" && "$OVERWRITE" != "Y" ]]; then
-            echo ""
-            echo "Existing public key:"
-            cat "${DEPLOY_KEY}.pub"
-            exit 0
-        fi
-    fi
+  if [ -z "$dir" ] || [ ! -d "$dir" ]; then
+    for candidate in /var/www/lelu/app /var/www/lelu-platform /opt/lelu-platform; do
+      if [ -d "$candidate" ] && [ -f "$candidate/package.json" ]; then
+        dir="$candidate"
+        break
+      fi
+    done
+  fi
 
-    info "Generating deploy key..."
-    sudo -u leluapp ssh-keygen -t ed25519 -C "lelu-csa-server-deploy" -f "$DEPLOY_KEY" -N ""
-    chown leluapp:leluapp "$DEPLOY_KEY" "${DEPLOY_KEY}.pub"
-    chmod 600 "$DEPLOY_KEY"
+  if [ -z "$dir" ] || [ ! -d "$dir" ]; then
+    read -rp "  App directory not found. Enter path: " dir
+  fi
 
-    # Add GitHub to known hosts so git doesn't prompt on first connect
-    sudo -u leluapp ssh-keyscan -H github.com >> /home/leluapp/.ssh/known_hosts 2>/dev/null
-    chown leluapp:leluapp /home/leluapp/.ssh/known_hosts
+  echo "$dir"
+}
 
-    echo ""
-    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${GREEN}  Deploy key generated. Add this to GitHub:${NC}"
-    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo ""
-    cat "${DEPLOY_KEY}.pub"
-    echo ""
-    echo "Steps:"
-    echo "  1. Copy the key above"
-    echo "  2. Go to: https://github.com/Baajike/lelu-platform/settings/keys"
-    echo "  3. Click 'Add deploy key'"
-    echo "  4. Title: csa-server"
-    echo "  5. Paste the key"
-    echo "  6. Leave 'Allow write access' unchecked"
-    echo "  7. Click Add key"
-    echo ""
-    echo "Then test the connection:"
-    echo "  sudo -u leluapp GIT_SSH_COMMAND='ssh -i $DEPLOY_KEY' git ls-remote $REPO"
-    echo ""
-    echo "Once that works, schedule the daily update:"
-    echo "  sudo bash update.sh --install"
-    echo ""
-    exit 0
+# ── Root check ───────────────────────────────────────────────────────────────
+if [ "$EUID" -ne 0 ]; then
+  error "Please run with sudo: sudo bash update.sh"
 fi
 
-# -----------------------------------------------------------------------
-# Install — schedule the daily cron job
-# -----------------------------------------------------------------------
-if [ "$1" = "--install" ]; then
-    section "Scheduling Daily Updates"
-
-    if [ ! -f "$DEPLOY_KEY" ]; then
-        error "Deploy key not found. Run 'sudo bash update.sh --setup-key' first."
-    fi
-
-    # Test the connection before scheduling
-    info "Testing GitHub connection..."
-    sudo -u leluapp GIT_SSH_COMMAND="ssh -i $DEPLOY_KEY" git ls-remote "$REPO" > /dev/null 2>&1 \
-        || error "Cannot connect to GitHub. Make sure the deploy key has been added to the repo."
-    log "GitHub connection works."
-
-    SCRIPT_PATH="$(realpath "$0")"
-
-    # Remove existing entry if any, then add fresh
-    (crontab -l 2>/dev/null | grep -v "update.sh"; \
-     echo "0 3 * * * sudo bash $SCRIPT_PATH >> $LOG_FILE 2>&1") | crontab -
-
-    log "Daily update scheduled at 3 AM."
-    echo ""
-    echo "To run a manual update anytime:"
-    echo "  sudo bash $SCRIPT_PATH"
-    echo ""
-    echo "To check update logs:"
-    echo "  sudo tail -f $LOG_FILE"
-    echo ""
-    exit 0
+# ── --status ─────────────────────────────────────────────────────────────────
+if [ "${1:-}" = "--status" ]; then
+  section "LELU Platform — Status"
+  APP_DIR=$(resolve_app_dir)
+  info "App directory : $APP_DIR"
+  info "Current commit: $(cd "$APP_DIR" && git rev-parse --short HEAD 2>/dev/null || echo 'unknown')"
+  info "Branch        : $(cd "$APP_DIR" && git rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'unknown')"
+  echo ""
+  pm2 show "$PM2_APP" 2>/dev/null || warn "PM2 process '$PM2_APP' not found."
+  echo ""
+  exit 0
 fi
 
-# -----------------------------------------------------------------------
-# Run update
-# -----------------------------------------------------------------------
+# ── --install ─────────────────────────────────────────────────────────────────
+if [ "${1:-}" = "--install" ]; then
+  section "Scheduling Daily Updates"
+  SCRIPT_PATH="$(realpath "$0")"
+  # Remove existing entry, add fresh at 3 AM
+  (crontab -l 2>/dev/null | grep -v "$SCRIPT_PATH"; \
+   echo "0 3 * * * sudo bash $SCRIPT_PATH >> $LOG_FILE 2>&1") | crontab -
+  log "Daily update scheduled at 3:00 AM."
+  echo ""
+  echo "  Manual update : sudo bash $SCRIPT_PATH"
+  echo "  Update logs   : sudo tail -f $LOG_FILE"
+  echo ""
+  exit 0
+fi
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  MAIN UPDATE
+# ═════════════════════════════════════════════════════════════════════════════
 section "LELU Update — $(date '+%Y-%m-%d %H:%M:%S')"
 
-if [ "$EUID" -ne 0 ]; then
-    error "Please run with sudo: sudo bash update.sh"
-fi
+APP_DIR=$(resolve_app_dir)
 
-if [ ! -d "$APP_DIR" ]; then
-    error "App directory not found at $APP_DIR. Has setup.sh been run?"
-fi
+[ -d "$APP_DIR" ]              || error "App directory not found: $APP_DIR"
+[ -f "$APP_DIR/package.json" ] || error "package.json not found in $APP_DIR — is this the right directory?"
+[ -f "$APP_DIR/.env" ]         || error ".env not found at $APP_DIR/.env — app cannot run without it."
 
-if [ ! -f "$DEPLOY_KEY" ]; then
-    error "Deploy key not found. Run 'sudo bash update.sh --setup-key' first."
-fi
-
+info "App directory : $APP_DIR"
 cd "$APP_DIR"
 
-# -----------------------------------------------------------------------
-# Check if there's anything new before doing any work
-# -----------------------------------------------------------------------
-info "Checking for updates on master..."
-sudo -u leluapp GIT_SSH_COMMAND="ssh -i $DEPLOY_KEY" git fetch origin master > /dev/null 2>&1
+# ── Git safe.directory (needed when root pulls a repo owned by another user) ─
+git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
 
-LOCAL=$(sudo -u leluapp git rev-parse HEAD)
-REMOTE=$(sudo -u leluapp git rev-parse origin/master)
+# ── Step 1: Fetch & check for updates ────────────────────────────────────────
+info "Checking for updates on $BRANCH..."
+git fetch origin "$BRANCH" 2>&1 || error "git fetch failed — check network or repo URL."
+
+LOCAL=$(git rev-parse HEAD)
+REMOTE=$(git rev-parse "origin/$BRANCH")
 
 if [ "$LOCAL" = "$REMOTE" ]; then
-    log "Already up to date. Nothing to do."
-    echo "$(date '+%Y-%m-%d %H:%M:%S') — Already up to date." >> "$LOG_FILE"
-    exit 0
+  log "Already up to date ($(git rev-parse --short HEAD))."
+  echo "$(date '+%Y-%m-%d %H:%M:%S') — Already up to date." >> "$LOG_FILE"
+  echo ""
+  exit 0
 fi
 
-# Show what changed
 echo ""
 info "Changes incoming:"
-sudo -u leluapp git log --oneline HEAD..origin/master
+git log --oneline HEAD..origin/"$BRANCH"
 echo ""
 
-# -----------------------------------------------------------------------
-# Pull latest code
-# -----------------------------------------------------------------------
-info "Pulling latest code from master..."
-sudo -u leluapp GIT_SSH_COMMAND="ssh -i $DEPLOY_KEY" git pull origin master
-log "Code updated."
+# ── Step 2: Pull latest code ─────────────────────────────────────────────────
+info "Pulling latest code..."
+# Hard reset so stale local edits never block the pull.
+# Secrets live in .env (gitignored) — they are never touched.
+git reset --hard origin/"$BRANCH" || error "git reset failed."
+log "Code updated to $(git rev-parse --short HEAD)."
 
-# -----------------------------------------------------------------------
-# Install any new dependencies
-# -----------------------------------------------------------------------
+# ── Step 3: Dependencies ──────────────────────────────────────────────────────
 info "Installing dependencies..."
-sudo -u leluapp npm install --silent
-log "Dependencies up to date."
+npm install || error "npm install failed."
+log "Dependencies installed."
 
-# -----------------------------------------------------------------------
-# Regenerate Prisma client in case schema changed
-# -----------------------------------------------------------------------
+# ── Step 4: Prisma ───────────────────────────────────────────────────────────
+# migrate deploy: runs only NEW forward migrations — never drops or resets data.
+info "Running database migrations..."
+npx prisma migrate deploy || error "Prisma migrate deploy failed."
+log "Migrations applied."
+
 info "Regenerating Prisma client..."
-sudo -u leluapp npx prisma generate > /dev/null 2>&1
-log "Prisma client regenerated."
+npx prisma generate || error "Prisma generate failed."
+log "Prisma client up to date."
 
-# -----------------------------------------------------------------------
-# Run any new migrations
-# -----------------------------------------------------------------------
-info "Running migrations..."
-sudo -u leluapp npx prisma migrate deploy
-log "Migrations done."
-
-# -----------------------------------------------------------------------
-# Rebuild the app
-# -----------------------------------------------------------------------
+# ── Step 5: Build ─────────────────────────────────────────────────────────────
 info "Building app..."
-sudo -u leluapp npm run build
-log "App rebuilt."
+npm run build || error "Build failed — rolled back; app is still running the previous version."
+log "Build complete."
 
-# -----------------------------------------------------------------------
-# Restart PM2
-# -----------------------------------------------------------------------
-info "Restarting app..."
-sudo -u leluapp pm2 restart lelu-platform
-log "App restarted."
-
-# -----------------------------------------------------------------------
-# Verify it came back up
-# -----------------------------------------------------------------------
-sleep 3
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 || echo "000")
-if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "307" ] || [ "$HTTP_CODE" = "302" ]; then
-    log "App is up and responding (HTTP $HTTP_CODE)."
+# ── Step 6: Restart ───────────────────────────────────────────────────────────
+info "Restarting app via PM2..."
+if pm2 describe "$PM2_APP" &>/dev/null; then
+  pm2 restart "$PM2_APP" || error "PM2 restart failed."
+  pm2 save --force
+  log "App restarted."
 else
-    warn "App returned HTTP $HTTP_CODE after restart — check: pm2 logs lelu-platform"
+  warn "PM2 process '$PM2_APP' not found — starting it now..."
+  pm2 start npm --name "$PM2_APP" -- start
+  pm2 save --force
+  log "App started."
 fi
 
-# -----------------------------------------------------------------------
-# Log the update
-# -----------------------------------------------------------------------
-NEW_VERSION=$(sudo -u leluapp git rev-parse --short HEAD)
-echo "$(date '+%Y-%m-%d %H:%M:%S') — Updated to ${NEW_VERSION}" >> "$LOG_FILE"
+# ── Step 7: Health check ──────────────────────────────────────────────────────
+info "Waiting for app to come up..."
+sleep 5
 
-section "Update Complete"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 http://localhost:3000 2>/dev/null || echo "000")
+
+if [[ "$HTTP_CODE" =~ ^(200|301|302|307|308)$ ]]; then
+  log "App is healthy (HTTP $HTTP_CODE)."
+else
+  warn "App returned HTTP $HTTP_CODE — check logs: pm2 logs $PM2_APP"
+fi
+
+# ── Log the update ────────────────────────────────────────────────────────────
+NEW_VERSION=$(git rev-parse --short HEAD)
+echo "$(date '+%Y-%m-%d %H:%M:%S') — Updated to ${NEW_VERSION} (HTTP ${HTTP_CODE})" >> "$LOG_FILE"
+
+# ── Done ──────────────────────────────────────────────────────────────────────
+section "Update Complete ✔"
 echo ""
-echo -e "  ${GREEN}Updated to:${NC} ${NEW_VERSION}"
-echo "  Check logs: sudo tail $LOG_FILE"
+echo -e "  ${GREEN}Version:${NC} ${NEW_VERSION}"
+echo -e "  ${GREEN}Status :${NC} pm2 status"
+echo -e "  ${GREEN}Logs   :${NC} pm2 logs ${PM2_APP}"
+echo -e "  ${GREEN}History:${NC} sudo tail $LOG_FILE"
 echo ""
