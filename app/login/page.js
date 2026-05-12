@@ -71,7 +71,7 @@ export default function LoginPage() {
           letter-spacing: 0.14em; text-transform: uppercase;
           border-radius: 4px; transition: background 0.2s, transform 0.1s;
         }
-        .login-btn:hover:not(:disabled) { background: #1550909; }
+        .login-btn:hover:not(:disabled) { background: #155090; }
         .login-btn:active:not(:disabled) { transform: scale(0.99); }
         .login-btn:disabled { opacity: 0.65; cursor: not-allowed; }
         .text-link {
