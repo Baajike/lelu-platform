@@ -36,6 +36,17 @@ export async function PATCH(request) {
     const body = await request.json();
     const { action } = body;
 
+    if (action === undefined && body.name !== undefined) {
+      const { name } = body;
+      if (!String(name).trim()) return Response.json({ error: "Name cannot be empty." }, { status: 400 });
+      const updated = await db.user.update({
+        where: { id: session.user.id },
+        data: { name: String(name).trim() },
+        select: { id: true, name: true, email: true, role: true },
+      });
+      return Response.json(updated);
+    }
+
     if (action === "change_password") {
       const { currentPassword, newPassword } = body;
 

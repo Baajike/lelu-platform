@@ -18,12 +18,14 @@ export async function PATCH(request, { params }) {
       return Response.json({ error: "Forbidden." }, { status: 403 });
     }
 
-    const { status, receivedAt, attachmentPath, attachmentName } = body;
+    const { status, receivedAt, attachmentPath, attachmentName, assignedTo, assignedAt } = body;
     const updateData = {};
     if (status !== undefined) updateData.status = status;
     if (receivedAt !== undefined) updateData.receivedAt = new Date(receivedAt);
     if (attachmentPath !== undefined) updateData.attachmentPath = attachmentPath;
     if (attachmentName !== undefined) updateData.attachmentName = attachmentName;
+    if (assignedTo !== undefined) updateData.assignedTo = assignedTo || null;
+    if (assignedAt !== undefined) updateData.assignedAt = assignedAt ? new Date(assignedAt) : null;
 
     const updated = await db.cdrRequest.update({
       where: { id: cdrId },

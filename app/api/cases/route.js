@@ -82,7 +82,7 @@ export async function POST(request) {
         userId: session.user.id,
         userName: session.user.name,
         action: "Case opened",
-        detail: `${caseNumber} — ${title}`,
+        detail: `${newCase.caseNumber} — ${title}`,
       },
     }).catch(() => {});
 

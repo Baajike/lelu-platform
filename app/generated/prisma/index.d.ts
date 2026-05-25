@@ -1538,6 +1538,7 @@ export namespace Prisma {
     activityReports: number
     caseAssignments: number
     notifications: number
+    cdrAssignments: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1548,6 +1549,7 @@ export namespace Prisma {
     activityReports?: boolean | UserCountOutputTypeCountActivityReportsArgs
     caseAssignments?: boolean | UserCountOutputTypeCountCaseAssignmentsArgs
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+    cdrAssignments?: boolean | UserCountOutputTypeCountCdrAssignmentsArgs
   }
 
   // Custom InputTypes
@@ -1608,6 +1610,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NotificationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCdrAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CdrRequestWhereInput
   }
 
 
@@ -1901,6 +1910,7 @@ export namespace Prisma {
     activityReports?: boolean | User$activityReportsArgs<ExtArgs>
     caseAssignments?: boolean | User$caseAssignmentsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
+    cdrAssignments?: boolean | User$cdrAssignmentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1940,6 +1950,7 @@ export namespace Prisma {
     activityReports?: boolean | User$activityReportsArgs<ExtArgs>
     caseAssignments?: boolean | User$caseAssignmentsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
+    cdrAssignments?: boolean | User$cdrAssignmentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1954,6 +1965,7 @@ export namespace Prisma {
       activityReports: Prisma.$ActivityReportPayload<ExtArgs>[]
       caseAssignments: Prisma.$CaseAssignmentPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
+      cdrAssignments: Prisma.$CdrRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2338,6 +2350,7 @@ export namespace Prisma {
     activityReports<T extends User$activityReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$activityReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityReportPayload<ExtArgs>, T, "findMany"> | Null>
     caseAssignments<T extends User$caseAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$caseAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseAssignmentPayload<ExtArgs>, T, "findMany"> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany"> | Null>
+    cdrAssignments<T extends User$cdrAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$cdrAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CdrRequestPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2827,6 +2840,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * User.cdrAssignments
+   */
+  export type User$cdrAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CdrRequest
+     */
+    select?: CdrRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CdrRequestInclude<ExtArgs> | null
+    where?: CdrRequestWhereInput
+    orderBy?: CdrRequestOrderByWithRelationInput | CdrRequestOrderByWithRelationInput[]
+    cursor?: CdrRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CdrRequestScalarFieldEnum | CdrRequestScalarFieldEnum[]
   }
 
   /**
@@ -6923,6 +6956,8 @@ export namespace Prisma {
     officerId: string | null
     attachmentPath: string | null
     attachmentName: string | null
+    assignedTo: string | null
+    assignedAt: Date | null
   }
 
   export type CdrRequestMaxAggregateOutputType = {
@@ -6940,6 +6975,8 @@ export namespace Prisma {
     officerId: string | null
     attachmentPath: string | null
     attachmentName: string | null
+    assignedTo: string | null
+    assignedAt: Date | null
   }
 
   export type CdrRequestCountAggregateOutputType = {
@@ -6957,6 +6994,8 @@ export namespace Prisma {
     officerId: number
     attachmentPath: number
     attachmentName: number
+    assignedTo: number
+    assignedAt: number
     _all: number
   }
 
@@ -6976,6 +7015,8 @@ export namespace Prisma {
     officerId?: true
     attachmentPath?: true
     attachmentName?: true
+    assignedTo?: true
+    assignedAt?: true
   }
 
   export type CdrRequestMaxAggregateInputType = {
@@ -6993,6 +7034,8 @@ export namespace Prisma {
     officerId?: true
     attachmentPath?: true
     attachmentName?: true
+    assignedTo?: true
+    assignedAt?: true
   }
 
   export type CdrRequestCountAggregateInputType = {
@@ -7010,6 +7053,8 @@ export namespace Prisma {
     officerId?: true
     attachmentPath?: true
     attachmentName?: true
+    assignedTo?: true
+    assignedAt?: true
     _all?: true
   }
 
@@ -7100,6 +7145,8 @@ export namespace Prisma {
     officerId: string | null
     attachmentPath: string | null
     attachmentName: string | null
+    assignedTo: string | null
+    assignedAt: Date | null
     _count: CdrRequestCountAggregateOutputType | null
     _min: CdrRequestMinAggregateOutputType | null
     _max: CdrRequestMaxAggregateOutputType | null
@@ -7134,8 +7181,11 @@ export namespace Prisma {
     officerId?: boolean
     attachmentPath?: boolean
     attachmentName?: boolean
+    assignedTo?: boolean
+    assignedAt?: boolean
     case?: boolean | CdrRequest$caseArgs<ExtArgs>
     officer?: boolean | CdrRequest$officerArgs<ExtArgs>
+    assignedUser?: boolean | CdrRequest$assignedUserArgs<ExtArgs>
   }, ExtArgs["result"]["cdrRequest"]>
 
   export type CdrRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7153,8 +7203,11 @@ export namespace Prisma {
     officerId?: boolean
     attachmentPath?: boolean
     attachmentName?: boolean
+    assignedTo?: boolean
+    assignedAt?: boolean
     case?: boolean | CdrRequest$caseArgs<ExtArgs>
     officer?: boolean | CdrRequest$officerArgs<ExtArgs>
+    assignedUser?: boolean | CdrRequest$assignedUserArgs<ExtArgs>
   }, ExtArgs["result"]["cdrRequest"]>
 
   export type CdrRequestSelectScalar = {
@@ -7172,15 +7225,19 @@ export namespace Prisma {
     officerId?: boolean
     attachmentPath?: boolean
     attachmentName?: boolean
+    assignedTo?: boolean
+    assignedAt?: boolean
   }
 
   export type CdrRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     case?: boolean | CdrRequest$caseArgs<ExtArgs>
     officer?: boolean | CdrRequest$officerArgs<ExtArgs>
+    assignedUser?: boolean | CdrRequest$assignedUserArgs<ExtArgs>
   }
   export type CdrRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     case?: boolean | CdrRequest$caseArgs<ExtArgs>
     officer?: boolean | CdrRequest$officerArgs<ExtArgs>
+    assignedUser?: boolean | CdrRequest$assignedUserArgs<ExtArgs>
   }
 
   export type $CdrRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7188,6 +7245,7 @@ export namespace Prisma {
     objects: {
       case: Prisma.$CasePayload<ExtArgs> | null
       officer: Prisma.$UserPayload<ExtArgs> | null
+      assignedUser: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7204,6 +7262,8 @@ export namespace Prisma {
       officerId: string | null
       attachmentPath: string | null
       attachmentName: string | null
+      assignedTo: string | null
+      assignedAt: Date | null
     }, ExtArgs["result"]["cdrRequest"]>
     composites: {}
   }
@@ -7570,6 +7630,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     case<T extends CdrRequest$caseArgs<ExtArgs> = {}>(args?: Subset<T, CdrRequest$caseArgs<ExtArgs>>): Prisma__CaseClient<$Result.GetResult<Prisma.$CasePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     officer<T extends CdrRequest$officerArgs<ExtArgs> = {}>(args?: Subset<T, CdrRequest$officerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    assignedUser<T extends CdrRequest$assignedUserArgs<ExtArgs> = {}>(args?: Subset<T, CdrRequest$assignedUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7613,6 +7674,8 @@ export namespace Prisma {
     readonly officerId: FieldRef<"CdrRequest", 'String'>
     readonly attachmentPath: FieldRef<"CdrRequest", 'String'>
     readonly attachmentName: FieldRef<"CdrRequest", 'String'>
+    readonly assignedTo: FieldRef<"CdrRequest", 'String'>
+    readonly assignedAt: FieldRef<"CdrRequest", 'DateTime'>
   }
     
 
@@ -7947,6 +8010,21 @@ export namespace Prisma {
    * CdrRequest.officer
    */
   export type CdrRequest$officerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * CdrRequest.assignedUser
+   */
+  export type CdrRequest$assignedUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the User
      */
@@ -11142,7 +11220,9 @@ export namespace Prisma {
     caseId: 'caseId',
     officerId: 'officerId',
     attachmentPath: 'attachmentPath',
-    attachmentName: 'attachmentName'
+    attachmentName: 'attachmentName',
+    assignedTo: 'assignedTo',
+    assignedAt: 'assignedAt'
   };
 
   export type CdrRequestScalarFieldEnum = (typeof CdrRequestScalarFieldEnum)[keyof typeof CdrRequestScalarFieldEnum]
@@ -11281,6 +11361,7 @@ export namespace Prisma {
     activityReports?: ActivityReportListRelationFilter
     caseAssignments?: CaseAssignmentListRelationFilter
     notifications?: NotificationListRelationFilter
+    cdrAssignments?: CdrRequestListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -11302,6 +11383,7 @@ export namespace Prisma {
     activityReports?: ActivityReportOrderByRelationAggregateInput
     caseAssignments?: CaseAssignmentOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
+    cdrAssignments?: CdrRequestOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -11326,6 +11408,7 @@ export namespace Prisma {
     activityReports?: ActivityReportListRelationFilter
     caseAssignments?: CaseAssignmentListRelationFilter
     notifications?: NotificationListRelationFilter
+    cdrAssignments?: CdrRequestListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -11679,8 +11762,11 @@ export namespace Prisma {
     officerId?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentPath?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentName?: StringNullableFilter<"CdrRequest"> | string | null
+    assignedTo?: StringNullableFilter<"CdrRequest"> | string | null
+    assignedAt?: DateTimeNullableFilter<"CdrRequest"> | Date | string | null
     case?: XOR<CaseNullableRelationFilter, CaseWhereInput> | null
     officer?: XOR<UserNullableRelationFilter, UserWhereInput> | null
+    assignedUser?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }
 
   export type CdrRequestOrderByWithRelationInput = {
@@ -11698,8 +11784,11 @@ export namespace Prisma {
     officerId?: SortOrderInput | SortOrder
     attachmentPath?: SortOrderInput | SortOrder
     attachmentName?: SortOrderInput | SortOrder
+    assignedTo?: SortOrderInput | SortOrder
+    assignedAt?: SortOrderInput | SortOrder
     case?: CaseOrderByWithRelationInput
     officer?: UserOrderByWithRelationInput
+    assignedUser?: UserOrderByWithRelationInput
   }
 
   export type CdrRequestWhereUniqueInput = Prisma.AtLeast<{
@@ -11720,8 +11809,11 @@ export namespace Prisma {
     officerId?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentPath?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentName?: StringNullableFilter<"CdrRequest"> | string | null
+    assignedTo?: StringNullableFilter<"CdrRequest"> | string | null
+    assignedAt?: DateTimeNullableFilter<"CdrRequest"> | Date | string | null
     case?: XOR<CaseNullableRelationFilter, CaseWhereInput> | null
     officer?: XOR<UserNullableRelationFilter, UserWhereInput> | null
+    assignedUser?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type CdrRequestOrderByWithAggregationInput = {
@@ -11739,6 +11831,8 @@ export namespace Prisma {
     officerId?: SortOrderInput | SortOrder
     attachmentPath?: SortOrderInput | SortOrder
     attachmentName?: SortOrderInput | SortOrder
+    assignedTo?: SortOrderInput | SortOrder
+    assignedAt?: SortOrderInput | SortOrder
     _count?: CdrRequestCountOrderByAggregateInput
     _max?: CdrRequestMaxOrderByAggregateInput
     _min?: CdrRequestMinOrderByAggregateInput
@@ -11762,6 +11856,8 @@ export namespace Prisma {
     officerId?: StringNullableWithAggregatesFilter<"CdrRequest"> | string | null
     attachmentPath?: StringNullableWithAggregatesFilter<"CdrRequest"> | string | null
     attachmentName?: StringNullableWithAggregatesFilter<"CdrRequest"> | string | null
+    assignedTo?: StringNullableWithAggregatesFilter<"CdrRequest"> | string | null
+    assignedAt?: DateTimeNullableWithAggregatesFilter<"CdrRequest"> | Date | string | null
   }
 
   export type InternationalRequestWhereInput = {
@@ -12046,6 +12142,7 @@ export namespace Prisma {
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -12067,6 +12164,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestUncheckedCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserUpdateInput = {
@@ -12088,6 +12186,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -12109,6 +12208,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUncheckedUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -12481,8 +12581,10 @@ export namespace Prisma {
     receivedAt?: Date | string | null
     attachmentPath?: string | null
     attachmentName?: string | null
+    assignedAt?: Date | string | null
     case?: CaseCreateNestedOneWithoutCdrRequestsInput
     officer?: UserCreateNestedOneWithoutCdrRequestsInput
+    assignedUser?: UserCreateNestedOneWithoutCdrAssignmentsInput
   }
 
   export type CdrRequestUncheckedCreateInput = {
@@ -12500,6 +12602,8 @@ export namespace Prisma {
     officerId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
+    assignedTo?: string | null
+    assignedAt?: Date | string | null
   }
 
   export type CdrRequestUpdateInput = {
@@ -12515,8 +12619,10 @@ export namespace Prisma {
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     case?: CaseUpdateOneWithoutCdrRequestsNestedInput
     officer?: UserUpdateOneWithoutCdrRequestsNestedInput
+    assignedUser?: UserUpdateOneWithoutCdrAssignmentsNestedInput
   }
 
   export type CdrRequestUncheckedUpdateInput = {
@@ -12534,6 +12640,8 @@ export namespace Prisma {
     officerId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CdrRequestCreateManyInput = {
@@ -12551,6 +12659,8 @@ export namespace Prisma {
     officerId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
+    assignedTo?: string | null
+    assignedAt?: Date | string | null
   }
 
   export type CdrRequestUpdateManyMutationInput = {
@@ -12566,6 +12676,7 @@ export namespace Prisma {
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CdrRequestUncheckedUpdateManyInput = {
@@ -12583,6 +12694,8 @@ export namespace Prisma {
     officerId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type InternationalRequestCreateInput = {
@@ -13338,6 +13451,8 @@ export namespace Prisma {
     officerId?: SortOrder
     attachmentPath?: SortOrder
     attachmentName?: SortOrder
+    assignedTo?: SortOrder
+    assignedAt?: SortOrder
   }
 
   export type CdrRequestMaxOrderByAggregateInput = {
@@ -13355,6 +13470,8 @@ export namespace Prisma {
     officerId?: SortOrder
     attachmentPath?: SortOrder
     attachmentName?: SortOrder
+    assignedTo?: SortOrder
+    assignedAt?: SortOrder
   }
 
   export type CdrRequestMinOrderByAggregateInput = {
@@ -13372,6 +13489,8 @@ export namespace Prisma {
     officerId?: SortOrder
     attachmentPath?: SortOrder
     attachmentName?: SortOrder
+    assignedTo?: SortOrder
+    assignedAt?: SortOrder
   }
 
   export type InternationalRequestCountOrderByAggregateInput = {
@@ -13552,6 +13671,13 @@ export namespace Prisma {
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
   }
 
+  export type CdrRequestCreateNestedManyWithoutAssignedUserInput = {
+    create?: XOR<CdrRequestCreateWithoutAssignedUserInput, CdrRequestUncheckedCreateWithoutAssignedUserInput> | CdrRequestCreateWithoutAssignedUserInput[] | CdrRequestUncheckedCreateWithoutAssignedUserInput[]
+    connectOrCreate?: CdrRequestCreateOrConnectWithoutAssignedUserInput | CdrRequestCreateOrConnectWithoutAssignedUserInput[]
+    createMany?: CdrRequestCreateManyAssignedUserInputEnvelope
+    connect?: CdrRequestWhereUniqueInput | CdrRequestWhereUniqueInput[]
+  }
+
   export type CaseUncheckedCreateNestedManyWithoutOfficerInput = {
     create?: XOR<CaseCreateWithoutOfficerInput, CaseUncheckedCreateWithoutOfficerInput> | CaseCreateWithoutOfficerInput[] | CaseUncheckedCreateWithoutOfficerInput[]
     connectOrCreate?: CaseCreateOrConnectWithoutOfficerInput | CaseCreateOrConnectWithoutOfficerInput[]
@@ -13599,6 +13725,13 @@ export namespace Prisma {
     connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
     createMany?: NotificationCreateManyUserInputEnvelope
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type CdrRequestUncheckedCreateNestedManyWithoutAssignedUserInput = {
+    create?: XOR<CdrRequestCreateWithoutAssignedUserInput, CdrRequestUncheckedCreateWithoutAssignedUserInput> | CdrRequestCreateWithoutAssignedUserInput[] | CdrRequestUncheckedCreateWithoutAssignedUserInput[]
+    connectOrCreate?: CdrRequestCreateOrConnectWithoutAssignedUserInput | CdrRequestCreateOrConnectWithoutAssignedUserInput[]
+    createMany?: CdrRequestCreateManyAssignedUserInputEnvelope
+    connect?: CdrRequestWhereUniqueInput | CdrRequestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -13715,6 +13848,20 @@ export namespace Prisma {
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
   }
 
+  export type CdrRequestUpdateManyWithoutAssignedUserNestedInput = {
+    create?: XOR<CdrRequestCreateWithoutAssignedUserInput, CdrRequestUncheckedCreateWithoutAssignedUserInput> | CdrRequestCreateWithoutAssignedUserInput[] | CdrRequestUncheckedCreateWithoutAssignedUserInput[]
+    connectOrCreate?: CdrRequestCreateOrConnectWithoutAssignedUserInput | CdrRequestCreateOrConnectWithoutAssignedUserInput[]
+    upsert?: CdrRequestUpsertWithWhereUniqueWithoutAssignedUserInput | CdrRequestUpsertWithWhereUniqueWithoutAssignedUserInput[]
+    createMany?: CdrRequestCreateManyAssignedUserInputEnvelope
+    set?: CdrRequestWhereUniqueInput | CdrRequestWhereUniqueInput[]
+    disconnect?: CdrRequestWhereUniqueInput | CdrRequestWhereUniqueInput[]
+    delete?: CdrRequestWhereUniqueInput | CdrRequestWhereUniqueInput[]
+    connect?: CdrRequestWhereUniqueInput | CdrRequestWhereUniqueInput[]
+    update?: CdrRequestUpdateWithWhereUniqueWithoutAssignedUserInput | CdrRequestUpdateWithWhereUniqueWithoutAssignedUserInput[]
+    updateMany?: CdrRequestUpdateManyWithWhereWithoutAssignedUserInput | CdrRequestUpdateManyWithWhereWithoutAssignedUserInput[]
+    deleteMany?: CdrRequestScalarWhereInput | CdrRequestScalarWhereInput[]
+  }
+
   export type CaseUncheckedUpdateManyWithoutOfficerNestedInput = {
     create?: XOR<CaseCreateWithoutOfficerInput, CaseUncheckedCreateWithoutOfficerInput> | CaseCreateWithoutOfficerInput[] | CaseUncheckedCreateWithoutOfficerInput[]
     connectOrCreate?: CaseCreateOrConnectWithoutOfficerInput | CaseCreateOrConnectWithoutOfficerInput[]
@@ -13811,6 +13958,20 @@ export namespace Prisma {
     update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type CdrRequestUncheckedUpdateManyWithoutAssignedUserNestedInput = {
+    create?: XOR<CdrRequestCreateWithoutAssignedUserInput, CdrRequestUncheckedCreateWithoutAssignedUserInput> | CdrRequestCreateWithoutAssignedUserInput[] | CdrRequestUncheckedCreateWithoutAssignedUserInput[]
+    connectOrCreate?: CdrRequestCreateOrConnectWithoutAssignedUserInput | CdrRequestCreateOrConnectWithoutAssignedUserInput[]
+    upsert?: CdrRequestUpsertWithWhereUniqueWithoutAssignedUserInput | CdrRequestUpsertWithWhereUniqueWithoutAssignedUserInput[]
+    createMany?: CdrRequestCreateManyAssignedUserInputEnvelope
+    set?: CdrRequestWhereUniqueInput | CdrRequestWhereUniqueInput[]
+    disconnect?: CdrRequestWhereUniqueInput | CdrRequestWhereUniqueInput[]
+    delete?: CdrRequestWhereUniqueInput | CdrRequestWhereUniqueInput[]
+    connect?: CdrRequestWhereUniqueInput | CdrRequestWhereUniqueInput[]
+    update?: CdrRequestUpdateWithWhereUniqueWithoutAssignedUserInput | CdrRequestUpdateWithWhereUniqueWithoutAssignedUserInput[]
+    updateMany?: CdrRequestUpdateManyWithWhereWithoutAssignedUserInput | CdrRequestUpdateManyWithWhereWithoutAssignedUserInput[]
+    deleteMany?: CdrRequestScalarWhereInput | CdrRequestScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutCasesInput = {
@@ -14135,6 +14296,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutCdrAssignmentsInput = {
+    create?: XOR<UserCreateWithoutCdrAssignmentsInput, UserUncheckedCreateWithoutCdrAssignmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCdrAssignmentsInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type CaseUpdateOneWithoutCdrRequestsNestedInput = {
     create?: XOR<CaseCreateWithoutCdrRequestsInput, CaseUncheckedCreateWithoutCdrRequestsInput>
     connectOrCreate?: CaseCreateOrConnectWithoutCdrRequestsInput
@@ -14153,6 +14320,16 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCdrRequestsInput, UserUpdateWithoutCdrRequestsInput>, UserUncheckedUpdateWithoutCdrRequestsInput>
+  }
+
+  export type UserUpdateOneWithoutCdrAssignmentsNestedInput = {
+    create?: XOR<UserCreateWithoutCdrAssignmentsInput, UserUncheckedCreateWithoutCdrAssignmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCdrAssignmentsInput
+    upsert?: UserUpsertWithoutCdrAssignmentsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCdrAssignmentsInput, UserUpdateWithoutCdrAssignmentsInput>, UserUncheckedUpdateWithoutCdrAssignmentsInput>
   }
 
   export type CaseCreateNestedOneWithoutInternationalRequestsInput = {
@@ -14476,7 +14653,9 @@ export namespace Prisma {
     receivedAt?: Date | string | null
     attachmentPath?: string | null
     attachmentName?: string | null
+    assignedAt?: Date | string | null
     case?: CaseCreateNestedOneWithoutCdrRequestsInput
+    assignedUser?: UserCreateNestedOneWithoutCdrAssignmentsInput
   }
 
   export type CdrRequestUncheckedCreateWithoutOfficerInput = {
@@ -14493,6 +14672,8 @@ export namespace Prisma {
     caseId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
+    assignedTo?: string | null
+    assignedAt?: Date | string | null
   }
 
   export type CdrRequestCreateOrConnectWithoutOfficerInput = {
@@ -14636,6 +14817,51 @@ export namespace Prisma {
     data: NotificationCreateManyUserInput | NotificationCreateManyUserInput[]
   }
 
+  export type CdrRequestCreateWithoutAssignedUserInput = {
+    id?: string
+    phoneNumber: string
+    identifierType?: string
+    telco?: string | null
+    periodStart: Date | string
+    periodEnd: Date | string
+    reason: string
+    status?: string
+    requestedAt?: Date | string
+    receivedAt?: Date | string | null
+    attachmentPath?: string | null
+    attachmentName?: string | null
+    assignedAt?: Date | string | null
+    case?: CaseCreateNestedOneWithoutCdrRequestsInput
+    officer?: UserCreateNestedOneWithoutCdrRequestsInput
+  }
+
+  export type CdrRequestUncheckedCreateWithoutAssignedUserInput = {
+    id?: string
+    phoneNumber: string
+    identifierType?: string
+    telco?: string | null
+    periodStart: Date | string
+    periodEnd: Date | string
+    reason: string
+    status?: string
+    requestedAt?: Date | string
+    receivedAt?: Date | string | null
+    caseId?: string | null
+    officerId?: string | null
+    attachmentPath?: string | null
+    attachmentName?: string | null
+    assignedAt?: Date | string | null
+  }
+
+  export type CdrRequestCreateOrConnectWithoutAssignedUserInput = {
+    where: CdrRequestWhereUniqueInput
+    create: XOR<CdrRequestCreateWithoutAssignedUserInput, CdrRequestUncheckedCreateWithoutAssignedUserInput>
+  }
+
+  export type CdrRequestCreateManyAssignedUserInputEnvelope = {
+    data: CdrRequestCreateManyAssignedUserInput | CdrRequestCreateManyAssignedUserInput[]
+  }
+
   export type CaseUpsertWithWhereUniqueWithoutOfficerInput = {
     where: CaseWhereUniqueInput
     update: XOR<CaseUpdateWithoutOfficerInput, CaseUncheckedUpdateWithoutOfficerInput>
@@ -14732,6 +14958,8 @@ export namespace Prisma {
     officerId?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentPath?: StringNullableFilter<"CdrRequest"> | string | null
     attachmentName?: StringNullableFilter<"CdrRequest"> | string | null
+    assignedTo?: StringNullableFilter<"CdrRequest"> | string | null
+    assignedAt?: DateTimeNullableFilter<"CdrRequest"> | Date | string | null
   }
 
   export type InternationalRequestUpsertWithWhereUniqueWithoutOfficerInput = {
@@ -14862,6 +15090,22 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Notification"> | Date | string
   }
 
+  export type CdrRequestUpsertWithWhereUniqueWithoutAssignedUserInput = {
+    where: CdrRequestWhereUniqueInput
+    update: XOR<CdrRequestUpdateWithoutAssignedUserInput, CdrRequestUncheckedUpdateWithoutAssignedUserInput>
+    create: XOR<CdrRequestCreateWithoutAssignedUserInput, CdrRequestUncheckedCreateWithoutAssignedUserInput>
+  }
+
+  export type CdrRequestUpdateWithWhereUniqueWithoutAssignedUserInput = {
+    where: CdrRequestWhereUniqueInput
+    data: XOR<CdrRequestUpdateWithoutAssignedUserInput, CdrRequestUncheckedUpdateWithoutAssignedUserInput>
+  }
+
+  export type CdrRequestUpdateManyWithWhereWithoutAssignedUserInput = {
+    where: CdrRequestScalarWhereInput
+    data: XOR<CdrRequestUpdateManyMutationInput, CdrRequestUncheckedUpdateManyWithoutAssignedUserInput>
+  }
+
   export type UserCreateWithoutCasesInput = {
     id?: string
     name: string
@@ -14880,6 +15124,7 @@ export namespace Prisma {
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserUncheckedCreateWithoutCasesInput = {
@@ -14900,6 +15145,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestUncheckedCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserCreateOrConnectWithoutCasesInput = {
@@ -14947,7 +15193,9 @@ export namespace Prisma {
     receivedAt?: Date | string | null
     attachmentPath?: string | null
     attachmentName?: string | null
+    assignedAt?: Date | string | null
     officer?: UserCreateNestedOneWithoutCdrRequestsInput
+    assignedUser?: UserCreateNestedOneWithoutCdrAssignmentsInput
   }
 
   export type CdrRequestUncheckedCreateWithoutCaseInput = {
@@ -14964,6 +15212,8 @@ export namespace Prisma {
     officerId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
+    assignedTo?: string | null
+    assignedAt?: Date | string | null
   }
 
   export type CdrRequestCreateOrConnectWithoutCaseInput = {
@@ -15099,6 +15349,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCasesInput = {
@@ -15119,6 +15370,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUncheckedUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type JournalEntryUpsertWithWhereUniqueWithoutCaseInput = {
@@ -15273,6 +15525,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserUncheckedCreateWithoutCaseAssignmentsInput = {
@@ -15293,6 +15546,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestUncheckedCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserCreateOrConnectWithoutCaseAssignmentsInput = {
@@ -15376,6 +15630,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCaseAssignmentsInput = {
@@ -15396,6 +15651,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUncheckedUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type CaseCreateWithoutEntriesInput = {
@@ -15457,6 +15713,7 @@ export namespace Prisma {
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserUncheckedCreateWithoutEntriesInput = {
@@ -15477,6 +15734,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestUncheckedCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserCreateOrConnectWithoutEntriesInput = {
@@ -15560,6 +15818,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEntriesInput = {
@@ -15580,6 +15839,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUncheckedUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type CaseCreateWithoutCaseActivitiesInput = {
@@ -15729,6 +15989,7 @@ export namespace Prisma {
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserUncheckedCreateWithoutCdrRequestsInput = {
@@ -15749,11 +16010,59 @@ export namespace Prisma {
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestUncheckedCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserCreateOrConnectWithoutCdrRequestsInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutCdrRequestsInput, UserUncheckedCreateWithoutCdrRequestsInput>
+  }
+
+  export type UserCreateWithoutCdrAssignmentsInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: string
+    approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    cases?: CaseCreateNestedManyWithoutOfficerInput
+    entries?: JournalEntryCreateNestedManyWithoutAuthorInput
+    cdrRequests?: CdrRequestCreateNestedManyWithoutOfficerInput
+    internationalRequests?: InternationalRequestCreateNestedManyWithoutOfficerInput
+    activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCdrAssignmentsInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: string
+    approved?: boolean
+    deactivated?: boolean
+    cdrAccess?: boolean
+    lastActive?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    cases?: CaseUncheckedCreateNestedManyWithoutOfficerInput
+    entries?: JournalEntryUncheckedCreateNestedManyWithoutAuthorInput
+    cdrRequests?: CdrRequestUncheckedCreateNestedManyWithoutOfficerInput
+    internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutOfficerInput
+    activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
+    caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCdrAssignmentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCdrAssignmentsInput, UserUncheckedCreateWithoutCdrAssignmentsInput>
   }
 
   export type CaseUpsertWithoutCdrRequestsInput = {
@@ -15832,6 +16141,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCdrRequestsInput = {
@@ -15848,6 +16158,60 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     cases?: CaseUncheckedUpdateManyWithoutOfficerNestedInput
     entries?: JournalEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
+    activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUncheckedUpdateManyWithoutAssignedUserNestedInput
+  }
+
+  export type UserUpsertWithoutCdrAssignmentsInput = {
+    update: XOR<UserUpdateWithoutCdrAssignmentsInput, UserUncheckedUpdateWithoutCdrAssignmentsInput>
+    create: XOR<UserCreateWithoutCdrAssignmentsInput, UserUncheckedCreateWithoutCdrAssignmentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCdrAssignmentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCdrAssignmentsInput, UserUncheckedUpdateWithoutCdrAssignmentsInput>
+  }
+
+  export type UserUpdateWithoutCdrAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    cases?: CaseUpdateManyWithoutOfficerNestedInput
+    entries?: JournalEntryUpdateManyWithoutAuthorNestedInput
+    cdrRequests?: CdrRequestUpdateManyWithoutOfficerNestedInput
+    internationalRequests?: InternationalRequestUpdateManyWithoutOfficerNestedInput
+    activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
+    caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCdrAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    deactivated?: BoolFieldUpdateOperationsInput | boolean
+    cdrAccess?: BoolFieldUpdateOperationsInput | boolean
+    lastActive?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    cases?: CaseUncheckedUpdateManyWithoutOfficerNestedInput
+    entries?: JournalEntryUncheckedUpdateManyWithoutAuthorNestedInput
+    cdrRequests?: CdrRequestUncheckedUpdateManyWithoutOfficerNestedInput
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
@@ -15913,6 +16277,7 @@ export namespace Prisma {
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserUncheckedCreateWithoutInternationalRequestsInput = {
@@ -15933,6 +16298,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestUncheckedCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserCreateOrConnectWithoutInternationalRequestsInput = {
@@ -16016,6 +16382,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInternationalRequestsInput = {
@@ -16036,6 +16403,7 @@ export namespace Prisma {
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUncheckedUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -16056,6 +16424,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -16076,6 +16445,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutOfficerInput
     activityReports?: ActivityReportUncheckedCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestUncheckedCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -16112,6 +16482,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -16132,6 +16503,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
     activityReports?: ActivityReportUncheckedUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUncheckedUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type UserCreateWithoutActivityReportsInput = {
@@ -16152,6 +16524,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserUncheckedCreateWithoutActivityReportsInput = {
@@ -16172,6 +16545,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestUncheckedCreateNestedManyWithoutOfficerInput
     caseAssignments?: CaseAssignmentUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    cdrAssignments?: CdrRequestUncheckedCreateNestedManyWithoutAssignedUserInput
   }
 
   export type UserCreateOrConnectWithoutActivityReportsInput = {
@@ -16208,6 +16582,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivityReportsInput = {
@@ -16228,6 +16603,7 @@ export namespace Prisma {
     internationalRequests?: InternationalRequestUncheckedUpdateManyWithoutOfficerNestedInput
     caseAssignments?: CaseAssignmentUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    cdrAssignments?: CdrRequestUncheckedUpdateManyWithoutAssignedUserNestedInput
   }
 
   export type CaseCreateManyOfficerInput = {
@@ -16266,6 +16642,8 @@ export namespace Prisma {
     caseId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
+    assignedTo?: string | null
+    assignedAt?: Date | string | null
   }
 
   export type InternationalRequestCreateManyOfficerInput = {
@@ -16314,6 +16692,24 @@ export namespace Prisma {
     meta?: string | null
     read?: boolean
     createdAt?: Date | string
+  }
+
+  export type CdrRequestCreateManyAssignedUserInput = {
+    id?: string
+    phoneNumber: string
+    identifierType?: string
+    telco?: string | null
+    periodStart: Date | string
+    periodEnd: Date | string
+    reason: string
+    status?: string
+    requestedAt?: Date | string
+    receivedAt?: Date | string | null
+    caseId?: string | null
+    officerId?: string | null
+    attachmentPath?: string | null
+    attachmentName?: string | null
+    assignedAt?: Date | string | null
   }
 
   export type CaseUpdateWithoutOfficerInput = {
@@ -16405,7 +16801,9 @@ export namespace Prisma {
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     case?: CaseUpdateOneWithoutCdrRequestsNestedInput
+    assignedUser?: UserUpdateOneWithoutCdrAssignmentsNestedInput
   }
 
   export type CdrRequestUncheckedUpdateWithoutOfficerInput = {
@@ -16422,6 +16820,8 @@ export namespace Prisma {
     caseId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CdrRequestUncheckedUpdateManyWithoutOfficerInput = {
@@ -16438,6 +16838,8 @@ export namespace Prisma {
     caseId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type InternationalRequestUpdateWithoutOfficerInput = {
@@ -16584,6 +16986,60 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CdrRequestUpdateWithoutAssignedUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    case?: CaseUpdateOneWithoutCdrRequestsNestedInput
+    officer?: UserUpdateOneWithoutCdrRequestsNestedInput
+  }
+
+  export type CdrRequestUncheckedUpdateWithoutAssignedUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    caseId?: NullableStringFieldUpdateOperationsInput | string | null
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CdrRequestUncheckedUpdateManyWithoutAssignedUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    identifierType?: StringFieldUpdateOperationsInput | string
+    telco?: NullableStringFieldUpdateOperationsInput | string | null
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    caseId?: NullableStringFieldUpdateOperationsInput | string | null
+    officerId?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type JournalEntryCreateManyCaseInput = {
     id?: string
     dayNumber: number
@@ -16607,6 +17063,8 @@ export namespace Prisma {
     officerId?: string | null
     attachmentPath?: string | null
     attachmentName?: string | null
+    assignedTo?: string | null
+    assignedAt?: Date | string | null
   }
 
   export type InternationalRequestCreateManyCaseInput = {
@@ -16683,7 +17141,9 @@ export namespace Prisma {
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     officer?: UserUpdateOneWithoutCdrRequestsNestedInput
+    assignedUser?: UserUpdateOneWithoutCdrAssignmentsNestedInput
   }
 
   export type CdrRequestUncheckedUpdateWithoutCaseInput = {
@@ -16700,6 +17160,8 @@ export namespace Prisma {
     officerId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CdrRequestUncheckedUpdateManyWithoutCaseInput = {
@@ -16716,6 +17178,8 @@ export namespace Prisma {
     officerId?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentPath?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type InternationalRequestUpdateWithoutCaseInput = {

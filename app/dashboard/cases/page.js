@@ -4,7 +4,23 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { FolderOpen, Plus, Search, ChevronRight, X } from "lucide-react";
 
-const CATEGORIES = ["Computer Access Offences", "Data Interference", "System Interference", "Electronic Fraud", "Cyberstalking", "Child Exploitation", "Identity Related Crimes", "Critical Infrastructure Attacks", "Other"];
+const CATEGORIES = [
+  "Account Takeover",
+  "Blackmailing",
+  "Investment Scam",
+  "Fake Online Shops",
+  "Momo Fraud",
+  "Fake Data Sales",
+  "Impersonation",
+  "Cyberbullying",
+  "Recruitment Scam",
+  "Advance Fee Fraud",
+  "Sextortion",
+  "Romance Scam",
+  "Business Email Compromise",
+  "Loan App",
+  "Other",
+];
 const STATUSES = ["All", "Active", "Closed"];
 const ADMIN_ROLES = ["HEAD_OF_UNIT", "SUPERVISOR", "ADMIN"];
 
@@ -29,7 +45,7 @@ export default function CasesPage() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({ title: "", category: "Computer Access Offences", description: "" });
+  const [form, setForm] = useState({ title: "", category: "Account Takeover", description: "" });
   const [otherCategory, setOtherCategory] = useState("");
 
   const isAdmin = ADMIN_ROLES.includes(session?.user?.role);
@@ -81,9 +97,12 @@ export default function CasesPage() {
       if (res.ok) {
         const newCase = await res.json();
         setShowModal(false);
-        setForm({ title: "", category: "Computer Access Offences", description: "" });
+        setForm({ title: "", category: "Account Takeover", description: "" });
         setOtherCategory("");
         router.push(`/dashboard/cases/${newCase.id}`);
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || "Failed to create case. Please try again.");
       }
     } finally { setSubmitting(false); }
   };

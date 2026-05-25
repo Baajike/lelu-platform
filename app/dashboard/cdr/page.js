@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Plus, X, Phone, Upload, Download, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Plus, X, Phone, Upload, Download, CheckCircle, Clock, XCircle, UserCheck } from "lucide-react";
 
 const TELCOS = ["MTN", "Vodafone", "AirtelTigo", "Other"];
 const IDENTIFIER_TYPES = ["Phone Number", "IMEI", "ID Document", "Email Address", "Physical Address", "Bank Account", "Device Serial Number", "Other"];
@@ -36,6 +36,10 @@ export default function CdrPage() {
   const [currentUser, setCurrentUser] = useState(null);
   const [accessLoading, setAccessLoading] = useState(true);
   const [cdrDupeWarning, setCdrDupeWarning] = useState(null);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [assignTargetCdr, setAssignTargetCdr] = useState(null);
+  const [assignedCdrs, setAssignedCdrs] = useState([]);
+  const [assignSearch, setAssignSearch] = useState("");
 
   const isAdmin = ADMIN_ROLES.includes(session?.user?.role);
 
@@ -74,9 +78,18 @@ export default function CdrPage() {
     } catch { setOfficers([]); }
   };
 
+  const fetchAssignedCdrs = async () => {
+    try {
+      const res = await fetch("/api/cdr?assigned=true");
+      const data = await res.json();
+      setAssignedCdrs(Array.isArray(data) ? data : []);
+    } catch { setAssignedCdrs([]); }
+  };
+
   useEffect(() => {
     fetchCdrs();
     fetchCases();
+    fetchAssignedCdrs();
     if (isAdmin) fetchOfficers();
   }, [isAdmin]);
 
@@ -114,21 +127,31 @@ export default function CdrPage() {
   };
 
   const handleSubmit = async () => {
-    if (!form.phoneNumber.trim() || !form.periodStart || !form.periodEnd || !form.reason.trim()) {
-      alert("Please fill all required fields."); return;
+    if (!form.phoneNumber.trim()) {
+      alert("Please enter the identifier value."); return;
+    }
+    if (!form.periodStart) {
+      alert("Please select a period start date."); return;
+    }
+    if (!form.periodEnd) {
+      alert("Please select a period end date."); return;
+    }
+    if (!(form.reason || "").trim()) {
+      alert("Please enter a reason / justification."); return;
+    }
+    if (form.identifierType === "Other" && !form.otherIdentifierType.trim()) {
+      alert("Please specify the identifier type."); return;
+    }
+    if (form.identifierType === "Phone Number" && form.telco === "Other" && !form.otherTelco.trim()) {
+      alert("Please specify the telco."); return;
     }
     const normalised = form.phoneNumber.trim().replace(/\s+/g, "");
-    const resolvedType = form.identifierType === "Other" ? form.otherIdentifierType : form.identifierType;
     try {
-      const res = await fetch("/api/cdr");
-      const all = await res.json();
-      if (Array.isArray(all)) {
-        const match = all.find(c =>
-          c.phoneNumber.replace(/\s+/g, "") === normalised &&
-          (c.identifierType || "Phone Number") === resolvedType
-        );
-        if (match) { setCdrDupeWarning(match); return; }
-      }
+      const res = await fetch(`/api/search?q=${encodeURIComponent(normalised)}`);
+      const data = await res.json();
+      const cdrs = data.cdrs || [];
+      const entries = data.entries || [];
+      if (cdrs.length > 0 || entries.length > 0) { setCdrDupeWarning({ cdrs, entries }); return; }
     } catch {}
     doSubmit();
   };
@@ -146,6 +169,7 @@ export default function CdrPage() {
     if (!confirm("Delete this CDR request?")) return;
     await fetch(`/api/cdr/${id}`, { method: "DELETE" });
     fetchCdrs(selectedOfficer);
+    fetchAssignedCdrs();
   };
 
   const handleFileUpload = async (cdrId, file) => {
@@ -169,6 +193,43 @@ export default function CdrPage() {
       });
       fetchCdrs(selectedOfficer);
     } finally { setUploadingId(null); }
+  };
+
+  const handleAssign = async (userId) => {
+    if (!assignTargetCdr) return;
+    await fetch(`/api/cdr/${assignTargetCdr.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ assignedTo: userId, assignedAt: new Date().toISOString() }),
+    });
+    await fetch("/api/notifications", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId,
+        type: "CDR_ASSIGNED",
+        title: "CDR Assigned to You",
+        message: `${session.user.name} assigned a CDR request for ${assignTargetCdr.phoneNumber} to you`,
+        link: "/dashboard/cdr",
+      }),
+    });
+    setShowAssignModal(false);
+    setAssignTargetCdr(null);
+    setAssignSearch("");
+    fetchCdrs(selectedOfficer);
+    fetchAssignedCdrs();
+  };
+
+  const checkIdentifierDupe = async (value) => {
+    if (!value.trim() || value.trim().length < 3) { setCdrDupeWarning(null); return; }
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(value.trim())}`);
+      const data = await res.json();
+      const cdrs = data.cdrs || [];
+      const entries = data.entries || [];
+      if (cdrs.length > 0 || entries.length > 0) setCdrDupeWarning({ cdrs, entries });
+      else setCdrDupeWarning(null);
+    } catch {}
   };
 
   const filtered = statusFilter ? cdrs.filter(c => c.status === statusFilter) : cdrs;
@@ -203,6 +264,10 @@ export default function CdrPage() {
     </div>
   );
 
+  const filteredOfficers = officers.filter(o =>
+    assignSearch === "" || o.name.toLowerCase().includes(assignSearch.toLowerCase())
+  );
+
   return (
     <div style={{ padding: 32, overflowX: "hidden" }}>
       <style>{`
@@ -217,8 +282,10 @@ export default function CdrPage() {
         @keyframes lelu-spin { to { transform: rotate(360deg); } }
         .lelu-spinner { width: 28px; height: 28px; border: 3px solid #EEF2F7; border-top-color: #1A5FA8; border-radius: 50%; animation: lelu-spin 0.7s linear infinite; margin: 0 auto; }
         .cdr-row:hover td { background: #F7F9FC; }
+        .cdr-row td { overflow: hidden; }
         .upload-btn:hover { border-color: #1A5FA8 !important; color: #1A5FA8 !important; }
         .officer-chip:hover { border-color: #1A5FA8 !important; }
+        .assign-user-row:hover { background: #F0F6FF !important; cursor: pointer; }
       `}</style>
 
       {/* Officer Filter Bar — admin only */}
@@ -314,33 +381,34 @@ export default function CdrPage() {
         </button>
       </div>
 
-      {/* Table */}
-      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflowX: "auto", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed", minWidth: 860 }}>
+      {/* Main Table */}
+      <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.05)" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
           <colgroup>
-            <col style={{ width: 175 }} />
-            <col style={{ width: 75 }} />
-            <col style={{ width: 155 }} />
-            <col style={{ width: 115 }} />
-            <col style={{ width: 85 }} />
             <col style={{ width: 130 }} />
-            <col style={{ width: 105 }} />
-            <col style={{ width: 110 }} />
-            <col style={{ width: 75 }} />
+            <col style={{ width: 60 }} />
+            <col style={{ width: 130 }} />
+            <col style={{ width: 85 }} />
+            <col style={{ width: 70 }} />
+            <col style={{ width: 100 }} />
+            <col style={{ width: 90 }} />
+            <col style={{ width: 85 }} />
+            <col style={{ width: 90 }} />
+            <col style={{ width: 80 }} />
           </colgroup>
           <thead>
             <tr style={{ background: "#F7F9FC", borderBottom: "1px solid #E2E8F0" }}>
-              {["Identifier", "Telco", "Period", "Officer", "Linked Case", "Reason", "Status", "Attachment", "Actions"].map(h => (
+              {["Identifier", "Telco", "Period", "Officer", "Linked Case", "Reason", "Status", "Assigned", "Attachment", "Actions"].map(h => (
                 <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden" }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={9} style={{ padding: 48, textAlign: "center" }}><div className="lelu-spinner" /></td></tr>
+              <tr><td colSpan={10} style={{ padding: 48, textAlign: "center" }}><div className="lelu-spinner" /></td></tr>
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan={9} style={{ padding: 72, textAlign: "center" }}>
+                <td colSpan={10} style={{ padding: 72, textAlign: "center" }}>
                   <Phone size={40} color="#D8E2EE" strokeWidth={1} style={{ margin: "0 auto 14px", display: "block" }} />
                   <div style={{ fontSize: 13, color: "#8FA3BB" }}>No CDR requests yet.</div>
                   <div style={{ fontSize: 11, color: "#C4D0DC", marginTop: 4 }}>Log a new request to get started.</div>
@@ -373,7 +441,7 @@ export default function CdrPage() {
                       <div style={{ width: 24, height: 24, borderRadius: "50%", background: "#0B1F3A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: "white", flexShrink: 0 }}>
                         {c.officer?.name?.charAt(0).toUpperCase()}
                       </div>
-                      <span style={{ fontSize: 12, color: "#4E6478" }}>{c.officer?.name}</span>
+                      <span style={{ fontSize: 12, color: "#4E6478", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.officer?.name}</span>
                     </div>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
@@ -394,6 +462,16 @@ export default function CdrPage() {
                     </div>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
+                    {c.assignedUser ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#1A5FA8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: "white", flexShrink: 0 }}>
+                          {c.assignedUser.name?.charAt(0).toUpperCase()}
+                        </div>
+                        <span style={{ fontSize: 11, color: "#1A5FA8", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.assignedUser.name}</span>
+                      </div>
+                    ) : <span style={{ color: "#C4D0DC", fontSize: 12 }}>—</span>}
+                  </td>
+                  <td style={{ padding: "14px 16px" }}>
                     {c.attachmentPath ? (
                       <a href={c.attachmentPath} target="_blank" rel="noopener noreferrer"
                         style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 600, color: "#1A7A4A", background: "#E6F5EE", padding: "4px 10px", borderRadius: 3, textDecoration: "none", whiteSpace: "nowrap" }}>
@@ -408,13 +486,25 @@ export default function CdrPage() {
                     )}
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <button onClick={() => handleDelete(c.id)}
-                      style={{ fontSize: 11, color: "#C0392B", background: "#FDECEA", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif", transition: "background 0.15s" }}
-                      onMouseEnter={e => e.currentTarget.style.background = "#F5C6C2"}
-                      onMouseLeave={e => e.currentTarget.style.background = "#FDECEA"}
-                    >
-                      Delete
-                    </button>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                      {isAdmin && (
+                        <button
+                          onClick={() => { setAssignTargetCdr(c); setAssignSearch(""); setShowAssignModal(true); }}
+                          style={{ fontSize: 11, color: "#1A5FA8", background: "#EBF3FB", border: "none", padding: "5px 10px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif", display: "flex", alignItems: "center", gap: 5, transition: "background 0.15s" }}
+                          onMouseEnter={e => e.currentTarget.style.background = "#C8DFF5"}
+                          onMouseLeave={e => e.currentTarget.style.background = "#EBF3FB"}
+                        >
+                          <UserCheck size={11} /> Assign
+                        </button>
+                      )}
+                      <button onClick={() => handleDelete(c.id)}
+                        style={{ fontSize: 11, color: "#C0392B", background: "#FDECEA", border: "none", padding: "5px 12px", borderRadius: 4, cursor: "pointer", fontWeight: 600, fontFamily: "'Segoe UI', sans-serif", transition: "background 0.15s" }}
+                        onMouseEnter={e => e.currentTarget.style.background = "#F5C6C2"}
+                        onMouseLeave={e => e.currentTarget.style.background = "#FDECEA"}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );
@@ -423,11 +513,79 @@ export default function CdrPage() {
         </table>
       </div>
 
-      {/* Modal */}
+      {/* CDRs Assigned to Me */}
+      {assignedCdrs.length > 0 && (
+        <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.05)", marginTop: 24 }}>
+          <div style={{ padding: "16px 20px", borderBottom: "1px solid #EEF2F7", background: "#F0F6FF", display: "flex", alignItems: "center", gap: 10 }}>
+            <UserCheck size={14} color="#1A5FA8" />
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A" }}>CDRs Assigned to Me</div>
+              <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 1 }}>
+                {assignedCdrs.length} {assignedCdrs.length === 1 ? "request" : "requests"} assigned to you
+              </div>
+            </div>
+          </div>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "auto", minWidth: 700 }}>
+              <thead>
+                <tr style={{ background: "#F7F9FC", borderBottom: "1px solid #E2E8F0" }}>
+                  {["Identifier", "Telco", "Period", "Officer", "Linked Case", "Status", "Assigned On"].map(h => (
+                    <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {assignedCdrs.map((c, i) => {
+                  const ss = statusStyle(c.status);
+                  return (
+                    <tr key={c.id} style={{ borderBottom: i < assignedCdrs.length - 1 ? "1px solid #F7F9FC" : "none" }}>
+                      <td style={{ padding: "12px 16px" }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, background: "#EEF2F7", color: "#4E6478", padding: "2px 7px", borderRadius: 3, display: "inline-block", marginBottom: 2 }}>
+                          {c.identifierType || "Phone Number"}
+                        </span>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A" }}>{c.phoneNumber}</div>
+                      </td>
+                      <td style={{ padding: "12px 16px" }}>
+                        {c.telco ? <span style={{ fontSize: 12, color: "#4E6478" }}>{c.telco}</span> : <span style={{ color: "#C4D0DC", fontSize: 12 }}>—</span>}
+                      </td>
+                      <td style={{ padding: "12px 16px", fontSize: 11, color: "#4E6478", whiteSpace: "nowrap" }}>
+                        {new Date(c.periodStart).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                        <span style={{ color: "#C4D0DC", margin: "0 4px" }}>→</span>
+                        {new Date(c.periodEnd).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                      </td>
+                      <td style={{ padding: "12px 16px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                          <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#0B1F3A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, fontWeight: 700, color: "white", flexShrink: 0 }}>
+                            {c.officer?.name?.charAt(0).toUpperCase()}
+                          </div>
+                          <span style={{ fontSize: 12, color: "#4E6478" }}>{c.officer?.name}</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: "12px 16px" }}>
+                        {c.case ? (
+                          <span style={{ fontSize: 11, fontWeight: 700, color: "#1A5FA8", background: "#EBF3FB", padding: "3px 8px", borderRadius: 3 }}>{c.case.caseNumber}</span>
+                        ) : <span style={{ color: "#C4D0DC", fontSize: 12 }}>—</span>}
+                      </td>
+                      <td style={{ padding: "12px 16px" }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: ss.color, background: ss.bg, padding: "3px 10px", borderRadius: 3 }}>{c.status}</span>
+                      </td>
+                      <td style={{ padding: "12px 16px", fontSize: 11, color: "#8FA3BB", whiteSpace: "nowrap" }}>
+                        {c.assignedAt ? new Date(c.assignedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* CDR Creation Modal */}
       {showModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(11,31,58,0.6)", backdropFilter: "blur(4px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: "white", borderRadius: 6, padding: "36px 40px", width: 540, boxShadow: "0 24px 64px rgba(11,31,58,0.25)", maxHeight: "90vh", overflowY: "auto" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+          <div style={{ background: "white", borderRadius: 6, padding: "24px 32px", width: 540, boxShadow: "0 24px 64px rgba(11,31,58,0.25)", maxHeight: "90vh", overflowY: "auto" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
               <div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: "#0B1F3A" }}>New CDR Request</div>
                 <div style={{ fontSize: 12, color: "#8FA3BB", marginTop: 3 }}>Log a call detail record request to a telco.</div>
@@ -435,9 +593,9 @@ export default function CdrPage() {
               <button onClick={() => { setShowModal(false); setCdrDupeWarning(null); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB" }}><X size={18} /></button>
             </div>
 
-            <div style={{ marginBottom: 14 }}>
+            <div style={{ marginBottom: 10 }}>
               <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Type *</label>
-              <select className="modal-input" value={form.identifierType} onChange={e => setForm({ ...form, identifierType: e.target.value, otherIdentifierType: "" })}>
+              <select className="modal-input" value={form.identifierType} onChange={e => { setForm({ ...form, identifierType: e.target.value, otherIdentifierType: "" }); setCdrDupeWarning(null); }}>
                 {IDENTIFIER_TYPES.map(t => <option key={t}>{t}</option>)}
               </select>
               {form.identifierType === "Other" && (
@@ -445,10 +603,11 @@ export default function CdrPage() {
               )}
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: form.identifierType === "Phone Number" ? "1fr 1fr" : "1fr", gap: 14, marginBottom: 14 }}>
+            <div style={{ display: "grid", gridTemplateColumns: form.identifierType === "Phone Number" ? "1fr 1fr" : "1fr", gap: 12, marginBottom: 10 }}>
               <div>
                 <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Identifier *</label>
                 <input className="modal-input" value={form.phoneNumber} onChange={e => setForm({ ...form, phoneNumber: e.target.value })}
+                  onBlur={e => checkIdentifierDupe(e.target.value)}
                   placeholder={form.identifierType === "Phone Number" ? "+233244000000" : `Enter ${form.identifierType === "Other" ? "identifier" : form.identifierType.toLowerCase()}...`} />
               </div>
               {form.identifierType === "Phone Number" && (
@@ -464,7 +623,7 @@ export default function CdrPage() {
               )}
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 10 }}>
               <div>
                 <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Period Start *</label>
                 <input className="modal-input" type="date" value={form.periodStart} onChange={e => setForm({ ...form, periodStart: e.target.value })} />
@@ -475,7 +634,7 @@ export default function CdrPage() {
               </div>
             </div>
 
-            <div style={{ marginBottom: 14 }}>
+            <div style={{ marginBottom: 10 }}>
               <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Link to Case (optional)</label>
               <select className="modal-input" value={form.caseId} onChange={e => setForm({ ...form, caseId: e.target.value })}>
                 <option value="">— No case linked —</option>
@@ -483,17 +642,29 @@ export default function CdrPage() {
               </select>
             </div>
 
-            <div style={{ marginBottom: 28 }}>
+            <div style={{ marginBottom: 14 }}>
               <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Reason / Justification *</label>
-              <textarea className="modal-input" value={form.reason} onChange={e => setForm({ ...form, reason: e.target.value })}
-                placeholder="Why is this CDR being requested?" style={{ height: 80, resize: "none" }} />
+              <textarea className="modal-input" value={form.reason} onChange={e => { const v = e.target.value; setForm(prev => ({ ...prev, reason: v })); }}
+                placeholder="Why is this CDR being requested?" style={{ height: 64, resize: "none" }} />
             </div>
 
             {cdrDupeWarning && (
-              <div style={{ background: "#FEF3E2", border: "1px solid #F5D79E", borderRadius: 4, padding: "12px 16px", marginBottom: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#8A5200", marginBottom: 3 }}>⚠ Duplicate detected</div>
-                <div style={{ fontSize: 12, color: "#8A5200", lineHeight: 1.6 }}>
-                  This number already has a CDR request{cdrDupeWarning.case ? ` linked to ${cdrDupeWarning.case.caseNumber}` : ""}. Do you still want to proceed?
+              <div style={{ background: "#FEF9E7", border: "1px solid #F5D79E", borderRadius: 4, padding: "12px 16px", marginBottom: 16 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#8A5200", marginBottom: 6 }}>
+                  ⚠ This identifier was already found in the system:
+                </div>
+                {(cdrDupeWarning.cdrs || []).map(c => (
+                  <div key={c.id} style={{ fontSize: 12, color: "#8A5200", lineHeight: 1.7, paddingLeft: 6 }}>
+                    · CDR request{c.case ? ` linked to ${c.case.caseNumber}` : ""}{c.officer ? ` by ${c.officer.name}` : ""}
+                  </div>
+                ))}
+                {(cdrDupeWarning.entries || []).map(e => (
+                  <div key={e.id} style={{ fontSize: 12, color: "#8A5200", lineHeight: 1.7, paddingLeft: 6 }}>
+                    · Mentioned in journal entry of {e.case?.caseNumber || "a case"}
+                  </div>
+                ))}
+                <div style={{ fontSize: 11, color: "#A06000", marginTop: 6 }}>
+                  You can still submit — click "Log Anyway" to proceed.
                 </div>
               </div>
             )}
@@ -510,6 +681,75 @@ export default function CdrPage() {
                 </button>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign Modal */}
+      {showAssignModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(11,31,58,0.6)", backdropFilter: "blur(4px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ background: "white", borderRadius: 6, padding: "32px 36px", width: 420, maxHeight: "80vh", display: "flex", flexDirection: "column", boxShadow: "0 24px 64px rgba(11,31,58,0.25)" }}>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#0B1F3A" }}>Assign CDR Request</div>
+                {assignTargetCdr && (
+                  <div style={{ fontSize: 12, color: "#8FA3BB", marginTop: 3 }}>
+                    {assignTargetCdr.phoneNumber} · {assignTargetCdr.identifierType || "Phone Number"}
+                  </div>
+                )}
+              </div>
+              <button onClick={() => { setShowAssignModal(false); setAssignTargetCdr(null); setAssignSearch(""); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB" }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <input
+              className="modal-input"
+              value={assignSearch}
+              onChange={e => setAssignSearch(e.target.value)}
+              placeholder="Search officers..."
+              style={{ marginBottom: 12 }}
+            />
+
+            <div style={{ overflowY: "auto", flex: 1 }}>
+              {filteredOfficers.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "32px 0", color: "#8FA3BB", fontSize: 13 }}>
+                  {assignSearch ? "No officers match your search." : "No officers available."}
+                </div>
+              ) : filteredOfficers.map(u => (
+                <div key={u.id}
+                  className="assign-user-row"
+                  onClick={() => handleAssign(u.id)}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 12,
+                    padding: "10px 12px", borderRadius: 5,
+                    transition: "background 0.15s", marginBottom: 4, background: "white",
+                  }}
+                >
+                  <div style={{
+                    width: 32, height: 32, borderRadius: "50%", background: "#1A5FA8",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 12, fontWeight: 800, color: "white", flexShrink: 0,
+                  }}>
+                    {u.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#0B1F3A" }}>{u.name}</div>
+                    <div style={{ fontSize: 11, color: "#8FA3BB", textTransform: "capitalize" }}>{(u.role || "").replace(/_/g, " ").toLowerCase()}</div>
+                  </div>
+                  {assignTargetCdr?.assignedUser?.id === u.id && (
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#1A7A4A", background: "#E6F5EE", padding: "2px 8px", borderRadius: 3, flexShrink: 0 }}>Current</span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => { setShowAssignModal(false); setAssignTargetCdr(null); setAssignSearch(""); }}
+              style={{ marginTop: 16, background: "white", border: "1px solid #E2E8F0", padding: "10px", borderRadius: 4, fontSize: 13, cursor: "pointer", color: "#4E6478", fontFamily: "'Segoe UI', sans-serif", width: "100%" }}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}

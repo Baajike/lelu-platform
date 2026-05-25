@@ -11,10 +11,13 @@ export async function GET(request) {
 
     const { searchParams } = new URL(request.url);
     const officerIdFilter = searchParams.get("officerId");
+    const assignedFilter = searchParams.get("assigned");
     const isAdmin = ADMIN_ROLES.includes(session.user.role);
 
     let where = {};
-    if (!isAdmin) {
+    if (assignedFilter === "true") {
+      where.assignedTo = session.user.id;
+    } else if (!isAdmin) {
       where.officerId = session.user.id;
     } else if (officerIdFilter) {
       where.officerId = officerIdFilter;
@@ -25,6 +28,7 @@ export async function GET(request) {
       include: {
         case: { select: { id: true, caseNumber: true, title: true } },
         officer: { select: { id: true, name: true } },
+        assignedUser: { select: { id: true, name: true } },
       },
       orderBy: { requestedAt: "desc" },
     });

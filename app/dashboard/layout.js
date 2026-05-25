@@ -1,12 +1,12 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, FolderOpen, Phone, ShieldAlert,
-  Globe, FileBarChart2, ChevronRight, LogOut,
-  Bell, Settings, Users, AlertCircle, Clock, X,
-  User, KeyRound, Eye, EyeOff, Mail, Check,
+  Globe, FileBarChart2, ChevronRight,
+  Bell, Users, AlertCircle, Clock, X,
+  Mail, Check,
 } from "lucide-react";
 
 const navItems = [
@@ -55,13 +55,8 @@ export default function DashboardLayout({ children }) {
   const [pageDate,   setPageDate]   = useState("");
   const [mounted,    setMounted]    = useState(false);
   const [pageKey,    setPageKey]    = useState(pathname);
-  const [bellOpen,     setBellOpen]     = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [showPwModal,  setShowPwModal]  = useState(false);
-  const [pwForm,       setPwForm]       = useState({ current: "", next: "", confirm: "" });
-  const [pwState,      setPwState]      = useState({ loading: false, error: "", success: false });
-  const [showCurrent,  setShowCurrent]  = useState(false);
-  const [showNext,     setShowNext]     = useState(false);
+  const [bellOpen, setBellOpen] = useState(false);
+  const [theme,    setTheme]    = useState("light");
 
   // Notification buckets
   const [pendingApprovals, setPendingApprovals] = useState([]);
@@ -71,8 +66,7 @@ export default function DashboardLayout({ children }) {
   const [personalNotifs,   setPersonalNotifs]   = useState([]);
   const [notifWorking,     setNotifWorking]     = useState(null); // "id_accept" | "id_decline"
 
-  const bellRef     = useRef(null);
-  const settingsRef = useRef(null);
+  const bellRef = useRef(null);
 
   // ── Auth redirect ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -90,10 +84,10 @@ export default function DashboardLayout({ children }) {
     );
     if (active) setPageTitle(active.label.toUpperCase());
     else if (pathname.startsWith("/dashboard/admin")) setPageTitle("USER MANAGEMENT");
+    else if (pathname === "/dashboard/profile") setPageTitle("MY PROFILE");
     setPageDate(new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
     setPageKey(pathname);
     setBellOpen(false);
-    setSettingsOpen(false); // close panels on navigation
   }, [pathname]);
 
   // ── Fetch notifications ───────────────────────────────────────────────────
@@ -178,47 +172,19 @@ export default function DashboardLayout({ children }) {
     return () => document.removeEventListener("mousedown", handler);
   }, [bellOpen]);
 
-  // ── Close settings panel on outside click ────────────────────────────────
+  // ── Theme ─────────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!settingsOpen) return;
-    const handler = (e) => {
-      if (settingsRef.current && !settingsRef.current.contains(e.target)) setSettingsOpen(false);
+    const saved = localStorage.getItem("lelu-theme") || "light";
+    setTheme(saved);
+    document.documentElement.setAttribute("data-lelu-theme", saved);
+    const handler = () => {
+      const t = localStorage.getItem("lelu-theme") || "light";
+      setTheme(t);
+      document.documentElement.setAttribute("data-lelu-theme", t);
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [settingsOpen]);
-
-  // ── Change password submit ────────────────────────────────────────────────
-  const handleChangePassword = async () => {
-    const { current, next, confirm } = pwForm;
-    if (!current || !next || !confirm) {
-      setPwState({ loading: false, error: "All fields are required.", success: false }); return;
-    }
-    if (next !== confirm) {
-      setPwState({ loading: false, error: "New passwords do not match.", success: false }); return;
-    }
-    if (next.length < 8) {
-      setPwState({ loading: false, error: "New password must be at least 8 characters.", success: false }); return;
-    }
-    setPwState({ loading: true, error: "", success: false });
-    try {
-      const res = await fetch("/api/users/me", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "change_password", currentPassword: current, newPassword: next }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setPwState({ loading: false, error: data.error || "Failed to change password.", success: false });
-      } else {
-        setPwState({ loading: false, error: "", success: true });
-        setPwForm({ current: "", next: "", confirm: "" });
-        setTimeout(() => { setShowPwModal(false); setPwState({ loading: false, error: "", success: false }); }, 1400);
-      }
-    } catch {
-      setPwState({ loading: false, error: "Network error. Please try again.", success: false });
-    }
-  };
+    window.addEventListener("lelu-theme-change", handler);
+    return () => window.removeEventListener("lelu-theme-change", handler);
+  }, []);
 
   // ── Handle case invitation accept / decline ───────────────────────────────
   const handleInvitationResponse = async (notif, action) => {
@@ -259,6 +225,15 @@ export default function DashboardLayout({ children }) {
     router.push(href);
   };
 
+  const markNotifRead = async (id) => {
+    await fetch("/api/notifications", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    }).catch(() => {});
+    setPersonalNotifs(prev => prev.filter(n => n.id !== id));
+  };
+
   if (status === "loading") {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#0B1F3A" }}>
@@ -278,7 +253,7 @@ export default function DashboardLayout({ children }) {
   const rc   = roleColor(role);
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#F7F9FC", fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: theme === "dark" ? "#0F1A2B" : "#F7F9FC", fontFamily: "'Segoe UI', sans-serif" }}>
       <style>{`
         @keyframes slideInLeft {
           from { opacity: 0; transform: translateX(-32px); }
@@ -385,7 +360,7 @@ export default function DashboardLayout({ children }) {
           opacity: mounted ? 1 : 0,
           transition: "opacity 1s cubic-bezier(.4,0,.2,1) 0.5s",
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#1A5FA8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "white", flexShrink: 0 }}>
               {session.user.name?.charAt(0).toUpperCase()}
             </div>
@@ -398,11 +373,6 @@ export default function DashboardLayout({ children }) {
               </span>
             </div>
           </div>
-          <button className="signout-btn" onClick={() => signOut({ callbackUrl: "/login" })}
-            style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, padding: "9px 12px", background: "#112847", border: "none", borderRadius: 4, cursor: "pointer", transition: "background 0.2s" }}>
-            <LogOut size={14} color="#4E6478" />
-            <span style={{ fontSize: 12, color: "#8FA3BB" }}>Sign Out</span>
-          </button>
         </div>
       </div>
 
@@ -483,26 +453,42 @@ export default function DashboardLayout({ children }) {
                       </div>
                     ) : (
                       <>
-                        {/* ── Case Invitations (personal, all users) ─── */}
-                        {personalNotifs.length > 0 && (
-                          <NotifSection
-                            dot="#1A5FA8"
-                            title="Case Invitations"
-                            count={personalNotifs.length}
-                            emptyText=""
-                          >
-                            {personalNotifs.map(n => (
-                              <InvitationNotifItem
-                                key={n.id}
-                                notif={n}
-                                working={notifWorking}
-                                onAccept={() => handleInvitationResponse(n, "accept")}
-                                onDecline={() => handleInvitationResponse(n, "decline")}
-                                daysSince={daysSince}
-                              />
-                            ))}
-                          </NotifSection>
-                        )}
+                        {/* ── Personal notifications (personal, all users) ─── */}
+                        {personalNotifs.length > 0 && (() => {
+                          const invitations = personalNotifs.filter(n => n.type === "CASE_INVITATION");
+                          const others = personalNotifs.filter(n => n.type !== "CASE_INVITATION");
+                          return (
+                            <>
+                              {invitations.length > 0 && (
+                                <NotifSection dot="#1A5FA8" title="Case Invitations" count={invitations.length} emptyText="">
+                                  {invitations.map(n => (
+                                    <InvitationNotifItem
+                                      key={n.id}
+                                      notif={n}
+                                      working={notifWorking}
+                                      onAccept={() => handleInvitationResponse(n, "accept")}
+                                      onDecline={() => handleInvitationResponse(n, "decline")}
+                                      daysSince={daysSince}
+                                    />
+                                  ))}
+                                </NotifSection>
+                              )}
+                              {others.length > 0 && (
+                                <NotifSection dot="#D4730A" title="Notifications" count={others.length} emptyText="">
+                                  {others.map(n => (
+                                    <NotifItem
+                                      key={n.id}
+                                      icon={<Phone size={13} color="#D4730A" strokeWidth={2} />}
+                                      label={n.title}
+                                      sub={n.message?.length > 60 ? n.message.slice(0, 60) + "…" : n.message}
+                                      onClick={() => { markNotifRead(n.id); navigate(n.link || "/dashboard/cdr"); }}
+                                    />
+                                  ))}
+                                </NotifSection>
+                              )}
+                            </>
+                          );
+                        })()}
 
                         {/* ── Pending Approvals ──────────────────────── */}
                         {APPROVAL_ROLES.includes(role) && (
@@ -593,80 +579,12 @@ export default function DashboardLayout({ children }) {
               )}
             </div>
 
-            {/* Settings dropdown */}
-            <div style={{ position: "relative" }} ref={settingsRef}>
-              <button
-                onClick={() => { setSettingsOpen(o => !o); setBellOpen(false); }}
-                style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
-                <Settings size={18} color={settingsOpen ? "white" : "#4E6478"} strokeWidth={1.8} />
-              </button>
-
-              {settingsOpen && (
-                <div style={{
-                  position: "absolute", top: 44, right: -8,
-                  width: 260,
-                  background: "white",
-                  borderRadius: 6,
-                  boxShadow: "0 8px 32px rgba(11,31,58,0.22), 0 2px 8px rgba(11,31,58,0.1)",
-                  border: "1px solid #E2E8F0",
-                  zIndex: 60,
-                  animation: "dropIn 0.18s cubic-bezier(.4,0,.2,1) both",
-                  overflow: "hidden",
-                }}>
-                  {/* Profile card */}
-                  <div style={{ padding: "16px 18px", background: "#0B1F3A", borderBottom: "1px solid #1E3A5F" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#1A5FA8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: "white", flexShrink: 0 }}>
-                        {session.user.name?.charAt(0).toUpperCase()}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: "white", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{session.user.name}</div>
-                        <div style={{ fontSize: 10, color: "#8FA3BB", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{session.user.email}</div>
-                        <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 3, background: rc.bg, color: rc.color, letterSpacing: "0.05em", textTransform: "uppercase", display: "inline-block", marginTop: 3 }}>
-                          {roleLabel(role)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Menu items */}
-                  <div style={{ padding: "6px 0" }}>
-                    <button
-                      onClick={() => setSettingsOpen(false)}
-                      style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "10px 18px", background: "none", border: "none", cursor: "default", textAlign: "left" }}>
-                      <User size={14} color="#8FA3BB" strokeWidth={1.8} />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: "#0B1F3A" }}>{session.user.name}</div>
-                        <div style={{ fontSize: 10, color: "#8FA3BB", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{session.user.email}</div>
-                      </div>
-                    </button>
-
-                    <div style={{ height: 1, background: "#EEF2F7", margin: "4px 0" }} />
-
-                    <button
-                      className="settings-item"
-                      onClick={() => { setSettingsOpen(false); setPwForm({ current: "", next: "", confirm: "" }); setPwState({ loading: false, error: "", success: false }); setShowPwModal(true); }}
-                      style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "10px 18px", background: "none", border: "none", cursor: "pointer", textAlign: "left", transition: "background 0.12s" }}>
-                      <KeyRound size={14} color="#4E6478" strokeWidth={1.8} />
-                      <span style={{ fontSize: 13, color: "#0B1F3A" }}>Change Password</span>
-                    </button>
-
-                    <div style={{ height: 1, background: "#EEF2F7", margin: "4px 0" }} />
-
-                    <button
-                      className="settings-item"
-                      onClick={() => signOut({ callbackUrl: "/login" })}
-                      style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "10px 18px", background: "none", border: "none", cursor: "pointer", textAlign: "left", transition: "background 0.12s" }}>
-                      <LogOut size={14} color="#C0392B" strokeWidth={1.8} />
-                      <span style={{ fontSize: 13, color: "#C0392B", fontWeight: 500 }}>Sign Out</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#1A5FA8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: "white" }}>
+            <button
+              onClick={() => router.push("/dashboard/profile")}
+              title="My Profile"
+              style={{ width: 32, height: 32, borderRadius: "50%", background: "#1A5FA8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: "white", border: "none", cursor: "pointer" }}>
               {session.user.name?.charAt(0).toUpperCase()}
-            </div>
+            </button>
           </div>
         </div>
 
@@ -679,114 +597,6 @@ export default function DashboardLayout({ children }) {
         </div>
       </div>
 
-      {/* ── Change Password Modal ─────────────────────────────────────── */}
-      {showPwModal && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(11,31,58,0.6)", backdropFilter: "blur(4px)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: "white", borderRadius: 6, width: 420, boxShadow: "0 24px 64px rgba(11,31,58,0.25)", overflow: "hidden" }}>
-
-            {/* Modal header */}
-            <div style={{ background: "#0B1F3A", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <KeyRound size={16} color="#4E6478" strokeWidth={1.8} />
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "white" }}>Change Password</div>
-                  <div style={{ fontSize: 11, color: "#4E6478", marginTop: 1 }}>Update your account password.</div>
-                </div>
-              </div>
-              <button onClick={() => setShowPwModal(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#4E6478", padding: 4 }}>
-                <X size={16} color="#4E6478" />
-              </button>
-            </div>
-
-            {/* Form */}
-            <div style={{ padding: "24px 24px 20px" }}>
-
-              {pwState.success ? (
-                <div style={{ textAlign: "center", padding: "24px 0" }}>
-                  <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#E6F5EE", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
-                    <KeyRound size={22} color="#1A7A4A" strokeWidth={1.8} />
-                  </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#1A7A4A" }}>Password updated</div>
-                  <div style={{ fontSize: 12, color: "#8FA3BB", marginTop: 4 }}>Your password has been changed successfully.</div>
-                </div>
-              ) : (
-                <>
-                  {/* Current password */}
-                  <div style={{ marginBottom: 14 }}>
-                    <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Current Password *</label>
-                    <div style={{ position: "relative" }}>
-                      <input
-                        type={showCurrent ? "text" : "password"}
-                        value={pwForm.current}
-                        onChange={e => setPwForm(f => ({ ...f, current: e.target.value }))}
-                        onKeyDown={e => e.key === "Enter" && handleChangePassword()}
-                        placeholder="Enter current password"
-                        style={{ width: "100%", border: "1.5px solid #E2E8F0", borderRadius: 4, padding: "10px 40px 10px 14px", fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "'Segoe UI',sans-serif", color: "#0B1F3A" }}
-                      />
-                      <button onClick={() => setShowCurrent(v => !v)} tabIndex={-1}
-                        style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", padding: 2, color: "#8FA3BB" }}>
-                        {showCurrent ? <EyeOff size={14} /> : <Eye size={14} />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* New password */}
-                  <div style={{ marginBottom: 14 }}>
-                    <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>New Password *</label>
-                    <div style={{ position: "relative" }}>
-                      <input
-                        type={showNext ? "text" : "password"}
-                        value={pwForm.next}
-                        onChange={e => setPwForm(f => ({ ...f, next: e.target.value }))}
-                        onKeyDown={e => e.key === "Enter" && handleChangePassword()}
-                        placeholder="At least 8 characters"
-                        style={{ width: "100%", border: "1.5px solid #E2E8F0", borderRadius: 4, padding: "10px 40px 10px 14px", fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "'Segoe UI',sans-serif", color: "#0B1F3A" }}
-                      />
-                      <button onClick={() => setShowNext(v => !v)} tabIndex={-1}
-                        style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", padding: 2, color: "#8FA3BB" }}>
-                        {showNext ? <EyeOff size={14} /> : <Eye size={14} />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Confirm new password */}
-                  <div style={{ marginBottom: 20 }}>
-                    <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Confirm New Password *</label>
-                    <input
-                      type="password"
-                      value={pwForm.confirm}
-                      onChange={e => setPwForm(f => ({ ...f, confirm: e.target.value }))}
-                      onKeyDown={e => e.key === "Enter" && handleChangePassword()}
-                      placeholder="Re-enter new password"
-                      style={{ width: "100%", border: "1.5px solid #E2E8F0", borderRadius: 4, padding: "10px 14px", fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "'Segoe UI',sans-serif", color: "#0B1F3A" }}
-                    />
-                  </div>
-
-                  {/* Error */}
-                  {pwState.error && (
-                    <div style={{ background: "#FDECEA", border: "1px solid #F5C6C2", borderRadius: 4, padding: "9px 14px", marginBottom: 16, fontSize: 12, color: "#C0392B", display: "flex", alignItems: "center", gap: 8 }}>
-                      <AlertCircle size={13} color="#C0392B" strokeWidth={2} />
-                      {pwState.error}
-                    </div>
-                  )}
-
-                  {/* Actions */}
-                  <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-                    <button onClick={() => setShowPwModal(false)}
-                      style={{ background: "white", border: "1px solid #E2E8F0", padding: "10px 22px", borderRadius: 4, fontSize: 13, cursor: "pointer", color: "#4E6478", fontFamily: "'Segoe UI',sans-serif" }}>
-                      Cancel
-                    </button>
-                    <button onClick={handleChangePassword} disabled={pwState.loading}
-                      style={{ background: "#1A5FA8", color: "white", border: "none", padding: "10px 28px", borderRadius: 4, fontSize: 13, fontWeight: 600, cursor: pwState.loading ? "not-allowed" : "pointer", fontFamily: "'Segoe UI',sans-serif", opacity: pwState.loading ? 0.7 : 1 }}>
-                      {pwState.loading ? "Saving..." : "Update Password"}
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

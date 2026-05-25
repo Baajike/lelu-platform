@@ -190,7 +190,9 @@ exports.Prisma.CdrRequestScalarFieldEnum = {
   caseId: 'caseId',
   officerId: 'officerId',
   attachmentPath: 'attachmentPath',
-  attachmentName: 'attachmentName'
+  attachmentName: 'attachmentName',
+  assignedTo: 'assignedTo',
+  assignedAt: 'assignedAt'
 };
 
 exports.Prisma.InternationalRequestScalarFieldEnum = {

@@ -69,6 +69,7 @@ export default function DashboardPage() {
   const [pendingUsers, setPendingUsers] = useState([]);
   const [teamStats,    setTeamStats]    = useState([]);
   const [approving,    setApproving]    = useState({});
+  const [assignedCdrs, setAssignedCdrs] = useState([]);
   const [loading,      setLoading]      = useState(true);
 
   const isAdmin    = ["HEAD_OF_UNIT", "SUPERVISOR", "OFFICE_ADMINISTRATOR", "ADMIN"].includes(session?.user?.role);
@@ -77,16 +78,19 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [casesRes, cdrsRes, intlRes, entriesRes] = await Promise.all([
+        const [casesRes, cdrsRes, intlRes, entriesRes, assignedRes] = await Promise.all([
           fetch("/api/cases"),
           fetch("/api/cdr"),
           fetch("/api/international"),
           fetch("/api/entries"),
+          fetch("/api/cdr?assigned=true"),
         ]);
         const cases   = await casesRes.json();
         const cdrs    = await cdrsRes.json();
         const intl    = await intlRes.json();
         const entries = await entriesRes.json();
+        const assigned = await assignedRes.json();
+        setAssignedCdrs(Array.isArray(assigned) ? assigned : []);
 
         const caseList    = Array.isArray(cases)   ? cases   : [];
         const cdrList     = Array.isArray(cdrs)    ? cdrs    : [];
@@ -338,6 +342,79 @@ export default function DashboardPage() {
         <StatCard label="Intel Items"    value={stats.intelItems}   icon={ShieldAlert} color="#C0392B" sub="Cases, CDR & network" />
         <StatCard label="Intl. Requests" value={stats.intlRequests} icon={Globe}      color="#6B3FA0" sub="Pending response" />
       </div>
+
+      {/* CDRs Assigned to Me */}
+      {assignedCdrs.length > 0 && (
+        <div style={{
+          background: "white", borderRadius: 6, border: "1px solid #E2E8F0",
+          overflow: "hidden", boxShadow: "0 1px 6px rgba(11,31,58,0.06)", marginBottom: 28,
+        }}>
+          <div style={{
+            padding: "16px 24px", borderBottom: "1px solid #EEF2F7",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            background: "#F0F6FF",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <Phone size={15} color="#1A5FA8" strokeWidth={1.8} />
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A" }}>CDRs Assigned to Me</div>
+                <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 1 }}>CDR requests assigned to you for processing</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{
+                background: "#1A5FA8", color: "white", fontSize: 11,
+                fontWeight: 700, padding: "4px 12px", borderRadius: 3, letterSpacing: "0.05em",
+              }}>{assignedCdrs.length} ASSIGNED</span>
+              <button onClick={() => router.push("/dashboard/cdr")} style={{
+                fontSize: 11, color: "#1A5FA8", background: "none", border: "none",
+                cursor: "pointer", fontWeight: 600, letterSpacing: "0.05em",
+              }}>VIEW ALL →</button>
+            </div>
+          </div>
+          {assignedCdrs.slice(0, 5).map((cdr, i) => (
+            <div key={cdr.id}
+              onClick={() => router.push("/dashboard/cdr")}
+              style={{
+                padding: "14px 24px",
+                borderBottom: i < Math.min(assignedCdrs.length, 5) - 1 ? "1px solid #F7F9FC" : "none",
+                cursor: "pointer", display: "flex", alignItems: "center", gap: 16,
+                transition: "background 0.15s",
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = "#F7F9FC"}
+              onMouseLeave={e => e.currentTarget.style.background = "white"}
+            >
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {cdr.phoneNumber}
+                </div>
+                <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 2 }}>
+                  {cdr.identifierType || "Phone Number"}
+                  {cdr.telco ? ` · ${cdr.telco}` : ""}
+                  {cdr.case ? ` · ${cdr.case.caseNumber}` : ""}
+                  {cdr.officer?.name ? ` · ${cdr.officer.name}` : ""}
+                </div>
+              </div>
+              <span style={{
+                fontSize: 10, fontWeight: 700, flexShrink: 0,
+                color: cdr.status === "Pending" ? "#D4730A" : cdr.status === "Received" ? "#1A7A4A" : "#C0392B",
+                background: cdr.status === "Pending" ? "#FEF3E2" : cdr.status === "Received" ? "#E6F5EE" : "#FDECEA",
+                padding: "3px 9px", borderRadius: 3, letterSpacing: "0.05em", textTransform: "uppercase",
+              }}>{cdr.status}</span>
+            </div>
+          ))}
+          {assignedCdrs.length > 5 && (
+            <div style={{ padding: "12px 24px", borderTop: "1px solid #EEF2F7", textAlign: "center" }}>
+              <button onClick={() => router.push("/dashboard/cdr")} style={{
+                fontSize: 12, color: "#1A5FA8", background: "none", border: "none",
+                cursor: "pointer", fontWeight: 600,
+              }}>
+                View {assignedCdrs.length - 5} more →
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Crime Intelligence Overview — heatmap by category */}
       {isHeadAdmin && !loading && categoryBreakdown.length > 0 && (

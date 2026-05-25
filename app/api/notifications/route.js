@@ -41,6 +41,22 @@ export async function GET(request) {
   }
 }
 
+export async function POST(request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+    const { userId, type, title, message, link, meta } = await request.json();
+    const notification = await db.notification.create({
+      data: { userId, type, title, message, link: link || null, meta: meta || null },
+    });
+
+    return Response.json(notification, { status: 201 });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+}
+
 export async function PATCH(request) {
   try {
     const session = await getServerSession(authOptions);

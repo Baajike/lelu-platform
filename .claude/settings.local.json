@@ -13,7 +13,9 @@
       "Bash(npm run *)",
       "Bash(curl -s http://localhost:3000/api/cases -H \"Cookie: \")",
       "Bash(pkill -f \"next dev\")",
-      "Bash(taskkill /F /IM node.exe)"
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(git fetch *)",
+      "Bash(git ls-tree *)"
     ]
   }
 }

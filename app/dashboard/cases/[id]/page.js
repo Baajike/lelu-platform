@@ -60,7 +60,37 @@ export default function CaseDetailPage() {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [allStaff, setAllStaff] = useState([]);
   const [staffSearch, setStaffSearch] = useState("");
-  const [assignWorking, setAssignWorking] = useState(false);
+  const [assignWorking,    setAssignWorking]    = useState(false);
+  const [entryDupeWarning, setEntryDupeWarning] = useState(null);
+
+  const extractTokens = (text) => {
+    const phones = (text.match(/\+?[\d][\d\s\-\.]{8,}[\d]/g) || [])
+      .map(m => m.replace(/[^\d]/g, ""))
+      .filter(m => m.length >= 10);
+    const emails = (text.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g) || []);
+    return [...new Set([...phones, ...emails])];
+  };
+
+  const checkEntryForDupes = async (text) => {
+    if (!text.trim()) { setEntryDupeWarning(null); return; }
+    const tokens = extractTokens(text);
+    if (tokens.length === 0) { setEntryDupeWarning(null); return; }
+    try {
+      const results = await Promise.all(
+        tokens.slice(0, 5).map(async token => {
+          const res = await fetch(`/api/search?q=${encodeURIComponent(token)}`);
+          const data = await res.json();
+          return {
+            token,
+            cdrs:    data.cdrs    || [],
+            entries: (data.entries || []).filter(e => e.case?.id !== id),
+          };
+        })
+      );
+      const hits = results.filter(r => r.cdrs.length > 0 || r.entries.length > 0);
+      setEntryDupeWarning(hits.length > 0 ? hits : null);
+    } catch {}
+  };
 
   const fetchCase = async () => {
     try {
@@ -145,17 +175,12 @@ export default function CaseDetailPage() {
       alert("Please fill all required fields."); return;
     }
     const normalised = cdrForm.phoneNumber.trim().replace(/\s+/g, "");
-    const resolvedType = cdrForm.identifierType === "Other" ? cdrForm.otherIdentifierType : cdrForm.identifierType;
     try {
-      const res = await fetch("/api/cdr");
-      const all = await res.json();
-      if (Array.isArray(all)) {
-        const match = all.find(c =>
-          c.phoneNumber.replace(/\s+/g, "") === normalised &&
-          (c.identifierType || "Phone Number") === resolvedType
-        );
-        if (match) { setCdrDupeWarning(match); return; }
-      }
+      const res = await fetch(`/api/search?q=${encodeURIComponent(normalised)}`);
+      const data = await res.json();
+      const cdrs = data.cdrs || [];
+      const entries = data.entries || [];
+      if (cdrs.length > 0 || entries.length > 0) { setCdrDupeWarning({ cdrs, entries }); return; }
     } catch {}
     doCdrSubmit();
   };
@@ -523,7 +548,7 @@ export default function CaseDetailPage() {
             <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 2 }}>{entries.length} {entries.length === 1 ? "entry" : "entries"}</div>
           </div>
           {caseData.status === "Active" && (
-            <button onClick={() => setShowAddEntry(!showAddEntry)} style={{
+            <button onClick={() => { setShowAddEntry(v => !v); if (showAddEntry) { setEntryContent(""); setEntryActions(""); setEntryDupeWarning(null); } }} style={{
               background: showAddEntry ? "#F7F9FC" : "#1A5FA8", color: showAddEntry ? "#4E6478" : "white",
               border: showAddEntry ? "1px solid #E2E8F0" : "none",
               padding: "9px 18px", borderRadius: 4, fontSize: 12,
@@ -542,13 +567,38 @@ export default function CaseDetailPage() {
               Input {entries.length + 1} Entry
             </div>
             <textarea className="input-field" value={entryContent} onChange={e => setEntryContent(e.target.value)}
+              onBlur={e => checkEntryForDupes(e.target.value)}
               placeholder="Document what happened today — interviews conducted, evidence found, leads followed..."
               style={{ height: 110, resize: "none", marginBottom: 10 }} />
             <textarea className="input-field" value={entryActions} onChange={e => setEntryActions(e.target.value)}
               placeholder="Actions taken or next steps (optional)..."
               style={{ height: 70, resize: "none", marginBottom: 14 }} />
+
+            {entryDupeWarning && (
+              <div style={{ background: "#FEF9E7", border: "1px solid #F5D79E", borderRadius: 4, padding: "12px 16px", marginBottom: 14 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#8A5200", marginBottom: 6 }}>
+                  ⚠ This entry references identifiers already found in the system:
+                </div>
+                {entryDupeWarning.map(({ token, cdrs, entries }) => (
+                  <div key={token} style={{ marginBottom: 4 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, background: "#F5D79E", color: "#6B3800", padding: "1px 6px", borderRadius: 2 }}>{token}</span>
+                    {cdrs.map(c => (
+                      <div key={c.id} style={{ fontSize: 11, color: "#8A5200", lineHeight: 1.7, paddingLeft: 10 }}>
+                        · CDR request{c.case ? ` linked to ${c.case.caseNumber}` : ""}{c.officer ? ` by ${c.officer.name}` : ""}
+                      </div>
+                    ))}
+                    {entries.map(e => (
+                      <div key={e.id} style={{ fontSize: 11, color: "#8A5200", lineHeight: 1.7, paddingLeft: 10 }}>
+                        · Mentioned in journal entry of {e.case?.caseNumber || "a case"}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-              <button onClick={() => { setShowAddEntry(false); setEntryContent(""); setEntryActions(""); }}
+              <button onClick={() => { setShowAddEntry(false); setEntryContent(""); setEntryActions(""); setEntryDupeWarning(null); }}
                 style={{ background: "white", border: "1px solid #E2E8F0", padding: "9px 20px", borderRadius: 4, fontSize: 13, cursor: "pointer", color: "#4E6478", fontFamily: "'Segoe UI', sans-serif" }}>
                 Cancel
               </button>
@@ -847,7 +897,7 @@ export default function CaseDetailPage() {
 
             <div style={{ marginBottom: 14 }}>
               <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Type *</label>
-              <select className="input-field" value={cdrForm.identifierType} onChange={e => setCdrForm({ ...cdrForm, identifierType: e.target.value, otherIdentifierType: "" })}>
+              <select className="input-field" value={cdrForm.identifierType} onChange={e => { setCdrForm({ ...cdrForm, identifierType: e.target.value, otherIdentifierType: "" }); setCdrDupeWarning(null); }}>
                 {IDENTIFIER_TYPES.map(t => <option key={t}>{t}</option>)}
               </select>
               {cdrForm.identifierType === "Other" && (
@@ -859,6 +909,18 @@ export default function CaseDetailPage() {
               <div>
                 <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Identifier *</label>
                 <input className="input-field" value={cdrForm.phoneNumber} onChange={e => setCdrForm({ ...cdrForm, phoneNumber: e.target.value })}
+                  onBlur={async e => {
+                    const v = e.target.value.trim().replace(/\s+/g, "");
+                    if (v.length < 3) return;
+                    try {
+                      const res = await fetch(`/api/search?q=${encodeURIComponent(v)}`);
+                      const data = await res.json();
+                      const cdrs = data.cdrs || [];
+                      const entries = data.entries || [];
+                      if (cdrs.length > 0 || entries.length > 0) setCdrDupeWarning({ cdrs, entries });
+                      else setCdrDupeWarning(null);
+                    } catch {}
+                  }}
                   placeholder={cdrForm.identifierType === "Phone Number" ? "+233244000000" : `Enter ${cdrForm.identifierType === "Other" ? "identifier" : cdrForm.identifierType.toLowerCase()}...`} />
               </div>
               {cdrForm.identifierType === "Phone Number" && (
@@ -892,10 +954,22 @@ export default function CaseDetailPage() {
             </div>
 
             {cdrDupeWarning && (
-              <div style={{ background: "#FEF3E2", border: "1px solid #F5D79E", borderRadius: 4, padding: "12px 16px", marginBottom: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#8A5200", marginBottom: 3 }}>⚠ Duplicate detected</div>
-                <div style={{ fontSize: 12, color: "#8A5200", lineHeight: 1.6 }}>
-                  This number already has a CDR request{cdrDupeWarning.case ? ` linked to ${cdrDupeWarning.case.caseNumber}` : ""}. Do you still want to proceed?
+              <div style={{ background: "#FEF9E7", border: "1px solid #F5D79E", borderRadius: 4, padding: "12px 16px", marginBottom: 16 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#8A5200", marginBottom: 6 }}>
+                  ⚠ This identifier was already found in the system:
+                </div>
+                {(cdrDupeWarning.cdrs || []).map(c => (
+                  <div key={c.id} style={{ fontSize: 12, color: "#8A5200", lineHeight: 1.7, paddingLeft: 6 }}>
+                    · CDR request{c.case ? ` linked to ${c.case.caseNumber}` : ""}{c.officer ? ` by ${c.officer.name}` : ""}
+                  </div>
+                ))}
+                {(cdrDupeWarning.entries || []).map(e => (
+                  <div key={e.id} style={{ fontSize: 12, color: "#8A5200", lineHeight: 1.7, paddingLeft: 6 }}>
+                    · Mentioned in journal entry of {e.case?.caseNumber || "a case"}
+                  </div>
+                ))}
+                <div style={{ fontSize: 11, color: "#A06000", marginTop: 6 }}>
+                  You can still submit — click "Log Anyway" to proceed.
                 </div>
               </div>
             )}

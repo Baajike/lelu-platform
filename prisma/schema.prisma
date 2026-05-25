@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -28,6 +28,7 @@ model User {
   activityReports ActivityReport[]
   caseAssignments CaseAssignment[]
   notifications   Notification[]
+  cdrAssignments  CdrRequest[]   @relation("CdrAssignee")
 }
 
 model Case {
@@ -99,10 +100,13 @@ model CdrRequest {
   receivedAt  DateTime?
   case        Case?    @relation(fields: [caseId], references: [id])
   caseId      String?
-  officer     User?    @relation(fields: [officerId], references: [id])
-  officerId   String?
+  officer      User?    @relation(fields: [officerId], references: [id])
+  officerId    String?
   attachmentPath String?
   attachmentName String?
+  assignedTo   String?
+  assignedAt   DateTime?
+  assignedUser User?    @relation("CdrAssignee", fields: [assignedTo], references: [id])
 }
 
 model InternationalRequest {

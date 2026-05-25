@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./lelu.db"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -28,6 +28,7 @@ model User {
   activityReports       ActivityReport[]
   caseAssignments       CaseAssignment[]
   notifications         Notification[]
+  cdrAssignments        CdrRequest[]           @relation("CdrAssignee")
 }
 
 model Case {
@@ -103,6 +104,9 @@ model CdrRequest {
   officerId      String?
   attachmentPath String?
   attachmentName String?
+  assignedTo     String?
+  assignedAt     DateTime?
+  assignedUser   User?     @relation("CdrAssignee", fields: [assignedTo], references: [id])
 }
 
 model InternationalRequest {
