@@ -137,6 +137,41 @@ export async function GET(request, { params }) {
   }
 }
 
+export async function DELETE(request, { params }) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+    const HEAD_ROLES = ["HEAD_OF_UNIT", "ADMIN"];
+    if (!HEAD_ROLES.includes(session.user.role)) {
+      return Response.json({ error: "Forbidden." }, { status: 403 });
+    }
+
+    const { id } = await params;
+
+    const existingCase = await db.case.findUnique({
+      where: { id },
+      select: { id: true, caseNumber: true, title: true },
+    });
+    if (!existingCase) return Response.json({ error: "Case not found." }, { status: 404 });
+
+    await db.$transaction(async (tx) => {
+      await tx.journalEntry.deleteMany({ where: { caseId: id } });
+      await tx.cdrRequest.deleteMany({ where: { caseId: id } });
+      await tx.caseActivity.deleteMany({ where: { caseId: id } });
+      await tx.internationalRequest.updateMany({
+        where: { caseId: id },
+        data: { caseId: null },
+      });
+      await tx.case.delete({ where: { id } });
+    });
+
+    return Response.json({ success: true });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+}
+
 export async function PATCH(request, { params }) {
   try {
     const session = await getServerSession(authOptions);

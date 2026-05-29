@@ -53,6 +53,7 @@ export default function CaseDetailPage() {
   const [submitting, setSubmitting] = useState(false);
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [declineReason, setDeclineReason] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCdrModal, setShowCdrModal] = useState(false);
   const [cdrForm, setCdrForm] = useState({ phoneNumber: "", identifierType: "Phone Number", otherIdentifierType: "", telco: "MTN", otherTelco: "", periodStart: "", periodEnd: "", reason: "" });
   const [cdrDupeWarning, setCdrDupeWarning] = useState(null);
@@ -245,6 +246,23 @@ export default function CaseDetailPage() {
     } finally { setAssignWorking(false); }
   };
 
+  const handleDeleteCase = async () => {
+    setSubmitting(true);
+    try {
+      const res = await fetch(`/api/cases/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        router.push("/dashboard/cases");
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to delete case.");
+        setSubmitting(false);
+      }
+    } catch {
+      alert("Failed to delete case.");
+      setSubmitting(false);
+    }
+  };
+
   const handleRemoveAssignment = async (userId) => {
     if (!confirm("Remove this officer from the case team?")) return;
     await fetch(`/api/cases/${id}/assignments`, {
@@ -353,6 +371,16 @@ export default function CaseDetailPage() {
               }}>
                 Close Case
               </button>
+              {["HEAD_OF_UNIT", "ADMIN"].includes(session?.user?.role) && (
+                <button className="action-btn" onClick={() => setShowDeleteModal(true)} style={{
+                  background: "white", color: "#C0392B", border: "1px solid #C0392B",
+                  padding: "10px 22px", borderRadius: 4, fontSize: 12,
+                  fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif",
+                  letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: 6,
+                }}>
+                  <Trash2 size={13} /> Delete Case
+                </button>
+              )}
             </div>
           )}
           {caseData.status === "Closed" && (
@@ -1091,6 +1119,41 @@ export default function CaseDetailPage() {
                 fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif",
               }}>
                 {submitting ? "Closing..." : "Close Case"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Case Modal */}
+      {showDeleteModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(11,31,58,0.6)", backdropFilter: "blur(4px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ background: "white", borderRadius: 6, padding: "36px 40px", width: 480, boxShadow: "0 24px 64px rgba(11,31,58,0.25)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#C0392B" }}>Delete Case</div>
+                <div style={{ fontSize: 12, color: "#8FA3BB", marginTop: 3 }}>{caseData.caseNumber} · {caseData.title}</div>
+              </div>
+              <button onClick={() => setShowDeleteModal(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB" }}><X size={18} /></button>
+            </div>
+
+            <div style={{ background: "#FDECEA", border: "1px solid #F5C6C2", borderRadius: 4, padding: "14px 18px", marginBottom: 24 }}>
+              <div style={{ fontSize: 13, color: "#8B2418", lineHeight: 1.6 }}>
+                Are you sure you want to permanently delete this case? All journal entries, CDR requests and activity logs linked to this case will also be deleted.
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+              <button onClick={() => setShowDeleteModal(false)} disabled={submitting} style={{ background: "white", border: "1px solid #E2E8F0", padding: "10px 22px", borderRadius: 4, fontSize: 13, cursor: "pointer", color: "#4E6478", fontFamily: "'Segoe UI', sans-serif" }}>
+                Cancel
+              </button>
+              <button onClick={handleDeleteCase} disabled={submitting} style={{
+                background: submitting ? "#8FA3BB" : "#C0392B", color: "white", border: "none",
+                padding: "10px 28px", borderRadius: 4, fontSize: 13,
+                fontWeight: 600, cursor: submitting ? "default" : "pointer", fontFamily: "'Segoe UI', sans-serif",
+                display: "flex", alignItems: "center", gap: 6,
+              }}>
+                <Trash2 size={13} /> {submitting ? "Deleting..." : "Delete Permanently"}
               </button>
             </div>
           </div>
