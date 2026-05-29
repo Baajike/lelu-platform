@@ -303,6 +303,8 @@ export default function CaseDetailPage() {
     staffSearch === "" || u.name.toLowerCase().includes(staffSearch.toLowerCase())
   );
 
+  console.log("SESSION:", session?.user);
+
   return (
     <div style={{ padding: 32 }}>
       <style>{`
@@ -353,8 +355,9 @@ export default function CaseDetailPage() {
               <span style={{ fontSize: 11, color: "#8FA3BB" }}>· Opened by {caseData.officer?.name}</span>
             </div>
           </div>
-          {caseData.status === "Active" && (
-            <div style={{ display: "flex", gap: 10 }}>
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+          {caseData.status === "Active" && canManageTeam && (
+            <>
               <button className="action-btn" onClick={() => setShowDeclineModal(true)} style={{
                 background: "#C0392B", color: "white", border: "none",
                 padding: "10px 22px", borderRadius: 4, fontSize: 12,
@@ -371,17 +374,7 @@ export default function CaseDetailPage() {
               }}>
                 Close Case
               </button>
-              {["HEAD_OF_UNIT", "ADMIN"].includes(session?.user?.role) && (
-                <button className="action-btn" onClick={() => setShowDeleteModal(true)} style={{
-                  background: "white", color: "#C0392B", border: "1px solid #C0392B",
-                  padding: "10px 22px", borderRadius: 4, fontSize: 12,
-                  fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif",
-                  letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: 6,
-                }}>
-                  <Trash2 size={13} /> Delete Case
-                </button>
-              )}
-            </div>
+            </>
           )}
           {caseData.status === "Closed" && (
   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10 }}>
@@ -436,6 +429,17 @@ export default function CaseDetailPage() {
     </button>
   </div>
 )}
+          {["HEAD_OF_UNIT", "ADMIN"].includes(session?.user?.role) && (
+            <button className="action-btn" onClick={() => setShowDeleteModal(true)} style={{
+              background: "white", color: "#C0392B", border: "1px solid #C0392B",
+              padding: "10px 22px", borderRadius: 4, fontSize: 12,
+              fontWeight: 600, cursor: "pointer", fontFamily: "'Segoe UI', sans-serif",
+              letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: 6,
+            }}>
+              <Trash2 size={13} /> Delete Case
+            </button>
+          )}
+          </div>
         </div>
       </div>
 
@@ -460,7 +464,7 @@ export default function CaseDetailPage() {
               )}
             </span>
           </div>
-          {canManageTeam && caseData.status === "Active" && (
+          {canManageTeam && (
             <button onClick={() => { setShowInviteModal(true); setStaffSearch(""); }} style={{
               background: "#F0F6FF", color: "#1A5FA8", border: "1px solid #C8DFF5",
               padding: "7px 14px", borderRadius: 4, fontSize: 12,
@@ -575,17 +579,15 @@ export default function CaseDetailPage() {
             <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A" }}>Investigation Journal</div>
             <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 2 }}>{entries.length} {entries.length === 1 ? "entry" : "entries"}</div>
           </div>
-          {caseData.status === "Active" && (
-            <button onClick={() => { setShowAddEntry(v => !v); if (showAddEntry) { setEntryContent(""); setEntryActions(""); setEntryDupeWarning(null); } }} style={{
-              background: showAddEntry ? "#F7F9FC" : "#1A5FA8", color: showAddEntry ? "#4E6478" : "white",
-              border: showAddEntry ? "1px solid #E2E8F0" : "none",
-              padding: "9px 18px", borderRadius: 4, fontSize: 12,
-              fontWeight: 600, cursor: "pointer", display: "flex",
-              alignItems: "center", gap: 7, fontFamily: "'Segoe UI', sans-serif",
-            }}>
-              {showAddEntry ? <><X size={13} /> Cancel</> : <><Plus size={13} /> Add Entry</>}
-            </button>
-          )}
+          <button onClick={() => { setShowAddEntry(v => !v); if (showAddEntry) { setEntryContent(""); setEntryActions(""); setEntryDupeWarning(null); } }} style={{
+            background: showAddEntry ? "#F7F9FC" : "#1A5FA8", color: showAddEntry ? "#4E6478" : "white",
+            border: showAddEntry ? "1px solid #E2E8F0" : "none",
+            padding: "9px 18px", borderRadius: 4, fontSize: 12,
+            fontWeight: 600, cursor: "pointer", display: "flex",
+            alignItems: "center", gap: 7, fontFamily: "'Segoe UI', sans-serif",
+          }}>
+            {showAddEntry ? <><X size={13} /> Cancel</> : <><Plus size={13} /> Add Entry</>}
+          </button>
         </div>
 
         {/* Add Entry Form */}
@@ -701,19 +703,17 @@ export default function CaseDetailPage() {
               {(caseData.cdrRequests || []).length} {(caseData.cdrRequests || []).length === 1 ? "request" : "requests"}
             </div>
           </div>
-          {caseData.status === "Active" && (
-            <button onClick={() => setShowCdrModal(true)} style={{
-              background: "#1A5FA8", color: "white", border: "none",
-              padding: "9px 18px", borderRadius: 4, fontSize: 12,
-              fontWeight: 600, cursor: "pointer", display: "flex",
-              alignItems: "center", gap: 7, fontFamily: "'Segoe UI', sans-serif",
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = "#154d8a"}
-            onMouseLeave={e => e.currentTarget.style.background = "#1A5FA8"}
-            >
-              <Plus size={13} /> Log CDR Request
-            </button>
-          )}
+          <button onClick={() => setShowCdrModal(true)} style={{
+            background: "#1A5FA8", color: "white", border: "none",
+            padding: "9px 18px", borderRadius: 4, fontSize: 12,
+            fontWeight: 600, cursor: "pointer", display: "flex",
+            alignItems: "center", gap: 7, fontFamily: "'Segoe UI', sans-serif",
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = "#154d8a"}
+          onMouseLeave={e => e.currentTarget.style.background = "#1A5FA8"}
+          >
+            <Plus size={13} /> Log CDR Request
+          </button>
         </div>
 
         {(caseData.cdrRequests || []).length === 0 ? (
