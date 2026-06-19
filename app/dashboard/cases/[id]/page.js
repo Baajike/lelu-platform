@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { ArrowLeft, Plus, Trash2, X, ChevronDown, Phone, GitBranch, Users, Crown, UserPlus, BookOpen } from "lucide-react";
@@ -58,6 +58,8 @@ export default function CaseDetailPage() {
   const [cdrForm, setCdrForm] = useState({ phoneNumber: "", identifierType: "Phone Number", otherIdentifierType: "", telco: "MTN", otherTelco: "", periodStart: "", periodEnd: "", reason: "" });
   const [cdrDupeWarning, setCdrDupeWarning] = useState(null);
   const [coViewers, setCoViewers] = useState([]);
+  const [coViewerToasts, setCoViewerToasts] = useState([]);
+  const seenViewersRef = useRef(new Set());
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [allStaff, setAllStaff] = useState([]);
   const [staffSearch, setStaffSearch] = useState("");
@@ -129,6 +131,25 @@ export default function CaseDetailPage() {
       fetch(`/api/cases/${id}/viewers`, { method: "DELETE" }).catch(() => {});
     };
   }, [id]);
+
+  // Fire a transient toast whenever a *new* co-viewer is detected.
+  // Tracks already-seen viewer IDs in a ref so the same user does not re-toast
+  // on every poll; if they leave and return, they get a fresh toast.
+  useEffect(() => {
+    const currentIds = new Set(coViewers.map(v => v.userId));
+    seenViewersRef.current.forEach(uid => {
+      if (!currentIds.has(uid)) seenViewersRef.current.delete(uid);
+    });
+    coViewers.forEach(v => {
+      if (seenViewersRef.current.has(v.userId)) return;
+      seenViewersRef.current.add(v.userId);
+      const tid = `${v.userId}-${Date.now()}`;
+      setCoViewerToasts(prev => [...prev, { id: tid, name: v.userName, visible: false }]);
+      setTimeout(() => setCoViewerToasts(prev => prev.map(t => t.id === tid ? { ...t, visible: true } : t)), 50);
+      setTimeout(() => setCoViewerToasts(prev => prev.map(t => t.id === tid ? { ...t, visible: false } : t)), 3700);
+      setTimeout(() => setCoViewerToasts(prev => prev.filter(t => t.id !== tid)), 4000);
+    });
+  }, [coViewers]);
 
   const handleAddEntry = async () => {
     if (!entryContent.trim()) return;
@@ -1157,6 +1178,42 @@ export default function CaseDetailPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Co-viewer toast notifications — HEAD_OF_UNIT / ADMIN only */}
+      {["HEAD_OF_UNIT", "ADMIN"].includes(session?.user?.role) && coViewerToasts.length > 0 && (
+        <div style={{
+          position: "fixed", bottom: 24, right: 24, zIndex: 1000,
+          display: "flex", flexDirection: "column", gap: 10,
+          pointerEvents: "none",
+        }}>
+          {coViewerToasts.map(t => (
+            <div key={t.id} style={{
+              background: "white", border: "1px solid #E2E8F0", borderRadius: 6,
+              boxShadow: "0 4px 16px rgba(11,31,58,0.18)",
+              padding: "12px 16px",
+              display: "flex", alignItems: "center", gap: 10,
+              minWidth: 240, maxWidth: 320,
+              opacity: t.visible ? 1 : 0,
+              transform: t.visible ? "translateY(0)" : "translateY(12px)",
+              transition: "opacity 0.3s ease, transform 0.3s ease",
+              fontFamily: "'Segoe UI', sans-serif",
+            }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: "50%",
+                background: "#1A5FA8", color: "white",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 13, fontWeight: 700, flexShrink: 0,
+              }}>
+                {t.name?.charAt(0).toUpperCase()}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#0B1F3A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.name}</div>
+                <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 1 }}>is also viewing this case</div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

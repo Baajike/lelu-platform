@@ -1,13 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 import { Plus, Search, X, Globe, ArrowUpRight, ArrowDownLeft, Upload, Download } from "lucide-react";
 
 const COUNTRIES = ["United States", "United Kingdom", "Nigeria", "South Africa", "Kenya", "Ghana", "Interpol", "Other"];
 const PRIORITIES = ["High", "Medium", "Low"];
 const STATUSES = ["All", "Pending", "Responded", "Closed"];
 const DIRECTIONS = ["Outgoing", "Incoming"];
-const ADMIN_ROLES = ["HEAD_OF_UNIT", "SUPERVISOR", "ADMIN"];
 
 const StatusBadge = ({ status }) => {
   const map = {
@@ -35,11 +33,8 @@ const PriorityBadge = ({ priority }) => {
 };
 
 export default function InternationalPage() {
-  const { data: session } = useSession();
   const [requests, setRequests] = useState([]);
   const [cases, setCases] = useState([]);
-  const [officers, setOfficers] = useState([]);
-  const [selectedOfficer, setSelectedOfficer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -54,13 +49,10 @@ export default function InternationalPage() {
     agency: "", subject: "", details: "", priority: "Medium", caseId: "",
   });
 
-  const isAdmin = ADMIN_ROLES.includes(session?.user?.role);
-
-  const fetchRequests = async (officerId = null) => {
+  const fetchRequests = async () => {
     setLoading(true);
     try {
-      const url = officerId ? `/api/international?officerId=${officerId}` : "/api/international";
-      const res = await fetch(url);
+      const res = await fetch("/api/international");
       const data = await res.json();
       setRequests(Array.isArray(data) ? data : []);
     } catch { setRequests([]); }
@@ -75,27 +67,10 @@ export default function InternationalPage() {
     } catch { setCases([]); }
   };
 
-  const fetchOfficers = async () => {
-    try {
-      const res = await fetch("/api/users");
-      const data = await res.json();
-      setOfficers(Array.isArray(data) ? data : []);
-    } catch { setOfficers([]); }
-  };
-
   useEffect(() => {
     fetchRequests();
     fetchCases();
-    if (isAdmin) fetchOfficers();
-  }, [isAdmin]);
-
-  const handleOfficerSelect = (officerId) => {
-    setSelectedOfficer(officerId);
-    setStatusFilter("All");
-    setDirectionFilter("All");
-    setSearch("");
-    fetchRequests(officerId);
-  };
+  }, []);
 
   const handleSubmit = async () => {
     if (!form.agency.trim() || !form.subject.trim()) { alert("Agency and subject are required."); return; }
@@ -114,7 +89,7 @@ export default function InternationalPage() {
       if (res.ok) {
         setShowModal(false);
         setForm({ direction: "Outgoing", country: "United States", otherCountry: "", agency: "", subject: "", details: "", priority: "Medium", caseId: "" });
-        fetchRequests(selectedOfficer);
+        fetchRequests();
       }
     } finally { setSubmitting(false); }
   };
@@ -125,7 +100,7 @@ export default function InternationalPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status, respondedAt: status === "Responded" ? new Date().toISOString() : undefined }),
     });
-    fetchRequests(selectedOfficer);
+    fetchRequests();
     if (selectedReq?.id === id) setSelectedReq(prev => ({ ...prev, status }));
   };
 
@@ -133,7 +108,7 @@ export default function InternationalPage() {
     if (!confirm("Delete this network request?")) return;
     await fetch(`/api/international/${id}`, { method: "DELETE" });
     setShowDetailModal(false);
-    fetchRequests(selectedOfficer);
+    fetchRequests();
   };
 
   const handleFileUpload = async (reqId, file) => {
@@ -155,7 +130,7 @@ export default function InternationalPage() {
           respondedAt: new Date().toISOString(),
         }),
       });
-      fetchRequests(selectedOfficer);
+      fetchRequests();
       if (selectedReq?.id === reqId) setSelectedReq(prev => ({ ...prev, attachmentPath: uploadData.path, attachmentName: uploadData.name, status: "Responded" }));
     } finally { setUploadingId(null); }
   };
@@ -196,53 +171,6 @@ export default function InternationalPage() {
         .officer-chip:hover { border-color: #1A5FA8 !important; }
         .upload-btn:hover { border-color: #1A5FA8 !important; color: #1A5FA8 !important; }
       `}</style>
-
-      {/* Officer Filter Bar — admin only */}
-      {isAdmin && officers.length > 0 && (
-        <div style={{
-          background: "white", borderRadius: 6, border: "1px solid #E2E8F0",
-          padding: "16px 20px", marginBottom: 20,
-          boxShadow: "0 1px 4px rgba(11,31,58,0.05)",
-        }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>
-            View Requests By Officer
-          </div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-            <button onClick={() => handleOfficerSelect(null)} className="officer-chip"
-              style={{
-                padding: "7px 16px", borderRadius: 4, fontSize: 12, cursor: "pointer",
-                fontFamily: "'Segoe UI', sans-serif", border: "1px solid #E2E8F0",
-                fontWeight: !selectedOfficer ? 700 : 400,
-                background: !selectedOfficer ? "#0B1F3A" : "white",
-                color: !selectedOfficer ? "white" : "#4E6478",
-                transition: "all 0.15s",
-              }}>All Officers</button>
-            {officers.map(o => (
-              <button key={o.id} onClick={() => handleOfficerSelect(o.id)} className="officer-chip"
-                style={{
-                  display: "flex", alignItems: "center", gap: 8,
-                  padding: "7px 14px", borderRadius: 4, fontSize: 12,
-                  cursor: "pointer", fontFamily: "'Segoe UI', sans-serif",
-                  border: `1px solid ${selectedOfficer === o.id ? "#1A5FA8" : "#E2E8F0"}`,
-                  fontWeight: selectedOfficer === o.id ? 700 : 400,
-                  background: selectedOfficer === o.id ? "#EBF3FB" : "white",
-                  color: selectedOfficer === o.id ? "#1A5FA8" : "#4E6478",
-                  transition: "all 0.15s",
-                }}>
-                <div style={{
-                  width: 22, height: 22, borderRadius: "50%",
-                  background: selectedOfficer === o.id ? "#1A5FA8" : "#0B1F3A",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 10, fontWeight: 700, color: "white", flexShrink: 0,
-                }}>
-                  {o.name?.charAt(0).toUpperCase()}
-                </div>
-                {o.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>

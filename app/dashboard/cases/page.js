@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { FolderOpen, Plus, Search, ChevronRight, X } from "lucide-react";
 
 const CATEGORIES = [
@@ -22,7 +21,6 @@ const CATEGORIES = [
   "Other",
 ];
 const STATUSES = ["All", "Active", "Closed"];
-const ADMIN_ROLES = ["HEAD_OF_UNIT", "SUPERVISOR", "ADMIN"];
 
 const StatusBadge = ({ status }) => {
   const map = { Active: { bg: "#E6F5EE", color: "#1A7A4A" }, Closed: { bg: "#EEF2F7", color: "#4E6478" } };
@@ -36,10 +34,7 @@ const StatusBadge = ({ status }) => {
 
 export default function CasesPage() {
   const router = useRouter();
-  const { data: session } = useSession();
   const [cases, setCases] = useState([]);
-  const [officers, setOfficers] = useState([]);
-  const [selectedOfficer, setSelectedOfficer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -48,38 +43,19 @@ export default function CasesPage() {
   const [form, setForm] = useState({ title: "", category: "Account Takeover", description: "" });
   const [otherCategory, setOtherCategory] = useState("");
 
-  const isAdmin = ADMIN_ROLES.includes(session?.user?.role);
-
-  const fetchCases = async (officerId = null) => {
+  const fetchCases = async () => {
     setLoading(true);
     try {
-      const url = officerId ? `/api/cases?officerId=${officerId}` : "/api/cases";
-      const res = await fetch(url);
+      const res = await fetch("/api/cases");
       const data = await res.json();
       setCases(Array.isArray(data) ? data : []);
     } catch { setCases([]); }
     finally { setLoading(false); }
   };
 
-  const fetchOfficers = async () => {
-    try {
-      const res = await fetch("/api/users");
-      const data = await res.json();
-      setOfficers(Array.isArray(data) ? data : []);
-    } catch { setOfficers([]); }
-  };
-
   useEffect(() => {
     fetchCases();
-    if (isAdmin) fetchOfficers();
-  }, [isAdmin]);
-
-  const handleOfficerSelect = (officerId) => {
-    setSelectedOfficer(officerId);
-    fetchCases(officerId);
-    setSearch("");
-    setStatusFilter("All");
-  };
+  }, []);
 
   const handleSubmit = async () => {
     if (!form.title.trim()) { alert("Case title is required."); return; }
@@ -130,10 +106,6 @@ export default function CasesPage() {
     return (Date.now() - new Date(lastEntry.createdAt).getTime()) > 7 * 24 * 60 * 60 * 1000;
   };
 
-  const selectedOfficerName = selectedOfficer
-    ? officers.find(o => o.id === selectedOfficer)?.name
-    : null;
-
   return (
     <div style={{ padding: 32, overflowX: "hidden" }}>
       <style>{`
@@ -153,66 +125,10 @@ export default function CasesPage() {
         .officer-chip:hover { border-color: #1A5FA8 !important; }
       `}</style>
 
-      {/* Officer Filter Bar — admin roles only */}
-      {isAdmin && officers.length > 0 && (
-        <div style={{
-          background: "white", borderRadius: 6, border: "1px solid #E2E8F0",
-          padding: "16px 20px", marginBottom: 20,
-          boxShadow: "0 1px 4px rgba(11,31,58,0.05)",
-        }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>
-            View Cases By Officer
-          </div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-
-            {/* All button */}
-            <button onClick={() => handleOfficerSelect(null)}
-              className="officer-chip"
-              style={{
-                padding: "7px 16px", borderRadius: 4, fontSize: 12, cursor: "pointer",
-                fontFamily: "'Segoe UI', sans-serif", border: "1px solid #E2E8F0",
-                fontWeight: !selectedOfficer ? 700 : 400,
-                background: !selectedOfficer ? "#0B1F3A" : "white",
-                color: !selectedOfficer ? "white" : "#4E6478",
-                transition: "all 0.15s",
-              }}>
-              All Officers
-            </button>
-
-            {/* Officer chips */}
-            {officers.map(o => (
-              <button key={o.id} onClick={() => handleOfficerSelect(o.id)}
-                className="officer-chip"
-                style={{
-                  display: "flex", alignItems: "center", gap: 8,
-                  padding: "7px 14px", borderRadius: 4, fontSize: 12,
-                  cursor: "pointer", fontFamily: "'Segoe UI', sans-serif",
-                  border: `1px solid ${selectedOfficer === o.id ? "#1A5FA8" : "#E2E8F0"}`,
-                  fontWeight: selectedOfficer === o.id ? 700 : 400,
-                  background: selectedOfficer === o.id ? "#EBF3FB" : "white",
-                  color: selectedOfficer === o.id ? "#1A5FA8" : "#4E6478",
-                  transition: "all 0.15s",
-                }}>
-                {/* Avatar */}
-                <div style={{
-                  width: 22, height: 22, borderRadius: "50%",
-                  background: selectedOfficer === o.id ? "#1A5FA8" : "#0B1F3A",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 10, fontWeight: 700, color: "white", flexShrink: 0,
-                }}>
-                  {o.name?.charAt(0).toUpperCase()}
-                </div>
-                {o.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Summary Bar */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 24 }}>
         {[
-          { label: selectedOfficerName ? `${selectedOfficerName}'s Cases` : "Total Cases", value: cases.length, color: "#1A5FA8" },
+          { label: "Total Cases", value: cases.length, color: "#1A5FA8" },
           { label: "Active", value: active, color: "#1A7A4A" },
           { label: "Closed", value: closed, color: "#4E6478" },
         ].map((s, i) => (
@@ -280,7 +196,7 @@ export default function CasesPage() {
                   <FolderOpen size={40} color="#D8E2EE" strokeWidth={1} style={{ margin: "0 auto 14px", display: "block" }} />
                   <div style={{ fontSize: 14, color: "#8FA3BB", fontWeight: 500 }}>No cases found.</div>
                   <div style={{ fontSize: 12, color: "#C4D0DC", marginTop: 4 }}>
-                    {selectedOfficerName ? `${selectedOfficerName} has no cases yet.` : "Adjust your filters or open a new case."}
+                    Adjust your filters or open a new case.
                   </div>
                 </td>
               </tr>

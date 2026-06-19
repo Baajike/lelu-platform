@@ -502,59 +502,6 @@ export default function ReportsPage() {
         .team-btn:hover { background:#4f2d80 !important; }
       `}</style>
 
-      {/* ── Admin Officer Selector ─────────────────────────────────────── */}
-      {isAdmin && users.length > 0 && (
-        <div style={{ background: "white", borderRadius: 6, border: "1px solid #E2E8F0", padding: "16px 20px", marginBottom: 20, boxShadow: "0 1px 4px rgba(11,31,58,0.05)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginRight: 4 }}>
-              <Users size={13} color="#1A5FA8" strokeWidth={2} />
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#0B1F3A", textTransform: "uppercase", letterSpacing: "0.08em" }}>Viewing Officer</span>
-            </div>
-
-            {/* "All Officers" chip */}
-            <button
-              className="officer-chip"
-              onClick={() => setSelectedOfficer(null)}
-              style={{
-                padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: selectedOfficer === null ? 700 : 400,
-                background: selectedOfficer === null ? "#0B1F3A" : "white",
-                color: selectedOfficer === null ? "white" : "#4E6478",
-                border: `1px solid ${selectedOfficer === null ? "#0B1F3A" : "#E2E8F0"}`,
-                fontFamily: "'Segoe UI', sans-serif", cursor: "pointer",
-              }}>
-              All Officers
-            </button>
-
-            {/* Individual officer chips */}
-            {users.filter(u => u.role !== "ADMIN" && u.role !== "OFFICE_ADMINISTRATOR").map(u => {
-              const isActive = selectedOfficer?.id === u.id;
-              return (
-                <button key={u.id} className="officer-chip"
-                  onClick={() => setSelectedOfficer(isActive ? null : u)}
-                  style={{
-                    padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: isActive ? 700 : 400,
-                    background: isActive ? "#1A5FA8" : "white",
-                    color: isActive ? "white" : "#4E6478",
-                    border: `1px solid ${isActive ? "#1A5FA8" : "#E2E8F0"}`,
-                    fontFamily: "'Segoe UI', sans-serif", cursor: "pointer",
-                  }}>
-                  {u.name}
-                </button>
-              );
-            })}
-
-            {selectedOfficer && (
-              <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#1A5FA8", fontWeight: 600 }}>
-                Reports will be filtered for: <strong>{selectedOfficer.name}</strong>
-                <button onClick={() => setSelectedOfficer(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB", padding: "2px 4px", display: "flex", alignItems: "center" }}>
-                  <X size={13} />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 24 }}>
 
         {/* LEFT ─────────────────────────────────────────────────────────── */}
@@ -566,7 +513,7 @@ export default function ReportsPage() {
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "white", letterSpacing: "0.08em", textTransform: "uppercase" }}>Generate Report</div>
                 <div style={{ fontSize: 11, color: "#8FA3BB", marginTop: 3 }}>
-                  {selectedOfficer ? `Generating for: ${selectedOfficer.name}` : "Select a report type to generate a professional document."}
+                  Select a report type to generate a professional document.
                 </div>
               </div>
               {/* Team Report button — HEAD_OF_UNIT only */}
@@ -590,11 +537,6 @@ export default function ReportsPage() {
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#0B1F3A", marginBottom: 6 }}>{rt.label}</div>
                   <div style={{ fontSize: 11, color: "#8FA3BB", lineHeight: 1.6 }}>{rt.desc}</div>
-                  {selectedOfficer && (
-                    <div style={{ marginTop: 8, fontSize: 10, color: "#1A5FA8", background: "#EBF3FB", padding: "3px 8px", borderRadius: 3, display: "inline-block" }}>
-                      For: {selectedOfficer.name}
-                    </div>
-                  )}
                   <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "#1A5FA8", fontWeight: 600 }}>
                     Generate <ChevronRight size={12} />
                   </div>
@@ -676,12 +618,26 @@ export default function ReportsPage() {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
               <div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: "#0B1F3A" }}>{REPORT_TYPES.find(r => r.id === selectedType)?.label}</div>
-                <div style={{ fontSize: 12, color: "#8FA3BB", marginTop: 3 }}>
-                  {selectedOfficer ? `Officer: ${selectedOfficer.name}` : "Configure and generate your report."}
-                </div>
+                <div style={{ fontSize: 12, color: "#8FA3BB", marginTop: 3 }}>Configure and generate your report.</div>
               </div>
               <button onClick={() => setShowGenModal(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#8FA3BB" }}><X size={18} /></button>
             </div>
+
+            {/* Officer scope picker — admin-only, pick officer to filter by */}
+            {isAdmin && users.length > 0 && (
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ fontSize: 11, fontWeight: 700, color: "#4E6478", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>Generate For Officer</label>
+                <select className="modal-input" value={selectedOfficer?.id || ""} onChange={e => {
+                  const id = e.target.value;
+                  setSelectedOfficer(id ? users.find(u => u.id === id) || null : null);
+                }}>
+                  <option value="">All Officers</option>
+                  {users.filter(u => u.role !== "ADMIN" && u.role !== "OFFICE_ADMINISTRATOR").map(u => (
+                    <option key={u.id} value={u.id}>{u.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Officer context banner */}
             {selectedOfficer && (

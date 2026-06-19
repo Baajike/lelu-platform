@@ -22,7 +22,6 @@ export default function CdrPage() {
   const [cdrs, setCdrs] = useState([]);
   const [cases, setCases] = useState([]);
   const [officers, setOfficers] = useState([]);
-  const [selectedOfficer, setSelectedOfficer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -93,12 +92,6 @@ export default function CdrPage() {
     if (isAdmin) fetchOfficers();
   }, [isAdmin]);
 
-  const handleOfficerSelect = (officerId) => {
-    setSelectedOfficer(officerId);
-    setStatusFilter("");
-    fetchCdrs(officerId);
-  };
-
   const doSubmit = async () => {
     setSubmitting(true);
     try {
@@ -118,7 +111,7 @@ export default function CdrPage() {
         setShowModal(false);
         setCdrDupeWarning(null);
         setForm({ phoneNumber: "", identifierType: "Phone Number", otherIdentifierType: "", telco: "MTN", otherTelco: "", periodStart: "", periodEnd: "", reason: "", caseId: "" });
-        fetchCdrs(selectedOfficer);
+        fetchCdrs();
       } else {
         const err = await res.json();
         alert(err.error || "Failed to log request.");
@@ -162,13 +155,13 @@ export default function CdrPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status, ...(status === "Received" ? { receivedAt: new Date().toISOString() } : {}) }),
     });
-    fetchCdrs(selectedOfficer);
+    fetchCdrs();
   };
 
   const handleDelete = async (id) => {
     if (!confirm("Delete this CDR request?")) return;
     await fetch(`/api/cdr/${id}`, { method: "DELETE" });
-    fetchCdrs(selectedOfficer);
+    fetchCdrs();
     fetchAssignedCdrs();
   };
 
@@ -191,7 +184,7 @@ export default function CdrPage() {
           receivedAt: new Date().toISOString(),
         }),
       });
-      fetchCdrs(selectedOfficer);
+      fetchCdrs();
     } finally { setUploadingId(null); }
   };
 
@@ -216,7 +209,7 @@ export default function CdrPage() {
     setShowAssignModal(false);
     setAssignTargetCdr(null);
     setAssignSearch("");
-    fetchCdrs(selectedOfficer);
+    fetchCdrs();
     fetchAssignedCdrs();
   };
 
@@ -287,53 +280,6 @@ export default function CdrPage() {
         .officer-chip:hover { border-color: #1A5FA8 !important; }
         .assign-user-row:hover { background: #F0F6FF !important; cursor: pointer; }
       `}</style>
-
-      {/* Officer Filter Bar — admin only */}
-      {isAdmin && officers.length > 0 && (
-        <div style={{
-          background: "white", borderRadius: 6, border: "1px solid #E2E8F0",
-          padding: "16px 20px", marginBottom: 20,
-          boxShadow: "0 1px 4px rgba(11,31,58,0.05)",
-        }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: "#8FA3BB", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>
-            View CDR Requests By Officer
-          </div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-            <button onClick={() => handleOfficerSelect(null)} className="officer-chip"
-              style={{
-                padding: "7px 16px", borderRadius: 4, fontSize: 12, cursor: "pointer",
-                fontFamily: "'Segoe UI', sans-serif", border: "1px solid #E2E8F0",
-                fontWeight: !selectedOfficer ? 700 : 400,
-                background: !selectedOfficer ? "#0B1F3A" : "white",
-                color: !selectedOfficer ? "white" : "#4E6478",
-                transition: "all 0.15s",
-              }}>All Officers</button>
-            {officers.map(o => (
-              <button key={o.id} onClick={() => handleOfficerSelect(o.id)} className="officer-chip"
-                style={{
-                  display: "flex", alignItems: "center", gap: 8,
-                  padding: "7px 14px", borderRadius: 4, fontSize: 12,
-                  cursor: "pointer", fontFamily: "'Segoe UI', sans-serif",
-                  border: `1px solid ${selectedOfficer === o.id ? "#1A5FA8" : "#E2E8F0"}`,
-                  fontWeight: selectedOfficer === o.id ? 700 : 400,
-                  background: selectedOfficer === o.id ? "#EBF3FB" : "white",
-                  color: selectedOfficer === o.id ? "#1A5FA8" : "#4E6478",
-                  transition: "all 0.15s",
-                }}>
-                <div style={{
-                  width: 22, height: 22, borderRadius: "50%",
-                  background: selectedOfficer === o.id ? "#1A5FA8" : "#0B1F3A",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 10, fontWeight: 700, color: "white", flexShrink: 0,
-                }}>
-                  {o.name?.charAt(0).toUpperCase()}
-                </div>
-                {o.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Stat Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
