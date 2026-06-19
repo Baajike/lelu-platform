@@ -1,0 +1,1 @@
+ALTER TABLE "CdrRequest" ADD COLUMN IF NOT EXISTS "identifierType" TEXT NOT NULL DEFAULT 'Phone Number';
