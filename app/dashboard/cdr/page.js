@@ -248,7 +248,7 @@ export default function CdrPage() {
     </div>
   );
 
-  const hasAccess = session?.user?.role === "HEAD_OF_UNIT" || currentUser?.cdrAccess === true;
+  const hasAccess = session?.user?.role === "HEAD_OF_UNIT" || session?.user?.role === "ADMIN" || currentUser?.cdrAccess === true;
 
   if (!hasAccess) return (
     <div style={{ padding: 32, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 400 }}>
