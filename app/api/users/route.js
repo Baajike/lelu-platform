@@ -40,7 +40,7 @@ export async function GET(request) {
       const users = await db.user.findMany({
         where: { approved: true, deactivated: false, role: { not: "ADMIN" } },
         select: {
-          id: true, name: true, email: true, role: true,
+          id: true, name: true, email: true, role: true, lastActive: true,
           _count: {
             select: {
               cases: true,

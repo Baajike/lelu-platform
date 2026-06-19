@@ -16,6 +16,7 @@ const navItems = [
   { id: "fraud",         label: "Intel DB",        icon: ShieldAlert,     href: "/dashboard/fraud" },
   { id: "international", label: "24/7 Network",    icon: Globe,           href: "/dashboard/international" },
   { id: "reports",       label: "Reports",         icon: FileBarChart2,   href: "/dashboard/reports" },
+  { id: "team",          label: "Team",            icon: Users,           href: "/dashboard/team" },
 ];
 
 const APPROVAL_ROLES = ["HEAD_OF_UNIT", "OFFICE_ADMINISTRATOR", "ADMIN"];
